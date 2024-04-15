@@ -64,5 +64,4 @@ ehthumbs_win7.db
 .vscode/
 passenger_wsgi.py
 
-local.py
 app.sock

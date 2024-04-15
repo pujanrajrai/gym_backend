@@ -29,6 +29,7 @@ def send_tender_email():
             # Assuming you have a template for the email
             email_subject = f"TENDER NOTICE {today}"
             email_template = 'frontend/tender_email_template.html'
+
             context = {'user': user, 'tenders': tenders}
             html_message = render_to_string(email_template, context)
             plain_message = strip_tags(html_message)
