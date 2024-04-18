@@ -1,0 +1,30 @@
+<!-- templates/staff/detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Detail</title>
+</head>
+<body>
+    <h1>Staff Detail</h1>
+    <p><strong>Email:</strong> {{ staff_detail.user.email }}</p>
+    <p><strong>Phone Number:</strong> {{ staff_detail.user.phone_number }}</p>
+    <p><strong>Full Name:</strong> {{ staff_detail.fullname }}</p>
+    <p><strong>Gender:</strong> {{ staff_detail.gender }}</p>
+    <p><strong>Address:</strong> {{ staff_detail.address }}</p>
+    {% if staff_detail.photo %}
+    <p><strong>Photo:</strong> <img src="{{ staff_detail.photo.url }}" alt="Staff Photo"></p>
+    {% endif %}
+    {% if staff_detail.id_document %}
+    <p><strong>ID Document:</strong> <a href="{{ staff_detail.id_document.url }}" target="_blank">View ID Document</a></p>
+    {% endif %}
+    <div class="col-6 btn-grp">
+        <a class="btn btn-sm btn-warning"
+           href="{% url 'accounts:pages:staff_profile_update' staff_detail.pk %}"
+           >
+           <i class="fa fa-edit"></i>
+            &nbsp; Update</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+</head>
+<body>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="dropdown">
+        <button class="dropbtn">Create</button>
+        <div class="dropdown-content">
+            <a href="{% url 'accounts:pages:admin_create' %}">Create Admin</a>
+            <a href="{% url 'accounts:pages:staff_create' %}">Create Staff</a>
+            <a href="{% url 'accounts:pages:user_create' %}">Create User</a>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone_number }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    {% if user.is_blocked %}
+                    <a href="{% url 'accounts:pages:unblock_user' user.id %}" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>
+                    {% else %}
+                    <a href="{% url 'accounts:pages:block_user' user.id %}" class="btn btn-sm btn-dark" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Block</a>
+                    {% endif %}
+                    <a href="{% url 'accounts:pages:profile_redirect' user.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
