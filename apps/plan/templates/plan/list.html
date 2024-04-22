@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan List</title>
+</head>
+<body>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="dropdown">
+        <button class="dropbtn">Create</button>
+        <div class="dropdown-content">
+            <a href="{% url 'plan:pages:create' %}">Create Plan</a>
+            
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Default Month</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan in plans %}
+            <tr>
+                <td>{{ plan.name }}</td>
+                <td>{{ plan.price }}</td>
+                <td>{{ plan.default_month }}</td>
+                <td>{{ plan.description }}</td>
+                <td>
+                    <a href="{% url 'plan:pages:delete' plan.id %}" class="btn btn-sm btn-dark" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                    <a href="{% url 'plan:pages:update' plan.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;Update</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
