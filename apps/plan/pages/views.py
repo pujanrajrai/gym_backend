@@ -3,6 +3,7 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from plan.models import Plan
+from django.shortcuts import render, get_object_or_404, redirect
 
 class PlanListView(ListView):
     model = Plan
@@ -28,10 +29,10 @@ class PlanUpdateView(UpdateView):
     fields = ['name', 'price', 'default_month', 'description']
 
     def get_success_url(self):
-        return reverse_lazy('accounts:pages:list')
+        return reverse_lazy('plan:pages:list')
 
 def plan_delete(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
     plan.delete()
-    return redirect('plan_list')
+    return redirect('plan:pages:list')
     
