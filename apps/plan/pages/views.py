@@ -3,6 +3,9 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from plan.models import Plan
+from accounts.models.users import User
+from accounts.models.profiles import UserProfile
+from . forms import SearchCustomerForm
 from django.shortcuts import render, get_object_or_404, redirect
 
 class PlanListView(ListView):
@@ -36,3 +39,20 @@ def plan_delete(request, pk):
     plan.delete()
     return redirect('plan:pages:list')
     
+
+def search_customer(request):
+    context = {
+        "form": SearchCustomerForm(),
+    }
+    if request.method == "POST":
+        phone_number = request.POST.get("phone_number")
+        if phone_number:
+            user = User.objects.get(phone_number=phone_number,role='user')
+            if user:
+                userprofile = UserProfile.objects.get(user=user)
+                import pdb;pdb.set_trace()
+                return redirect(f'/accounts/pages/userdetail/{userprofile.pk}/')
+            else:
+                return redirect(f'/accounts/pages/customer/create/?phone_number={phone_number}')
+
+    return render(request, 'plan/search_customer.html', context)
