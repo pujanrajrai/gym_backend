@@ -47,12 +47,11 @@ def search_customer(request):
     if request.method == "POST":
         phone_number = request.POST.get("phone_number")
         if phone_number:
-            user = User.objects.get(phone_number=phone_number,role='user')
-            if user:
+            try:
+                user = User.objects.get(phone_number=phone_number, role='user')
                 userprofile = UserProfile.objects.get(user=user)
-                import pdb;pdb.set_trace()
                 return redirect(f'/accounts/pages/userdetail/{userprofile.pk}/')
-            else:
-                return redirect(f'/accounts/pages/customer/create/?phone_number={phone_number}')
+            except User.DoesNotExist:
+                return redirect(f'/accounts/pages/user/create/?phone_number={phone_number}')
 
     return render(request, 'plan/search_customer.html', context)
