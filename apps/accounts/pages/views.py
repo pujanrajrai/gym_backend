@@ -40,6 +40,11 @@ class CreateUser(SuccessMessageMixin, CreateView):
     success_message = 'User Created Successfully'
     template_name = 'users/create.html'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['phone_number'] = self.request.GET.get('phone_number')
+        return initial
+
     def get_success_url(self):
         return reverse_lazy('accounts:pages:user_list')
  

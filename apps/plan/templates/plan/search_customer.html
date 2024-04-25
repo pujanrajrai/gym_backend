@@ -1,0 +1,117 @@
+
+<style>
+    #search-box {
+        width: 300px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    #suggestion-list {
+        list-style: none;
+        padding: 0;
+        border: 1px solid #ccc;
+        max-height: 150px;
+        overflow-y: auto;
+        position: absolute;
+        width: 298px; /* Adjust to match the input width */
+        margin: 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        z-index: 1;
+    }
+
+    
+    .suggestion-item {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .suggestion-item:hover {
+        background-color: #f0f0f0;
+    }
+</style>
+<form method="POST">
+    {%csrf_token%}
+<label for="search-box">Search:</label><br>
+    <input type="text" name="phone_number" id="search-box">
+    <ul id="suggestion-list"></ul>
+    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Search or Create</button>
+</form>
+{% comment %} <script>
+    $(document).ready(function () {
+        let suggestions = [];
+        // Function to fetch suggestions from the API
+        function fetchSuggestionsFromAPI() {
+            // Replace 'https://api.example.com/suggestions' with your API endpoint
+            $.ajax({
+                url: "{% url 'shipments:pages:shipments:search_customer_api' %}",
+                method: 'GET',
+                success: function (data) {
+                    suggestions = data.suggestions;
+
+                    // You can update the suggestion list immediately
+                    updateSuggestionList('');
+                },
+                error: function (error) {
+                    console.error('Error fetching suggestions:', error);
+                }
+            });
+        }
+
+        // Call the function to fetch suggestions on document ready
+        fetchSuggestionsFromAPI();
+
+        // Function to update suggestion list
+        function updateSuggestionList(query) {
+            const suggestionList = $('#suggestion-list');
+            // Clear previous suggestions
+            suggestionList.empty();
+
+            // Filter and display matching suggestions
+            suggestions
+                .filter(suggestion => suggestion.toLowerCase().includes(query))
+                .forEach(suggestion => {
+                    const listItem = $('<li class="list-group-item"></li>').text(suggestion);
+                    listItem.on('click', function () {
+                        $('#search-box').val(suggestion);
+                        suggestionList.empty();
+                    });
+                    suggestionList.append(listItem);
+                });
+
+            // Show/hide suggestion list based on input
+            if (query.length > 0) {
+                suggestionList.show();
+            } else {
+                suggestionList.hide();
+            }
+        }
+
+        $('#search-box').on('input', function () {
+            const filter = $(this).val().toLowerCase();
+            updateSuggestionList(filter);
+        });
+
+        // Handle Enter key press
+        $('#search-box').on('keydown', function (event) {
+            if (event.which === 13) { // Enter key
+                const topSuggestion = $('#suggestion-list li:first-child').text();
+                if (topSuggestion) {
+                    $('#search-box').val(topSuggestion);
+                    $('#suggestion-list').empty();
+                }
+            }
+        });
+
+        // Hide suggestion list on clicking outside the input and list
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#search-box, #suggestion-list').length) {
+                $('#suggestion-list').hide();
+            }
+        });
+    });
+</script>
+ {% endcomment %}
+
+  
+

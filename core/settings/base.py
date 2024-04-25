@@ -25,6 +25,7 @@ INSTALLED_APPS = [
 
 DJANGO_APP = [
     'accounts',
+    'plan',
 ]
 
 THIRD_PARTY_APP = [
