@@ -1,0 +1,53 @@
+{% load static %}
+<div class="main-menu">
+    <header class="header">
+        <a href="/" class="logo">
+            <span class="ico fa fa-gavel"></span> CMS
+        </a>
+        <button type="button" class="button-close fa fa-times js__menu_close"></button>
+        <div class="user">
+            <a href="/" class="avatar"><img src="{% static 'assets/images/logo.png' %}" alt="" style="height:50%;width:50%;margin-top:10px;margin-left:5vh;"></a>
+        </div>
+        <!-- /.user -->
+    </header>
+    <!-- /.header -->
+    <div class="content">
+        <div class="navigation">
+          <h5 class="title">Home</h5>
+          <!-- /.title -->
+          <ul class="menu js__accordion">
+            <li class="{% if current == "users" %}current{%endif%}">
+              <a class="" href="{% url 'accounts:pages:user_list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Users</span></a>
+            </li>
+          </ul>
+         
+  
+          <ul class="menu js__accordion">
+            <li class="{% if current == "changepassword" %}current{%endif%}">
+              {% comment %} <a class="" href="{% url 'accounts:pages:users:changepassword' %}"> {% endcomment %}
+                <i class="menu-icon material-symbols-outlined">
+                    lock
+                </i>
+                  <span>Change Password</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="">
+              {% comment %} <a class="" href="{% url 'accounts:pages:users:logout' %}"> {% endcomment %}
+                <i class="menu-icon material-symbols-outlined">
+                    logout
+                </i>
+                  <span>Logout</span></a>
+            </li>
+          </ul>
+          <!-- /.menu js__accordion -->
+        </div>
+        <!-- /.navigation -->
+      </div>
+    <!-- /.content -->
+</div>
+

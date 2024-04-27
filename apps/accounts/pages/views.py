@@ -107,6 +107,7 @@ class UserProfileDetailView(DetailView):
 
 def profile_redirect(request, id):
     user = User.objects.get(pk=id)
+    
     if user.role == "admin":
         pass
         # adminprofile = AdminProfile.objects.get(user=user)
