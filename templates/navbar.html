@@ -33,6 +33,15 @@
                   <span>Plans</span></a>
             </li>
           </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "users" %}current{%endif%}">
+              <a class="" href="{% url 'plan:pages:search_customer' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Search User</span></a>
+            </li>
+          </ul>
          
   
           <!-- /.menu js__accordion -->

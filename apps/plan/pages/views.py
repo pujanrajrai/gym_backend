@@ -13,10 +13,10 @@ class PlanListView(ListView):
     template_name = 'plan/list.html'
     context_object_name = 'plans'
 
-class PlanDetailView(DetailView):
-    model = Plan
-    template_name = 'plan/detail.html'
-    context_object_name = 'plan'
+# class PlanDetailView(DetailView):
+#     model = Plan
+#     template_name = 'plan/detail.html'
+#     context_object_name = 'plan'
 
 class PlanCreateView(CreateView):
     model = Plan
