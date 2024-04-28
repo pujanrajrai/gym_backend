@@ -1,37 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan List</title>
-</head>
-<body>
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}Plan List{% endblock %}
+{% block pagetitle %}Plan List{% endblock %}
+{%block addbutton%}
+{% comment %} <a href="{% url 'accounts:pages:users:createadmin' %}" class="btn btn-sm btn-primary">
+<i class="fa fa-plus"></i>Add User
+</a> {% endcomment %}
+
+<div class="dropdown">
+    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Add Plan
+    </button>
+    <div class="dropdown-menu" aria-labelledby="exportDropdown">
+        <a class="dropdown-item" href="{% url 'plan:pages:create' %}" >Create Plan</a>
+    
     </div>
-    {% endif %}
-    <div class="dropdown">
-        <button class="dropbtn">Create</button>
-        <div class="dropdown-content">
-            <a href="{% url 'plan:pages:create' %}">Create Plan</a>
-            
-        </div>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Default Month</th>
-                <th>Description</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for plan in plans %}
+</div>
+{% endblock %}
+
+{% block table %}
+    <div class="box-content">
+        <!-- /.dropdown js__dropdown -->
+        <div class="table-responsive">
+            <table id="example" class="display compact nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Default Month</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Default Month</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for plan in plans %}
             <tr>
                 <td>{{ plan.name }}</td>
                 <td>{{ plan.price }}</td>
@@ -44,7 +55,17 @@
                 </td>
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+    </script>
+{% endblock %}
+
