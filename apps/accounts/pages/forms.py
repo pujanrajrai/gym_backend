@@ -205,10 +205,11 @@ class StaffProfileUpdateForm(forms.ModelForm):
             'id_document',
         ]
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
+            'fullname': forms.TextInput(attrs={'class': 'form-control col-6', 'placeholder': 'Enter your Full Name'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
-            
+            'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
+
         }
     
     def __init__(self, *args, **kwargs):
