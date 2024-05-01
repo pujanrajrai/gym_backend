@@ -135,6 +135,7 @@ class CreateUserForm(forms.ModelForm):
         model = UserProfile
         fields = [
             'phone_number',
+            'email',
             "password",
             'fullname',
             'address',
@@ -142,10 +143,11 @@ class CreateUserForm(forms.ModelForm):
             'photo',
         ]
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
+            'fullname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
-            
+            'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
+
         }
 
     def clean(self):
