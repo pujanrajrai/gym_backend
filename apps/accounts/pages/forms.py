@@ -227,6 +227,52 @@ class StaffProfileUpdateForm(forms.ModelForm):
             instance.save()
         return instance
 
+
+
+
+class AdminProfileUpdateForm(forms.ModelForm):
+    
+    phone_number = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
+    )
+    email = forms.CharField(
+        max_length=150,
+        widget=forms.EmailInput(attrs={'class': 'form-control col-6'}),
+    )
+   
+    
+
+    class Meta:
+        model = User
+        fields = [
+            'phone_number',
+            "email",
+          
+        ]
+        widgets = {
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
+            
+            
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Get the instance associated with the form
+        instance = kwargs.get('instance')
+        # If instance exists and it has a related user
+        if instance:
+            # Populate email and phone_number fields with user data
+            self.fields['email'].initial = instance.email
+            self.fields['phone_number'].initial = instance.phone_number
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        if commit:
+            instance.save()
+        return instance
+
   
 class UserProfileUpdateForm(forms.ModelForm):
     

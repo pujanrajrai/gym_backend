@@ -1,0 +1,48 @@
+{% extends 'form_base.html' %}
+{% load static %}
+{% block title %}Admin Detail{% endblock %}
+{% block pagetitle %}admin Detail{% endblock %}
+{% block body %}
+<section class="section profile">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <h5 class="card-title">Profile Details</h5>
+                    <div class="profile-detail">
+                        <div class="detail-item">
+                            <strong>Email:</strong> {{admin_detail.email}}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Phone Number:</strong> {{admin_detail.phone_number}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 btn-grp">
+                <a class="btn btn-sm btn-warning"
+                   href="{% url 'accounts:pages:admin_profile_update' admin_detail.pk %}"
+                   >
+                   <i class="fa fa-edit"></i>
+                    &nbsp; Update</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .profile-detail {
+        margin-top: 20px;
+    }
+
+    .detail-item {
+        margin-bottom: 10px;
+    }
+
+    .detail-item strong {
+        margin-right: 10px;
+    }
+</style>
+
+{% endblock %}
+<!-- templates/staff/detail.html -->

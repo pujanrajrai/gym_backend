@@ -1,7 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from accounts.models.users import User
 from accounts.models.profiles import StaffProfile,UserProfile
-from .forms import CreateAdminForm,CreateStaffForm,CreateUserForm,StaffProfileUpdateForm,UserProfileUpdateForm
+from .forms import CreateAdminForm,CreateStaffForm,CreateUserForm,StaffProfileUpdateForm,UserProfileUpdateForm,AdminProfileUpdateForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -104,14 +104,18 @@ class UserProfileDetailView(DetailView):
     context_object_name = 'user_detail'
 
 
+class AdminProfileDetailView(DetailView):
+    model = User
+    template_name = 'admin/detail.html'
+    context_object_name = 'admin_detail'
+
+
 
 def profile_redirect(request, id):
     user = User.objects.get(pk=id)
     
     if user.role == "admin":
-        pass
-        # adminprofile = AdminProfile.objects.get(user=user)
-        # return redirect(f'/dashboard/user/admindetail/{adminprofile.pk}/')
+        return redirect(f'/accounts/pages/admindetail/{user.pk}/')
     elif user.role == "staff":
         staffprofile = StaffProfile.objects.get(user=user)
         return redirect(f'/accounts/pages/staffdetail/{staffprofile.pk}/')
@@ -133,6 +137,17 @@ class StaffProfileUpdateView(SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         user_id = StaffProfile.objects.get(pk=self.kwargs['pk']).id
         return reverse_lazy('accounts:pages:staff_detail', kwargs={'pk': user_id})
+
+
+class AdminProfileUpdateView(SuccessMessageMixin, UpdateView):
+    form_class = AdminProfileUpdateForm
+    success_message = 'Admin Profile Updated Successfully'
+    model = User
+    template_name = 'admin/update.html'
+
+    def get_success_url(self):
+        user_id = User.objects.get(pk=self.kwargs['pk']).id
+        return reverse_lazy('accounts:pages:admin_detail', kwargs={'pk': user_id})
 
 class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     form_class = UserProfileUpdateForm
