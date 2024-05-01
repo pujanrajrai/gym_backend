@@ -70,6 +70,7 @@ class CreateStaffForm(forms.ModelForm):
         model = StaffProfile
         fields = [
             'phone_number',
+            'email',
             "password",
             'fullname',
             'address',
@@ -78,9 +79,9 @@ class CreateStaffForm(forms.ModelForm):
             'id_document',
         ]
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
+            'fullname': forms.TextInput(attrs={'class': 'form-control col-6', 'placeholder': 'Enter your Full Name'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
+            'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
             
         }
 
