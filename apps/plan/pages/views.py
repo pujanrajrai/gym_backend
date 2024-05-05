@@ -13,10 +13,15 @@ class PlanListView(ListView):
     template_name = 'plan/list.html'
     context_object_name = 'plans'
 
-class PlanDetailView(DetailView):
-    model = Plan
-    template_name = 'plan/detail.html'
-    context_object_name = 'plan'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'plans' 
+        return context
+
+# class PlanDetailView(DetailView):
+#     model = Plan
+#     template_name = 'plan/detail.html'
+#     context_object_name = 'plan'
 
 class PlanCreateView(CreateView):
     model = Plan
@@ -26,6 +31,11 @@ class PlanCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('plan:pages:list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'plans' 
+        return context
+
 class PlanUpdateView(UpdateView):
     model = Plan
     template_name = 'plan/update.html'
@@ -33,6 +43,11 @@ class PlanUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('plan:pages:list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'plans' 
+        return context
 
 def plan_delete(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
@@ -43,6 +58,7 @@ def plan_delete(request, pk):
 def search_customer(request):
     context = {
         "form": SearchCustomerForm(),
+        "current":"search_user",
     }
     if request.method == "POST":
         phone_number = request.POST.get("phone_number")

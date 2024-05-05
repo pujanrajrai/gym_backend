@@ -1,53 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User List</title>
-</head>
-<body>
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
+
+
+
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}User List{% endblock %}
+{% block pagetitle %}User List{% endblock %}
+{%block addbutton%}
+{% comment %} <a href="{% url 'accounts:pages:users:createadmin' %}" class="btn btn-sm btn-primary">
+<i class="fa fa-plus"></i>Add User
+</a> {% endcomment %}
+
+<div class="dropdown">
+    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        AddUser
+    </button>
+    <div class="dropdown-menu" aria-labelledby="exportDropdown">
+        <a class="dropdown-item" href="{% url 'accounts:pages:admin_create' %}" >Create Admin</a>
+    <a class="dropdown-item" href="{% url 'accounts:pages:staff_create' %}">Create Staff</a>
+    <a class="dropdown-item" href="{% url 'accounts:pages:user_create' %}">Create User</a>
     </div>
-    {% endif %}
-    <div class="dropdown">
-        <button class="dropbtn">Create</button>
-        <div class="dropdown-content">
-            <a href="{% url 'accounts:pages:admin_create' %}">Create Admin</a>
-            <a href="{% url 'accounts:pages:staff_create' %}">Create Staff</a>
-            <a href="{% url 'accounts:pages:user_create' %}">Create User</a>
+</div>
+{% endblock %}
+
+{% block table %}
+    <div class="box-content">
+        <!-- /.dropdown js__dropdown -->
+        <div class="table-responsive">
+            <table id="example" class="display compact nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone_number }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>
+                            {% if user.is_blocked %}
+                            <a href="{% url 'accounts:pages:unblock_user' user.id %}" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>
+                            {% else %}
+                            <a href="{% url 'accounts:pages:block_user' user.id %}" class="btn btn-sm btn-dark" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Block</a>
+                            {% endif %}
+                            <a href="{% url 'accounts:pages:profile_redirect' user.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
+        
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Role</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.email }}</td>
-                <td>{{ user.phone_number }}</td>
-                <td>{{ user.role }}</td>
-                <td>
-                    {% if user.is_blocked %}
-                    <a href="{% url 'accounts:pages:unblock_user' user.id %}" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>
-                    {% else %}
-                    <a href="{% url 'accounts:pages:block_user' user.id %}" class="btn btn-sm btn-dark" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Block</a>
-                    {% endif %}
-                    <a href="{% url 'accounts:pages:profile_redirect' user.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
+    <script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+    </script>
+{% endblock %}
 
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>

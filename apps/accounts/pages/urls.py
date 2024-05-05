@@ -11,7 +11,9 @@ urlpatterns = [
     path('<int:id>/user/unblock', views.unblock_user, name="unblock_user"),
     path('profileredirect/<int:id>/',views.profile_redirect, name="profile_redirect"),
     path('staffdetail/<str:pk>/',views.StaffProfileDetailView.as_view(), name="staff_detail"),
+    path('admindetail/<str:pk>/',views.AdminProfileDetailView.as_view(), name="admin_detail"),
     path('userdetail/<str:pk>/',views.UserProfileDetailView.as_view(), name="user_detail"),
     path('staff/<str:pk>/update/', views.StaffProfileUpdateView.as_view(),name='staff_profile_update'),
+    path('admin/<str:pk>/update/', views.AdminProfileUpdateView.as_view(),name='admin_profile_update'),
     path('user/<str:pk>/update/', views.UserProfileUpdateView.as_view(),name='user_profile_update'),
 ]

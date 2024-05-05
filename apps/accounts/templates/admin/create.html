@@ -1,16 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Admin</title>
-</head>
-<body>
-    <h1>Create Admin</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create</button>
-    </form>
-</body>
-</html>
+{% extends 'form_base.html' %}
+{% load static %}
+{% block title %}Create Admin{% endblock %}
+{% block pagetitle %}Create Admin{% endblock %}
+{%block addbutton%}
+{%endblock%}
+{% block body %}
+
+<form method="post" onsubmit="myFunction()" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{phone_number}}
+  {% for field in form %}
+  <div class="form-group col-md-6">
+      {{ field.label_tag }} {{ field }} 
+      {{ field.errors }}
+      {% if field.help_text %}
+          <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+  </div>
+{% endfor %}
+    </div>
+    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Create Admin</button>
+
+  </form>
+
+  <script>
+
+  </script>
+  
+{% endblock %}

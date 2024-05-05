@@ -70,6 +70,7 @@ class CreateStaffForm(forms.ModelForm):
         model = StaffProfile
         fields = [
             'phone_number',
+            'email',
             "password",
             'fullname',
             'address',
@@ -78,9 +79,9 @@ class CreateStaffForm(forms.ModelForm):
             'id_document',
         ]
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
+            'fullname': forms.TextInput(attrs={'class': 'form-control col-6', 'placeholder': 'Enter your Full Name'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
+            'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
             
         }
 
@@ -134,6 +135,7 @@ class CreateUserForm(forms.ModelForm):
         model = UserProfile
         fields = [
             'phone_number',
+            'email',
             "password",
             'fullname',
             'address',
@@ -141,10 +143,11 @@ class CreateUserForm(forms.ModelForm):
             'photo',
         ]
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
+            'fullname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
-            
+            'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
+
         }
 
     def clean(self):
@@ -204,10 +207,11 @@ class StaffProfileUpdateForm(forms.ModelForm):
             'id_document',
         ]
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
+            'fullname': forms.TextInput(attrs={'class': 'form-control col-6', 'placeholder': 'Enter your Full Name'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
-            
+            'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
+
         }
     
     def __init__(self, *args, **kwargs):
@@ -219,6 +223,52 @@ class StaffProfileUpdateForm(forms.ModelForm):
             # Populate email and phone_number fields with user data
             self.fields['email'].initial = instance.user.email
             self.fields['phone_number'].initial = instance.user.phone_number
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        if commit:
+            instance.save()
+        return instance
+
+
+
+
+class AdminProfileUpdateForm(forms.ModelForm):
+    
+    phone_number = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
+    )
+    email = forms.CharField(
+        max_length=150,
+        widget=forms.EmailInput(attrs={'class': 'form-control col-6'}),
+    )
+   
+    
+
+    class Meta:
+        model = User
+        fields = [
+            'phone_number',
+            "email",
+          
+        ]
+        widgets = {
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
+            
+            
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Get the instance associated with the form
+        instance = kwargs.get('instance')
+        # If instance exists and it has a related user
+        if instance:
+            # Populate email and phone_number fields with user data
+            self.fields['email'].initial = instance.email
+            self.fields['phone_number'].initial = instance.phone_number
 
     def save(self, commit=True):
         instance = super().save(commit=False)

@@ -1,31 +1,62 @@
-<!-- templates/staff/detail.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Detail</title>
-</head>
-<body>
-    <h1>User Detail</h1>
-    <p><strong>Email:</strong> {{ user_detail.user.email }}</p>
-    <p><strong>Phone Number:</strong> {{ user_detail.user.phone_number }}</p>
-    <p><strong>Full Name:</strong> {{ user_detail.fullname }}</p>
-    <p><strong>Gender:</strong> {{ user_detail.gender }}</p>
-    <p><strong>Address:</strong> {{ user_detail.address }}</p>
-    {% if user_detail.photo %}
+{% extends 'form_base.html' %}
+{% load static %}
+{% block title %}User Detail{% endblock %}
+{% block pagetitle %}User Detail{% endblock %}
+{% block body %}
+<section class="section profile">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <h5 class="card-title">Profile Details</h5>
+                    <div class="profile-detail">
+                        <div class="detail-item">
+                            <strong>Email:</strong> {{user_detail.user.email}}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Phone Number:</strong> {{user_detail.user.phone_number}}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Full Name:</strong> {{user_detail.fullname}}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Gender:</strong> {{user_detail.gender}}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Address:</strong> {{user_detail.address}}
+                        </div>
+                        {% if user_detail.photo %}
     <p><strong>Photo:</strong> <img src="{{ user_detail.photo.url }}" alt="Staff Photo"></p>
     {% endif %}
     {% if user_detail.id_document %}
     <p><strong>ID Document:</strong> <a href="{{ user_detail.id_document.url }}" target="_blank">View ID Document</a></p>
     {% endif %}
-
-    <div class="col-6 btn-grp">
-        <a class="btn btn-sm btn-warning"
-           href="{% url 'accounts:pages:user_profile_update' user_detail.pk %}"
-           >
-           <i class="fa fa-edit"></i>
-            &nbsp; Update</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 btn-grp">
+                <a class="btn btn-sm btn-warning"
+                   href="{% url 'accounts:pages:user_profile_update' user_detail.pk %}"
+                   >
+                   <i class="fa fa-edit"></i>
+                    &nbsp; Update</a>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</section>
+
+<style>
+    .profile-detail {
+        margin-top: 20px;
+    }
+
+    .detail-item {
+        margin-bottom: 10px;
+    }
+
+    .detail-item strong {
+        margin-right: 10px;
+    }
+</style>
+
+{% endblock %}

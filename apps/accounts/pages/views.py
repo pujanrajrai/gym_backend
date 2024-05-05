@@ -1,7 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from accounts.models.users import User
 from accounts.models.profiles import StaffProfile,UserProfile
-from .forms import CreateAdminForm,CreateStaffForm,CreateUserForm,StaffProfileUpdateForm,UserProfileUpdateForm
+from .forms import CreateAdminForm,CreateStaffForm,CreateUserForm,StaffProfileUpdateForm,UserProfileUpdateForm,AdminProfileUpdateForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -12,6 +12,11 @@ class UserListView(ListView):
     template_name = 'users/list.html'
     context_object_name = 'users'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
+
 
 class CreateAdmin(SuccessMessageMixin, CreateView):
     model = User
@@ -21,6 +26,11 @@ class CreateAdmin(SuccessMessageMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('accounts:pages:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
  
 
 class CreateStaff(SuccessMessageMixin, CreateView):
@@ -31,6 +41,11 @@ class CreateStaff(SuccessMessageMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('accounts:pages:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
  
 
 
@@ -47,6 +62,11 @@ class CreateUser(SuccessMessageMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('accounts:pages:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
  
 
 
@@ -98,19 +118,39 @@ class StaffProfileDetailView(DetailView):
     template_name = 'staff/detail.html'
     context_object_name = 'staff_detail'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
+
 class UserProfileDetailView(DetailView):
     model = UserProfile
     template_name = 'users/detail.html'
     context_object_name = 'user_detail'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
+
+
+class AdminProfileDetailView(DetailView):
+    model = User
+    template_name = 'admin/detail.html'
+    context_object_name = 'admin_detail'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
+
 
 
 def profile_redirect(request, id):
     user = User.objects.get(pk=id)
+    
     if user.role == "admin":
-        pass
-        # adminprofile = AdminProfile.objects.get(user=user)
-        # return redirect(f'/dashboard/user/admindetail/{adminprofile.pk}/')
+        return redirect(f'/accounts/pages/admindetail/{user.pk}/')
     elif user.role == "staff":
         staffprofile = StaffProfile.objects.get(user=user)
         return redirect(f'/accounts/pages/staffdetail/{staffprofile.pk}/')
@@ -133,6 +173,27 @@ class StaffProfileUpdateView(SuccessMessageMixin, UpdateView):
         user_id = StaffProfile.objects.get(pk=self.kwargs['pk']).id
         return reverse_lazy('accounts:pages:staff_detail', kwargs={'pk': user_id})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
+
+
+class AdminProfileUpdateView(SuccessMessageMixin, UpdateView):
+    form_class = AdminProfileUpdateForm
+    success_message = 'Admin Profile Updated Successfully'
+    model = User
+    template_name = 'admin/update.html'
+
+    def get_success_url(self):
+        user_id = User.objects.get(pk=self.kwargs['pk']).id
+        return reverse_lazy('accounts:pages:admin_detail', kwargs={'pk': user_id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
+
 class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     form_class = UserProfileUpdateForm
     success_message = 'User Profile Updated Successfully'
@@ -142,3 +203,8 @@ class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         user_id = UserProfile.objects.get(pk=self.kwargs['pk']).id
         return reverse_lazy('accounts:pages:user_detail', kwargs={'pk': user_id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current'] = 'users' 
+        return context
