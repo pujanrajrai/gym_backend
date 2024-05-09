@@ -40,18 +40,18 @@
 <form method="POST">
     {%csrf_token%}
 <label for="search-box">Search:</label><br>
-    <input type="text" name="phone_number" id="search-box">
-    <ul id="suggestion-list"></ul>
+<input type="text" name="phone_number" id="search-box" pattern="\d*" title="Please enter only numbers" required>
+<ul id="suggestion-list"></ul>
     <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Search or Create</button>
 </form>
-{% comment %} <script>
+ <script>
     $(document).ready(function () {
         let suggestions = [];
         // Function to fetch suggestions from the API
         function fetchSuggestionsFromAPI() {
             // Replace 'https://api.example.com/suggestions' with your API endpoint
             $.ajax({
-                url: "{% url 'shipments:pages:shipments:search_customer_api' %}",
+                url: "{% url 'plan:pages:userplan:search_customer_api' %}",
                 method: 'GET',
                 success: function (data) {
                     suggestions = data.suggestions;
@@ -118,7 +118,6 @@
         });
     });
 </script>
- {% endcomment %}
  {% endblock %}
 
   

@@ -1,6 +1,7 @@
 from django import forms
 from accounts.models.users import User
 
+
 class SearchCustomerForm(forms.Form):
     user = forms.ModelChoiceField(
         widget=forms.TextInput(

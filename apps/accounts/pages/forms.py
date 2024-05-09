@@ -1,13 +1,12 @@
 from django import forms
 from accounts.models.users import User
-from accounts.models.profiles import StaffProfile,UserProfile
+from accounts.models.profiles import StaffProfile, UserProfile
 
 role_choices = [
     ('admin', 'admin'),
     ('staff', 'staff'),
     ('user', 'user')
 ]
-
 
 
 class CreateAdminForm(forms.ModelForm):
@@ -51,9 +50,8 @@ class CreateAdminForm(forms.ModelForm):
         return cleaned_data
 
 
-
 class CreateStaffForm(forms.ModelForm):
-    
+
     phone_number = forms.CharField(
         max_length=150,
         widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
@@ -64,7 +62,6 @@ class CreateStaffForm(forms.ModelForm):
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    
 
     class Meta:
         model = StaffProfile
@@ -82,7 +79,7 @@ class CreateStaffForm(forms.ModelForm):
             'fullname': forms.TextInput(attrs={'class': 'form-control col-6', 'placeholder': 'Enter your Full Name'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
             'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
-            
+
         }
 
     def clean(self):
@@ -113,15 +110,15 @@ class CreateStaffForm(forms.ModelForm):
         phone_number = self.cleaned_data['phone_number']
         if User.objects.filter(phone_number=phone_number).exists():
             raise forms.ValidationError("phone_number already exists.")
-        return 
-        
+        return
 
 
 class CreateUserForm(forms.ModelForm):
-    
+
     phone_number = forms.CharField(
         max_length=150,
-        widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
+        widget=forms.TextInput(attrs={
+                               'class': 'form-control', 'placeholder': 'Enter your Phone Number', "pattern": "\d*"}),
     )
     email = forms.CharField(
         max_length=150,
@@ -129,7 +126,6 @@ class CreateUserForm(forms.ModelForm):
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    
 
     class Meta:
         model = UserProfile
@@ -144,7 +140,7 @@ class CreateUserForm(forms.ModelForm):
         ]
         widgets = {
             'fullname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number', "pattern": "\d*"}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
             'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
 
@@ -181,9 +177,8 @@ class CreateUserForm(forms.ModelForm):
         return phone_number
 
 
-
 class StaffProfileUpdateForm(forms.ModelForm):
-    
+
     phone_number = forms.CharField(
         max_length=150,
         widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
@@ -192,8 +187,6 @@ class StaffProfileUpdateForm(forms.ModelForm):
         max_length=150,
         widget=forms.EmailInput(attrs={'class': 'form-control col-6'}),
     )
-   
-    
 
     class Meta:
         model = StaffProfile
@@ -213,7 +206,7 @@ class StaffProfileUpdateForm(forms.ModelForm):
             'gender': forms.Select(attrs={'class': 'form-control mt-2 mb-2', 'placeholder': 'Gender'}),
 
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get the instance associated with the form
@@ -232,10 +225,8 @@ class StaffProfileUpdateForm(forms.ModelForm):
         return instance
 
 
-
-
 class AdminProfileUpdateForm(forms.ModelForm):
-    
+
     phone_number = forms.CharField(
         max_length=150,
         widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
@@ -244,22 +235,20 @@ class AdminProfileUpdateForm(forms.ModelForm):
         max_length=150,
         widget=forms.EmailInput(attrs={'class': 'form-control col-6'}),
     )
-   
-    
 
     class Meta:
         model = User
         fields = [
             'phone_number',
             "email",
-          
+
         ]
         widgets = {
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
-            
-            
+
+
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get the instance associated with the form
@@ -277,9 +266,9 @@ class AdminProfileUpdateForm(forms.ModelForm):
             instance.save()
         return instance
 
-  
+
 class UserProfileUpdateForm(forms.ModelForm):
-    
+
     phone_number = forms.CharField(
         max_length=150,
         widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
@@ -288,8 +277,6 @@ class UserProfileUpdateForm(forms.ModelForm):
         max_length=150,
         widget=forms.EmailInput(attrs={'class': 'form-control col-6'}),
     )
-   
-    
 
     class Meta:
         model = UserProfile
@@ -306,9 +293,9 @@ class UserProfileUpdateForm(forms.ModelForm):
             'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Full Name'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone Number'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Address'}),
-            
+
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get the instance associated with the form
@@ -325,6 +312,3 @@ class UserProfileUpdateForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
-
-  
-        

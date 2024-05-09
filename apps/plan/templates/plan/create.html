@@ -5,7 +5,6 @@
 {%block addbutton%}
 {%endblock%}
 {% block body %}
-
 <form method="post" onsubmit="myFunction()" enctype="multipart/form-data">
   {% csrf_token %}
   {{phone_number}}
@@ -17,14 +16,9 @@
           <p class="help">{{ field.help_text|safe }}</p>
       {% endif %}
   </div>
-{% endfor %}
+  {% endfor %}
     </div>
     <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Create Plan</button>
+</form>
 
-  </form>
-
-  <script>
-
-  </script>
-  
 {% endblock %}

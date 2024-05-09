@@ -8,6 +8,7 @@ from accounts.models.profiles import UserProfile
 from . forms import SearchCustomerForm
 from django.shortcuts import render, get_object_or_404, redirect
 
+
 class PlanListView(ListView):
     model = Plan
     template_name = 'plan/list.html'
@@ -15,13 +16,9 @@ class PlanListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'plans' 
+        context['current'] = 'plans'
         return context
 
-# class PlanDetailView(DetailView):
-#     model = Plan
-#     template_name = 'plan/detail.html'
-#     context_object_name = 'plan'
 
 class PlanCreateView(CreateView):
     model = Plan
@@ -33,8 +30,9 @@ class PlanCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'plans' 
+        context['current'] = 'plans'
         return context
+
 
 class PlanUpdateView(UpdateView):
     model = Plan
@@ -46,28 +44,11 @@ class PlanUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'plans' 
+        context['current'] = 'plans'
         return context
+
 
 def plan_delete(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
     plan.delete()
     return redirect('plan:pages:list')
-    
-
-def search_customer(request):
-    context = {
-        "form": SearchCustomerForm(),
-        "current":"search_user",
-    }
-    if request.method == "POST":
-        phone_number = request.POST.get("phone_number")
-        if phone_number:
-            try:
-                user = User.objects.get(phone_number=phone_number, role='user')
-                userprofile = UserProfile.objects.get(user=user)
-                return redirect(f'/accounts/pages/userdetail/{userprofile.pk}/')
-            except User.DoesNotExist:
-                return redirect(f'/accounts/pages/user/create/?phone_number={phone_number}')
-
-    return render(request, 'plan/search_customer.html', context)

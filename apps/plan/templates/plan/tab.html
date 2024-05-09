@@ -1,0 +1,12 @@
+
+<div class="tab">
+    <a href="{% url 'plan:pages:userplan:current_plan' userprofile.user.pk  %}" class="{% if tab == 'current_plan' %}active{% endif %}">
+        Current Plan
+    </a>
+    <a href="{% url 'plan:pages:userplan:current_plan' userprofile.user.pk %}" class="{% if tab == 'expired_plan' %}active{% endif %}">
+        Expired Plan
+    </a>
+    <a href="{% url 'plan:pages:userplan:create_user_plan' userprofile.user.pk %}" class="{% if tab == 'add_new' %}active{% endif %}">
+        Add New
+    </a>
+</div>
