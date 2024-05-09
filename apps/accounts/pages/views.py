@@ -155,8 +155,8 @@ def profile_redirect(request, id):
         staffprofile = StaffProfile.objects.get(user=user)
         return redirect(f'/accounts/pages/staffdetail/{staffprofile.pk}/')
     elif user.role == "user":
-        userprofile = UserProfile.objects.get(user=user)
-        return redirect(f'/accounts/pages/userdetail/{userprofile.pk}/')
+        # userprofile = UserProfile.objects.get(user=user)
+        return redirect(f'/plan/pages/userplan/create/user/plan/{user.pk}/')
     else:
         pass
         # raise Httpresponse error something went wrong
