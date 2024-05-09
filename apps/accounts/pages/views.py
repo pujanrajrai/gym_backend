@@ -201,8 +201,9 @@ class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     template_name = 'users/update.html'
 
     def get_success_url(self):
-        user_id = UserProfile.objects.get(pk=self.kwargs['pk']).id
-        return reverse_lazy('accounts:pages:user_detail', kwargs={'pk': user_id})
+        user_profile = UserProfile.objects.get(pk=self.kwargs['pk'])
+        user_id=user_profile.user.id
+        return reverse_lazy('plan:pages:userplan:create_user_plan', kwargs={'pk': user_id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
