@@ -81,7 +81,8 @@ def current_plan(request, pk):
     context = {
         "mycurrent_plan": mycurrent_plan,
         "userprofile": userprofile,
-        "tab": "current_plan"
+        "tab": "current_plan",
+        "starting_date": mycurrent_plan.starting_date,
     }
     return render(request, 'plan/current_plan.html', context)
 

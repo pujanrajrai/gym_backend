@@ -17,6 +17,18 @@ class UserListView(ListView):
         context['current'] = 'users' 
         return context
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        tab = self.request.GET.get('tab')
+        if tab == 'admin':
+            return queryset.filter(role='admin')
+        elif tab == 'staff':
+            return queryset.filter(role='staff')
+        elif tab == 'user':
+            return queryset.filter(role='user')
+        return queryset
+
 
 class CreateAdmin(SuccessMessageMixin, CreateView):
     model = User
