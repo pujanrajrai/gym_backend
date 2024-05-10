@@ -132,6 +132,11 @@
             <td colspan="2">Rs.{{mycurrent_plan.total}} <span id="grandTotal"></span></td>
         </tr>
 </table>
+<form action="{% url 'plan:pages:userplan:invoice_print_plan' userprofile.user.pk %}" method="post" target="_blank">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-print"></i> Print Invoice</button>
+</form>
+
 
 <script>
     // Get necessary elements
