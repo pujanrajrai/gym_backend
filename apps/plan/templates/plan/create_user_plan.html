@@ -50,8 +50,11 @@
             <img src="{% static 'home/img/filter.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
         </div>
         <div class="col-lg-1">
-            <img src="{% static 'home/img/edit.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
+            <a href="{% url 'accounts:pages:user_profile_update' userprofile.pk %}">
+                <img src="{% static 'home/img/edit.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
+            </a>
         </div>
+        
     </div>
     
 </div>
@@ -156,12 +159,19 @@
 <div class="row" style="margin-top:20px;">
     <div class="col-xs-12">
         <div class="text-right">
-            <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Issue</button>
+            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirmStatusChange()"><i class="fa fa-plus"></i>&nbsp;Issue</button>
         </div>
     </div>
 </div>
 </form>
-
+<script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+</script>
 <script>
     // Get necessary elements
     const totalPriceElement = document.getElementById('totalPrice');

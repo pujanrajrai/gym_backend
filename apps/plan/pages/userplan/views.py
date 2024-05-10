@@ -81,9 +81,29 @@ def current_plan(request, pk):
     context = {
         "mycurrent_plan": mycurrent_plan,
         "userprofile": userprofile,
-        "tab": "current_plan"
+        "tab": "current_plan",
+        "starting_date": mycurrent_plan.starting_date,
     }
     return render(request, 'plan/current_plan.html', context)
+
+
+
+
+def invoice_print(request,pk):
+    user = User.objects.get(pk=pk)
+    userprofile = UserProfile.objects.get(user=user)
+    userplan = UserPlan.objects.filter(userprofile=userprofile)
+    mycurrent_plan = userplan.first()
+    if userplan.count() == 0:
+        return redirect(f'/plan/pages/userplan/create/user/plan/{user.pk}/')
+    context = {
+        "mycurrent_plan": mycurrent_plan,
+        "userprofile": userprofile,
+        "tab": "current_plan",
+        "starting_date": mycurrent_plan.starting_date,
+    }
+    return render(request, 'plan/current_plan.html', context)
+    return render(request, 'plan/invoice_print.html')
 
 
 def usercreate_plan(request, pk):

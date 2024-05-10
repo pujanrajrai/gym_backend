@@ -16,6 +16,9 @@ urlpatterns = [
         'create/user/plan/<str:pk>/', views.usercreate_plan, name="create_user_plan"
     ),
     path(
+        'invoice/print/plan/<str:pk>/', views.invoice_print, name="invoice_print_plan"
+    ),
+    path(
         'userplan/delete/<str:pk>/', views.delete_user_plan, name="delete_user_plan"
     ),
     path(

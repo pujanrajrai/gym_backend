@@ -17,6 +17,18 @@ class UserListView(ListView):
         context['current'] = 'users' 
         return context
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        tab = self.request.GET.get('tab')
+        if tab == 'admin':
+            return queryset.filter(role='admin')
+        elif tab == 'staff':
+            return queryset.filter(role='staff')
+        elif tab == 'user':
+            return queryset.filter(role='user')
+        return queryset
+
 
 class CreateAdmin(SuccessMessageMixin, CreateView):
     model = User
@@ -155,8 +167,8 @@ def profile_redirect(request, id):
         staffprofile = StaffProfile.objects.get(user=user)
         return redirect(f'/accounts/pages/staffdetail/{staffprofile.pk}/')
     elif user.role == "user":
-        userprofile = UserProfile.objects.get(user=user)
-        return redirect(f'/accounts/pages/userdetail/{userprofile.pk}/')
+        # userprofile = UserProfile.objects.get(user=user)
+        return redirect(f'/plan/pages/userplan/create/user/plan/{user.pk}/')
     else:
         pass
         # raise Httpresponse error something went wrong
@@ -201,8 +213,9 @@ class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     template_name = 'users/update.html'
 
     def get_success_url(self):
-        user_id = UserProfile.objects.get(pk=self.kwargs['pk']).id
-        return reverse_lazy('accounts:pages:user_detail', kwargs={'pk': user_id})
+        user_profile = UserProfile.objects.get(pk=self.kwargs['pk'])
+        user_id=user_profile.user.id
+        return reverse_lazy('plan:pages:userplan:create_user_plan', kwargs={'pk': user_id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

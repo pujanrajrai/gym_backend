@@ -23,6 +23,7 @@
 {% endblock %}
 
 {% block table %}
+{% include 'users/tab.html' %}
     <div class="box-content">
         <!-- /.dropdown js__dropdown -->
         <div class="table-responsive">
@@ -64,6 +65,7 @@
             </table>
         </div>
     </div>
+    
     <script>
         function confirmStatusChange() {
             if (confirm('Are you sure ?')) {
