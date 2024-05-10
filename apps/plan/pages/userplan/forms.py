@@ -94,7 +94,6 @@ class UserPlanForm(forms.Form):
                     'plan_id', flat=True)
             )
         self.userprofile = userprofile  # Store userprofile for later use
-
     plan = forms.ModelChoiceField(
         queryset=Plan.objects.all(),
         label="Plan",

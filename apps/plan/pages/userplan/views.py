@@ -79,6 +79,7 @@ def current_plan(request, pk):
     if userplan.count() == 0:
         return redirect(f'/plan/pages/userplan/create/user/plan/{user.pk}/')
     context = {
+        "userplan": userplan,
         "mycurrent_plan": mycurrent_plan,
         "userprofile": userprofile,
         "tab": "current_plan",
@@ -87,9 +88,7 @@ def current_plan(request, pk):
     return render(request, 'plan/current_plan.html', context)
 
 
-
-
-def invoice_print(request,pk):
+def invoice_print(request, pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
     userplan = UserPlan.objects.filter(userprofile=userprofile)
@@ -122,11 +121,14 @@ def usercreate_plan(request, pk):
             # Pass userprofile to the form
             form = UserPlanForm(request.POST, userprofile=userprofile)
             if form.is_valid():
-                UnConfirmUserPlanDetail.objects.create(
+                unconfirmuserplan = UnConfirmUserPlanDetail.objects.create(
                     userplan=userplan,
-                    # Use cleaned_data to get the selected plan directly from the form
                     plan=form.cleaned_data['plan']
                 )
+
+                if form.cleaned_data['starting_date']:
+                    userplan.starting_date = form.cleaned_data['starting_date']
+                    userplan.save()
                 return redirect(request.META.get('HTTP_REFERER'))
         else:
             # Pass userprofile to the form
@@ -142,6 +144,40 @@ def usercreate_plan(request, pk):
         return redirect(request.META.get('HTTP_REFERER'))
 
 
+def previous_plan(request, pk):
+    user = User.objects.get(pk=pk)
+    userprofile = UserProfile.objects.get(user=user)
+    userplan = UserPlan.objects.filter(userprofile=userprofile)
+    context = {
+        "userprofile": userprofile,
+        "tab": "previous_plan",
+        "userplan": userplan
+    }
+    return render(request, 'plan/previous_plan.html', context)
+
+
+def plan_details(request, pk):
+    userplan = UserPlan.objects.get(pk=pk)
+    userprofile = userplan.userprofile
+    context = {
+        "userplan": userplan,
+        "userprofile": userprofile,
+        "tab": "plan_details",
+    }
+    return render(request, 'plan/plan_details.html', context)
+
+
+def print_invoice(request, pk):
+    userplan = UserPlan.objects.get(pk=pk)
+    userprofile = userplan.userprofile
+    context = {
+        "userplan": userplan,
+        "userprofile": userprofile,
+        "tab": "plan_details",
+    }
+    return render(request, 'print_invoice.html', context)
+
+
 def delete_user_plan(request, pk):
     userplan = UnConfirmUserPlanDetail.objects.get(pk=pk)
     userplan.hard_delete()
@@ -152,10 +188,13 @@ def delete_user_plan(request, pk):
 
 def issue_userplan(request, pk):
     unconfirm_userplan = UnConfirmUserPlan.objects.get(pk=pk)
+    unconfirm_userplan.starting_date = request.POST.get("starting_date")
+    unconfirm_userplan.save()
     userprofile = unconfirm_userplan.userprofile
-    discount = int(request.POST.get("discount"))
-
-    if not discount:
+    discount = request.POST.get("discount")
+    if discount:
+        discount = int(discount)
+    else:
         discount = 0
     response = issue_user_plan(pk=pk, discount=discount)
     message = response["message"]

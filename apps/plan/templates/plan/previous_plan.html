@@ -1,7 +1,7 @@
 {% extends 'form_base.html' %}
 {% load static %}
-{% block title %}Create Plan{% endblock %}
-{% block pagetitle %}Create Plan{% endblock %}
+{% block title %}Current Plan{% endblock %}
+{% block pagetitle %}Current Plan{% endblock %}
 {%block addbutton%}
 {%endblock%}
 {% block body %}
@@ -50,11 +50,8 @@
             <img src="{% static 'home/img/filter.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
         </div>
         <div class="col-lg-1">
-            <a href="{% url 'accounts:pages:user_profile_update' userprofile.pk %}">
-                <img src="{% static 'home/img/edit.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
-            </a>
+            <img src="{% static 'home/img/edit.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
         </div>
-        
     </div>
     
 </div>
@@ -99,92 +96,31 @@
 {%include 'plan/tab.html' %}
 <div class="box-content">
 
-<form method="post" onsubmit="myFunction()" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{phone_number}}
-    {% for field in form %}
-    <div class="form-group col-md-4">
-        {{ field.label_tag }} {{ field }}
-        {{ field.errors }}
-        {% if field.help_text %}
-        <p class="help">{{ field.help_text|safe }}</p>
-        {% endif %}
-    </div>
-    {% endfor %}
-    <div class="form-group col-md-4" style="margin-top:5px">
-        <label for="id_plan"></label><br>
-        <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Plan</button>
-    </div>
-</form>
 <table>
     <tr>
+        <th>Created Date</th>
         <th>Plans Name</th>
-        <th>Duration</th>
-        <th>Price</th>
+        <th>Total Paid</th>
+        <th>Startind Date</th>
         <th>Action</th>
     </tr>
-    {% for plan in myplans%}
+    {% for plan in userplan %}
     <tr>
-        <td>{{plan.plan.name}}</td>
-        <td>{{plan.plan.default_month}} Months</td>
-        <td>NRS. {{plan.plan.price}}</td>
+        <td>{{ plan.created_date }}</td>
         <td>
-            <a href="{% url 'plan:pages:userplan:delete_user_plan' plan.pk %}"
-                onclick="return confirm('Are you sure you want to delete this user plan?');">
-                <span style='font-size:20px; border:2px solid red; padding:3px;'>&#10060;</span>
-            </a>
+            {%for name in plan.userplandetails.all %}
+            {{name.plan.name}} /&nbsp;
+            {%endfor%}
         </td>
+        <td>{{plan.total}}</td>
+
+        <td>{{plan.starting_date}}</td>
+        <td><a href="{% url 'plan:pages:userplan:plan_details' plan.pk %}" class="btn btn-sm btn-danger">View Details</a></td>
     </tr>
     {%endfor%}
-    {% if myplans.count == 0%}
-    <td colspan="4" style="text-align:center;">No Plan Selected</td>
-
-    {%endif%}
-    <tr>
-        <td colspan="2" style="text-align: right;">Total Price</td>
-        <td colspan="2">NRs: <span id="totalPrice">{{userplan.total_price}}</span></td>
-    </tr>
-    <form method="POST" action="{% url 'plan:pages:userplan:issue_plan' userplan.pk  %}">
-        {%csrf_token%}
-        <input type="hidden" name="starting_date" id="hidden_starting_date" value="{{ userplan.starting_date|date:'Y-m-d' }}">
-
-        <tr>
-            <td colspan="2" style="text-align: right;">Discount</td>
-            <td colspan="2"><input id="discount" name="discount" class="form-control" type="number" readonly></td>
-        </tr>
-        <tr>
-            <td colspan="2" style="text-align: right;">Grand Total</td>
-            <td colspan="2">Rs. <span id="grandTotal"></span></td>
-        </tr>
 </table>
-<div class="row" style="margin-top:20px;">
-    <div class="col-xs-12">
-        <div class="text-right">
-            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirmStatusChange()"><i class="fa fa-plus"></i>&nbsp;Issue</button>
-        </div>
-    </div>
-</div>
-</form>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var startingDateField = document.querySelector('#id_starting_date');
-        var hiddenStartingDateField = document.querySelector('#hidden_starting_date');
 
 
-        // Add event listener to update hidden input when starting date changes
-        startingDateField.addEventListener('change', function () {
-            hiddenStartingDateField.value = startingDateField.value;
-        });
-    });
-</script>
-<script>
-        function confirmStatusChange() {
-            if (confirm('Are you sure ?')) {
-                return true;  // Proceed with the link
-            }
-            return false;  // Cancel the link
-        }
-</script>
 <script>
     // Get necessary elements
     const totalPriceElement = document.getElementById('totalPrice');

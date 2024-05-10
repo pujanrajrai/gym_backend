@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from plan.pages.userplan import views
 app_name = "userplan"
 
 urlpatterns = [
@@ -26,5 +26,14 @@ urlpatterns = [
     ),
     path(
         'current/plan/<str:pk>/', views.current_plan, name="current_plan"
+    ),
+    path(
+        'previous/plan/<str:pk>/', views.previous_plan, name="previous_plan"
+    ),
+    path(
+        'plan/details/<str:pk>/', views.plan_details, name="plan_details"
+    ),
+    path(
+        'print/invoice/<str:pk>/', views.print_invoice, name="print_invoice"
     ),
 ]

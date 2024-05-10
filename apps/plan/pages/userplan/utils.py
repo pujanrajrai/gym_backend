@@ -34,6 +34,7 @@ def issue_user_plan(pk, discount):
                 plan_price=unconfirm_userplan.total_price(),
                 discount=discount,
                 total=unconfirm_userplan.total_price()-discount,
+                # ending_date=get_plan_ending_date(),
             )
             # Transfer items from UnconfirmCreditSales to CreditSales
             for unconfirm_item in unconfirm_userplan.unconfirmuserplandetails.all():

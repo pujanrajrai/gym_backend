@@ -3,10 +3,21 @@
     <a href="{% url 'plan:pages:userplan:current_plan' userprofile.user.pk  %}" class="{% if tab == 'current_plan' %}active{% endif %}">
         Current Plan
     </a>
-    <a href="{% url 'plan:pages:userplan:current_plan' userprofile.user.pk %}" class="{% if tab == 'expired_plan' %}active{% endif %}">
-        Expired Plan
+    <a href="{% url 'plan:pages:userplan:previous_plan' userprofile.user.pk %}" class="{% if tab == 'previous_plan' %}active{% endif %}">
+        Previous Plan
     </a>
     <a href="{% url 'plan:pages:userplan:create_user_plan' userprofile.user.pk %}" class="{% if tab == 'add_new' %}active{% endif %}">
         Add New
     </a>
+    {% if tab == "plan_details"%}
+    <a style="float:right;background:red;" href="{%url 'plan:pages:userplan:print_invoice' userplan.pk %}" target="blank" class="btn btn-sm btn-danger">
+        Print
+    </a>
+    {%endif%}
+    {% if tab == "current_plan"%}
+    <a style="float:right;background:red;" href="{%url 'plan:pages:userplan:print_invoice' mycurrent_plan.pk %}" target="blank" class="btn btn-sm btn-danger">
+        Print
+    </a>
+    {%endif%}
+    
 </div>

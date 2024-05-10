@@ -22,7 +22,6 @@ class UnConfirmUserPlan(BaseModel):
         null=True,
         default=get_tomorrow
     )
-    # end_date = models.DateField()
 
     def total_price(self):
         allplan = self.unconfirmuserplandetails.all()
@@ -54,7 +53,9 @@ class UserPlan(BaseModel):
         related_name="userplan"
     )
     starting_date = models.DateField()
-    # end_date = models.DateField()
+    ending_date = models.DateField(
+        null=True, blank=True
+    )
     plan_price = models.PositiveIntegerField()
     discount = models.PositiveIntegerField()
     total = models.PositiveIntegerField()

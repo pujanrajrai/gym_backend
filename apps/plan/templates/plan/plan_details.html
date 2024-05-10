@@ -96,108 +96,41 @@
 {%include 'plan/tab.html' %}
 <div class="box-content">
 
+
 <table>
+    <tr >
+        <td colspan="4"><b>Created Date:</b> {{ userplan.created_date }}</td>
+    </tr>
     <tr>
         <th>Starting Date</th>
         <th>Plans Name</th>
         <th>Duration</th>
         <th>Price</th>
     </tr>
-    
-    {% for plan in mycurrent_plan.userplandetails.all %}
+    {% for plan in userplan.userplandetails.all %}
     <tr>
-        <td>{{ starting_date }}</td>
+
+        <td>{{ userplan.starting_date }}</td>
         <td>{{plan.plan.name}}</td>
         <td>{{plan.plan.default_month}} Months</td>
         <td>NRS. {{plan.plan.price}}</td>
     </tr>
     {%endfor%}
     
-    {% if not mycurrent_plan %}
-    <td colspan="2" style="text-align:center;">No Plan</td>
-    <td colspan="1">
-        <a href="{% url 'plan:pages:userplan:create_user_plan' userprofile.user.pk %}" type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Plan</a>
-    </td>
-    {%endif%}
     <tr>
         <td colspan="2" style="text-align: right;">Total Price</td>
-        <td colspan="2">NRs: <span id="totalPrice">{{mycurrent_plan.plan_price}}</span></td>
+        <td colspan="2">NRs: <span id="totalPrice">{{userplan.plan_price}}</span></td>
     </tr>
         <tr>
             <td colspan="2" style="text-align: right;">Discount</td>
-            <td colspan="2">{{mycurrent_plan.discount}}</td>
+            <td colspan="2">{{userplan.discount}}</td>
         </tr>
         <tr>
             <td colspan="2" style="text-align: right;">Grand Total</td>
-            <td colspan="2">Rs.{{mycurrent_plan.total}} <span id="grandTotal"></span></td>
+            <td colspan="2">Rs.{{userplan.total}} <span id="grandTotal"></span></td>
         </tr>
 </table>
 
-<script>
-    // Get necessary elements
-    const totalPriceElement = document.getElementById('totalPrice');
-    const discountElement = document.getElementById('discount');
-    const grandTotalElement = document.getElementById('grandTotal');
 
-    // Calculate grand total function
-    function calculateGrandTotal() {
-        const totalPrice = parseFloat(totalPriceElement.textContent.replace('NRs. ', ''));
-        const discount = parseFloat(discountElement.value) || 0;
-        const grandTotal = totalPrice - discount;
-        grandTotalElement.textContent = grandTotal.toFixed(2);
-    }
-
-    // Add event listener to discount input
-    discountElement.addEventListener('input', () => {
-        calculateGrandTotal();
-    });
-
-    // Enable discount input
-    function toggleReadOnly(inputName) {
-        const input = document.querySelector('input[id="' + inputName + '"]');
-        if (input) {
-            input.readOnly = false;
-        }
-    }
-
-    // Enable discount input on mousedown
-    discountElement.addEventListener('click', () => {
-        toggleReadOnly('discount');
-    });
-
-    // Initial calculation
-    calculateGrandTotal();
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Get the userplan starting_date from the template
-        var startingDate = "{{ userplan.starting_date|date:'Y-m-d' }}";
-
-        // Set the default value for the starting date field
-        var startingDateField = document.getElementById("id_starting_date");
-        startingDateField.value = startingDate;
-    });
-</script>
-<script>
-    document.getElementById('filter').addEventListener('click', function() {
-        var hiddenProfileDivs = document.getElementsByClassName('hiddenprofile');
-        for (var i = 0; i < hiddenProfileDivs.length; i++) {
-            if (hiddenProfileDivs[i].style.display === 'none') {
-                hiddenProfileDivs[i].style.display = 'block';
-            } else {
-                hiddenProfileDivs[i].style.display = 'none';
-            }
-        }
-        var hiddenProfileDivs = document.getElementsByClassName('showprofile');
-        for (var i = 0; i < hiddenProfileDivs.length; i++) {
-            if (hiddenProfileDivs[i].style.display === 'none') {
-                hiddenProfileDivs[i].style.display = 'block';
-            } else {
-                hiddenProfileDivs[i].style.display = 'none';
-            }
-        }
-    });
-</script>    
 
 {% endblock %}

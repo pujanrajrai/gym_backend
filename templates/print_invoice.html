@@ -1,0 +1,163 @@
+{% extends 'print_base.html' %}
+{% load static %}
+
+{% block title %}{{ userplan.userprofile.fullname }} {{ current_datetime }}{% endblock %}
+
+{% block body %}
+<style type="text/css" media="print">
+    @page {
+        size: auto;
+        /* auto is the initial value */
+        margin: 0;
+        /* this affects the margin in the printer settings */
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+
+    .font10 {
+        font-size: 10px;
+    }
+
+    .font11 {
+        font-size: 14px;
+    }
+    .font8 {
+        font-size: 10px;
+    }
+
+    .invoice {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 2px;
+    }
+
+    img.logo {
+        max-height: 100px;
+        margin-right: 6px;
+        padding: 20px;
+    }
+
+    .info p {
+        margin: 5px 0;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #ddd;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        text-align: left;
+    }
+</style>
+
+<div class="invoice">
+    <div class="info">
+        <div class="row" style="border-bottom:solid 1px #ddd;">
+            <div class="col-6 ">
+                <div class="row">
+                    <div class="col-2">
+                        <img src="{% static 'dashboard/img/logo2.png' %}" style="max-height:60px;" alt="">
+                    </div>
+                    <div class="col-10 ml-5" style="margin-left:0px;">
+                        <strong>Bouddha Fitness</strong><br>
+                        <p>Kathmandu, Nepal<br>
+                            +977 982-3709937<br>
+                            www.bouddhafitness.com<br>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-6" style="justify-content:right;">
+                <strong>
+                    <p>Created Date: <span>{{ userplan.created_date|date:"M d, Y" }}</span></p>
+                    <p>Invoice Number: <span>{{ userplan.pk}}</span></p>
+
+                </strong>
+            </div>
+        </div>
+    </div>
+    <div>
+
+        <!-- Consignor and Consignee details here -->
+        <div class="row mt-3 mb-3" style="border:1px solid #ddd;padding:8px;">
+            <div class="col-sm-4 font11">
+                <strong>Customer Details:</strong><br>
+                <strong>{{userplan.userprofile.fullname}}</strong>
+                <p>
+                    {{userplan.userprofile.user.phone_number}}<br>
+                    {{userplan.userprofile.address}}<br>
+                </p>
+            </div>
+        </div>
+        <table>
+
+            <tr>
+                <th>Starting Date</th>
+                <th>Plans Name</th>
+                <th>Duration</th>
+                <th>Price</th>
+            </tr>
+            {% for plan in userplan.userplandetails.all %}
+            <tr>
+        
+                <td>{{ userplan.starting_date }}</td>
+                <td>{{plan.plan.name}}</td>
+                <td>{{plan.plan.default_month}} Months</td>
+                <td>NRS. {{plan.plan.price}}</td>
+            </tr>
+            {%endfor%}
+            <tr>
+                <td colspan="2" style="text-align: right;">Total Price</td>
+                <td colspan="2">NRs: <span id="totalPrice">{{userplan.plan_price}}</span></td>
+            </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right;">Discount</td>
+                    <td colspan="2">{{userplan.discount}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right;">Grand Total</td>
+                    <td colspan="2">Rs.{{userplan.total}} <span id="grandTotal"></span></td>
+                </tr>
+        </table>
+        
+
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+</div>
+</div>
+
+
+
+</div>
+
+
+
+<script type="text/javascript">
+    window.print();
+    window.onfocus = function () {
+        window.close();
+    }
+</script>
+
+{% endblock %}
