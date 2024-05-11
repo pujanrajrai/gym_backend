@@ -1,0 +1,166 @@
+{% extends 'datatable_base.html' %}
+{%load static %}
+{% load static %}
+{% block title %} Ledger Report{% endblock %}
+{% block pagetitle %}Ledger Report{% endblock %}
+{%block addbutton%}
+<a href="{% url 'ledger:pages:create' %}" class="btn btn-primary btn-sm">Add Ledger</a>
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block table %}
+
+  
+<div class="box-content">
+
+<form method="get" action="" class="form-inline mb-3" id="filter-form">
+
+    {{ form }}
+    
+    <button type="submit" class="btn btn-sm btn-primary mr-2 ">Filter</button>
+    <button type="button" class="btn btn-sm btn-secondary mr-2" onclick="resetFilter()">Reset Filter</button>
+    {% comment %} <a href="{% url 'ledger:pages:export_ledger_excel' %}?user={{ user }}" class="btn btn-sm btn-secondary mr-2" >Export Excel</a> {% endcomment %}
+    {% comment %} <a href="{% url 'ledger:pages:export_ledger_pdf' %}" class="btn btn-sm btn-secondary mr-2" >Export PDF</a> {% endcomment %}
+</form>
+        
+    <!-- /.dropdown js__dropdown -->
+    <div class="table-responsive">
+        <table id="items-table" class="display compact nowrap" style="width:100%">
+            <thead>
+                        <tr>
+                            <th>Create Date</th>
+                            <th>User</th>
+                            <th>Particular</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Balance</th>
+                            <th>Remarks</th>
+                            <th>Entry Type</th>
+                            <th>Leadger Id</th>
+
+                          </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Create Date</th>
+                                <th>User</th>
+                                <th>Particular</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Balance</th>
+                                <th>Remarks</th>
+                                <th>Entry Type</th>
+                                <th>Leadger Id</th>
+                              </tr>
+                             
+                                
+                                
+                            </tr>
+                        </tfoot>
+                <tbody>
+                    {% comment %} {% for ledger in ledgers %}
+
+                    <tr>
+                        <td>{{ ledger.created_date|date:"Y-m-d H:i" }}</td>
+                      <td>{{ ledger.user.name }}</td>
+                      <td>{{ ledger.particular }}</td>
+                      <td>{%if ledger.get__type_display == "Debit" %} {{ ledger.amount|floatformat:2 }}{%endif%}</td>
+                      <td>{%if ledger.get__type_display == "Credit" %}{{ ledger.amount|floatformat:2 }}{%endif%}</td>
+                      <td>{{ ledger.balance|floatformat:2 }}</td>
+                      <td>{{ ledger.remarks }}</td>
+                      <td>{{ ledger.entry_type }}</td>
+                      <td>{{ ledger.leaserid }}</td>
+                    </tr>
+                  {% endfor %} {% endcomment %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+<script>
+  
+    $(document).ready(function () {
+            
+        $('#items-table').dataTable({
+            order: [[0, 'desc']],
+            lengthMenu: [
+                [10, 20, 50, 100],
+                [10, 20, 50, 100]
+            ],
+            pageLength: 20,
+            serverSide: true,
+            paging: true,
+            processing: true,
+
+            sAjaxSource:"{% url 'ledger:pages:ledger_datatable' %}?user={{ user }}",  // new url
+
+            
+            
+            
+            columns: [
+            {
+                name: "Create Date",
+                data: 0,
+                render: function (data) {
+                    // Parse the input date string
+                    var date = new Date(data);
+                    
+                    // Format the date as desired (example: "August 15, 2023 12:34 PM")
+                    var formattedDate = date.toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    });
+                    
+                    return formattedDate;
+                }
+            },
+                {name: "User", data: 1},
+                {name: "Particular", data: 2},
+                {
+                    name: 'Debit',
+                    data: function (row) {
+                        if (row[3]=="Debit"){
+                            return  row[4];
+                        }
+                        else{
+                            return '';
+                        }
+                        
+                    }
+                },
+            {
+                name: 'Credit',
+                data: function (row) {
+                    if (row[3]=="Credit"){
+                        return row[4];
+                    }
+                    else{
+                        return '';
+                    }
+                }   
+                
+            },
+                {name: "Balance", data: 5},
+                {name: "Remarks", data: 6},
+                {name: "Entry Type", data: 7},
+                {name: "Leadger Id", data: 8},
+            
+            ],
+        });
+    });
+
+    
+</script>
+    <script>
+        function resetFilter() {
+            {% comment %} document.querySelector('input[name="from_date"]').value = '';
+            document.querySelector('input[name="to_date"]').value = ''; {% endcomment %}
+            document.querySelector('select[name="user"]').selectedIndex = -1;
+            document.getElementById('filter-form').submit();
+        }
+        </script>
+{% endblock %}
