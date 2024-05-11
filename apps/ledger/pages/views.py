@@ -52,6 +52,7 @@ class LedgerListView(ServerSideDatatableView):
         'remarks',
         'entry_type',
         'leaserid',
+        'company_balance'
     ]
 
 
@@ -90,8 +91,12 @@ def create_ledger(request):
             # Debit ledger entry
             if request.POST['_type'] == 'Debit':
                 new_balance = last_balance - Decimal(request.POST['amount'])
+                company_balance = Ledger.objects.latest(
+                    'created_date').company_balance-Decimal(request.POST['amount'])
             else:
                 new_balance = last_balance + Decimal(request.POST['amount'])
+                company_balance = Ledger.objects.latest(
+                    'created_date').company_balance+Decimal(request.POST['amount'])
 
             myledger = Ledger.objects.create(
                 user=user,
@@ -100,7 +105,8 @@ def create_ledger(request):
                 amount=request.POST['amount'],
                 remarks=request.POST['remarks'],
                 entry_type=request.POST['entry_type'],
-                balance=new_balance
+                balance=new_balance,
+                company_balance=company_balance,
             )
 
             messages.success(request, 'Ledger created successfully.')

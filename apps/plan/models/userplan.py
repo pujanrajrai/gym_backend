@@ -93,7 +93,9 @@ def create_ledger(sender, instance, created, **kwargs):
                     remarks="Invoice Total Amount",
                     entry_type="Invoice",
                     leaserid=instance.pk,
-                    balance=last_balance + instance.total
+                    balance=last_balance + instance.total,
+                    company_balance=Ledger.objects.latest(
+                        'created_date').company_balance+instance.total,
                 )
                 print("success")
                 print(credit_ledger)
@@ -114,7 +116,9 @@ def create_ledger(sender, instance, created, **kwargs):
                     remarks="Invoice Cancelled Amount",
                     entry_type="Cancel Invoice",
                     leaserid=instance.pk,
-                    balance=last_balance - instance.total
+                    balance=last_balance - instance.total,
+                    company_balance=Ledger.objects.latest(
+                        'created_date').company_balance-instance.total,
                 )
         except Exception as e:
             print(f"Error creating ledger entries: {e}")

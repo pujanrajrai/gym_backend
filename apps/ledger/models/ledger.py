@@ -46,6 +46,11 @@ class Ledger(BaseModel):
         decimal_places=2,
         editable=False
     )
+    company_balance = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        editable=False
+    )
     remarks = models.CharField(
         max_length=1000
     )
