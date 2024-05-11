@@ -30,8 +30,8 @@ ALLOWED_HOSTS = [
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-d_name = config('d_name', default='boudhafitness')
-d_user = config('d_user', default='root')
+d_name = config('d_name', default='pujanraj_boudhafitness')
+d_user = config('d_user', default='pujanraj_boudhafitness')
 d_password = config('d_password', default='boudhafitness')
 d_host = config('d_host', default='127.0.0.1')
 d_port = config('d_port', default='3306')
