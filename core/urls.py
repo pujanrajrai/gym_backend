@@ -21,15 +21,15 @@ from django.conf import settings
 from . import views
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    # path('accounts/', include('accounts.urls')),
-    # path('plan/', include('plan.urls')),
-    # path('ledger/', include('ledger.urls')),
-    # path('', views.login, name="login"),
-    # path('logout/', views.logout, name="logout"),
-    # path(
-    #     'captcha/', include('captcha.urls')
-    # ),
+    path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
+    path('plan/', include('plan.urls')),
+    path('ledger/', include('ledger.urls')),
+    path('', views.login, name="login"),
+    path('logout/', views.logout, name="logout"),
+    path(
+        'captcha/', include('captcha.urls')
+    ),
 
 ]
 
