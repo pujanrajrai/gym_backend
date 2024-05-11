@@ -42,7 +42,15 @@
                   <span>Search User</span></a>
             </li>
           </ul>
-         
+          <ul class="menu js__accordion">
+            <li class="{% if current == "ledger" %}current{%endif%}">
+              <a class="" href="{% url 'ledger:pages:list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    currency_exchange
+                </i>
+                  <span>Ledger</span></a>
+            </li>
+          </ul>
   
           <!-- /.menu js__accordion -->
         </div>
