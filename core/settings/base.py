@@ -30,6 +30,8 @@ DJANGO_APP = [
 ]
 
 THIRD_PARTY_APP = [
+    'captcha',
+
 
 ]
 
@@ -105,3 +107,11 @@ AUTH_USER_MODEL = 'accounts.User'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# captcha settings
+CAPTCHA_FONT_SIZE = 55
+CAPTCHA_FOREGROUND_COLOR = '#000'
+CAPTCHA_BACKGROUND_COLOR = '#FFF'
+CAPTCHA_IMAGE_SIZE = [200, 90]
+CAPTCHA_DICTIONARY_MIN_LENGTH = CAPTCHA_DICTIONARY_MAX_LENGTH = 4

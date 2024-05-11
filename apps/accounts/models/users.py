@@ -25,7 +25,6 @@ class UserManager(BaseUserManager):
 
     def create_superuser(
         self,
-        email,
         phone_number,
         password=None,
         role='admin',
@@ -34,7 +33,7 @@ class UserManager(BaseUserManager):
     ):
         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(email, phone_number, password, role, is_blocked, **extra_fields)
+        return self.create_user(phone_number, password, role, is_blocked, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):

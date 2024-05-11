@@ -6,12 +6,13 @@ from django import forms
 
 class LedgerForm(forms.Form):
     userss = User.objects.all()
-    
+
     user_choices = [(user.phone_number, user.phone_number) for user in userss]
 
     user = forms.ChoiceField(
         choices=[('', 'Select user')] + user_choices,
-        widget=forms.Select(attrs={'class': 'form-control mt-2 mb-2','data-live-search': 'true'})
+        widget=forms.Select(
+            attrs={'class': 'form-control mt-2 mb-2', 'data-live-search': 'true'})
     )
 
     _type = forms.ChoiceField(
@@ -53,13 +54,16 @@ class LedgerFilterForm(forms.Form):
 
     # )
     userss = User.objects.all()
-    
+
     user_choices = [(user.phone_number, user.phone_number) for user in userss]
 
     user = forms.ChoiceField(
         choices=[('', 'Select user')] + user_choices,
-        widget=forms.Select(attrs={'class': 'form-control mt-2 mb-2','data-live-search': 'true'}))
-    
+        widget=forms.Select(
+            attrs={'class': 'form-control mt-2 mb-2', 'data-live-search': 'true'}),
+        required=False
+    )
+
     from_date = forms.DateField(
         widget=forms.DateInput(
             attrs={'class': 'form-control mt-2 mb-2', 'type': 'date'}),

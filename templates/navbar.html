@@ -44,11 +44,29 @@
           </ul>
           <ul class="menu js__accordion">
             <li class="{% if current == "ledger" %}current{%endif%}">
-              <a class="" href="{% url 'ledger:pages:list' %}">
+              <a class="" href="{% url 'ledger:pages:list' %}?user=&from_date=&to_date=">
                 <i class="menu-icon material-symbols-outlined">
                     currency_exchange
                 </i>
                   <span>Ledger</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "salary" %}current{%endif%}">
+              <a class="" href="{% url 'ledger:pages:list' %}?user=&from_date=&to_date=">
+                <i class="menu-icon material-symbols-outlined">
+                    currency_exchange
+                </i>
+                  <span>Salary</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "logout" %}current{%endif%}">
+              <a class="" href="{% url 'logout' %}?user=&from_date=&to_date="  onclick="return confirm('Are you sure you want to Logout?');">
+                <i class="menu-icon material-symbols-outlined">
+                    logout
+                </i>
+                  <span>Logout</span></a>
             </li>
           </ul>
   

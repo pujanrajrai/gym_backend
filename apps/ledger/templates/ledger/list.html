@@ -18,9 +18,7 @@
     {{ form }}
     
     <button type="submit" class="btn btn-sm btn-primary mr-2 ">Filter</button>
-    <button type="button" class="btn btn-sm btn-secondary mr-2" onclick="resetFilter()">Reset Filter</button>
-    {% comment %} <a href="{% url 'ledger:pages:export_ledger_excel' %}?user={{ user }}" class="btn btn-sm btn-secondary mr-2" >Export Excel</a> {% endcomment %}
-    {% comment %} <a href="{% url 'ledger:pages:export_ledger_pdf' %}" class="btn btn-sm btn-secondary mr-2" >Export PDF</a> {% endcomment %}
+    <a type="button" href="{% url 'ledger:pages:list' %}?user=&from_date=&to_date=" class="btn btn-sm btn-secondary mr-2" >Reset Filter</a>
 </form>
         
     <!-- /.dropdown js__dropdown -->
@@ -92,7 +90,7 @@
             paging: true,
             processing: true,
 
-            sAjaxSource:"{% url 'ledger:pages:ledger_datatable' %}?user={{ user }}",  // new url
+            sAjaxSource:"{% url 'ledger:pages:ledger_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
 
             
             
@@ -157,8 +155,8 @@
 </script>
     <script>
         function resetFilter() {
-            {% comment %} document.querySelector('input[name="from_date"]').value = '';
-            document.querySelector('input[name="to_date"]').value = ''; {% endcomment %}
+            document.querySelector('input[name="from_date"]').value = '';
+            document.querySelector('input[name="to_date"]').value = ''; 
             document.querySelector('select[name="user"]').selectedIndex = -1;
             document.getElementById('filter-form').submit();
         }

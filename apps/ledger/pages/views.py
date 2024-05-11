@@ -16,25 +16,24 @@ from datetime import datetime
 from accounts.models.users import User
 
 
-
 class LedgerListView(ServerSideDatatableView):
     def get_queryset(self):
         user = self.request.GET.get('user')
         from_date_str = self.request.GET.get('from_date')
-        if from_date_str:
+        to_date_str = self.request.GET.get('to_date')
+
+        if from_date_str and from_date_str != 'None':
             # Use '%b' for abbreviated month
-            from_date = datetime.strptime(from_date_str, '%b. %d, %Y')
+            from_date = datetime.strptime(from_date_str, '%b %d, %Y')
         else:
             from_date = None
 
-        to_date_str = self.request.GET.get('to_date')
-        if to_date_str:
+        if to_date_str and to_date_str != 'None':
             # Use '%b' for abbreviated month
-            to_date = datetime.strptime(to_date_str, '%b. %d, %Y')
+            to_date = datetime.strptime(to_date_str, '%b %d, %Y')
         else:
             to_date = None
         queryset = Ledger.objects.all()
-
         if user:
             queryset = queryset.filter(user__phone_number=user)
         if from_date:
@@ -58,16 +57,13 @@ class LedgerListView(ServerSideDatatableView):
 
 def list_ledger(request):
     context = {"current": "ledger"}
-    form = LedgerFilterForm()
-    if request.method == "GET":
-        form = LedgerFilterForm(request.GET)
-        if form.is_valid():
-            user = form.cleaned_data['user']
-            if user:
-                context["user"] = form.cleaned_data['user']
-
-            context["from_date"] = form.cleaned_data['from_date']
-            context["to_date"] = form.cleaned_data['to_date']
+    form = LedgerFilterForm(request.GET)
+    if form.is_valid():
+        context["user"] = request.GET.get('user')
+        context["from_date"] = form.cleaned_data['from_date']
+        context["to_date"] = form.cleaned_data['to_date']
+    else:
+        print(form.error)
     context["form"] = form
     return render(request, 'ledger/list.html', context)
 

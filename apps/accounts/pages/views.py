@@ -1,11 +1,13 @@
+from django.contrib.auth import logout
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from accounts.models.users import User
-from accounts.models.profiles import StaffProfile,UserProfile
-from .forms import CreateAdminForm,CreateStaffForm,CreateUserForm,StaffProfileUpdateForm,UserProfileUpdateForm,AdminProfileUpdateForm
+from accounts.models.profiles import StaffProfile, UserProfile
+from .forms import CreateAdminForm, CreateStaffForm, CreateUserForm, StaffProfileUpdateForm, UserProfileUpdateForm, AdminProfileUpdateForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.shortcuts import redirect,get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
+
 
 class UserListView(ListView):
     model = User
@@ -14,12 +16,12 @@ class UserListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        
+
         tab = self.request.GET.get('tab')
         if tab == 'admin':
             return queryset.filter(role='admin')
@@ -41,9 +43,9 @@ class CreateAdmin(SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
- 
+
 
 class CreateStaff(SuccessMessageMixin, CreateView):
     model = User
@@ -56,9 +58,8 @@ class CreateStaff(SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
- 
 
 
 class CreateUser(SuccessMessageMixin, CreateView):
@@ -77,15 +78,14 @@ class CreateUser(SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
- 
 
 
 def block_user(request, id):
     try:
         user = get_object_or_404(User, pk=id)
-        
+
     except User.DoesNotExist:
         messages.error(request, 'User not found')
         return redirect('accounts:pages:user_list')
@@ -132,8 +132,9 @@ class StaffProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
+
 
 class UserProfileDetailView(DetailView):
     model = UserProfile
@@ -142,7 +143,7 @@ class UserProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
 
 
@@ -153,14 +154,13 @@ class AdminProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
-
 
 
 def profile_redirect(request, id):
     user = User.objects.get(pk=id)
-    
+
     if user.role == "admin":
         return redirect(f'/accounts/pages/admindetail/{user.pk}/')
     elif user.role == "staff":
@@ -172,7 +172,6 @@ def profile_redirect(request, id):
     else:
         pass
         # raise Httpresponse error something went wrong
-
 
 
 class StaffProfileUpdateView(SuccessMessageMixin, UpdateView):
@@ -187,7 +186,7 @@ class StaffProfileUpdateView(SuccessMessageMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
 
 
@@ -203,8 +202,9 @@ class AdminProfileUpdateView(SuccessMessageMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
+
 
 class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     form_class = UserProfileUpdateForm
@@ -214,10 +214,40 @@ class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
 
     def get_success_url(self):
         user_profile = UserProfile.objects.get(pk=self.kwargs['pk'])
-        user_id=user_profile.user.id
+        user_id = user_profile.user.id
         return reverse_lazy('plan:pages:userplan:create_user_plan', kwargs={'pk': user_id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current'] = 'users' 
+        context['current'] = 'users'
         return context
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('accounts:pages:users:login')
+
+
+def custom_login(request):
+    context = {"captcha_form": CaptchaFieldForm()}
+    if request.user.is_authenticated:
+        if request.user:
+            return redirect('shipments:pages:shipments:list')
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        form = CaptchaFieldForm(request.POST)
+        if not form.is_valid():
+            context['captcha_errors'] = "Captcha Not Correct"
+            context['username'] = username
+            return render(request, 'accounts/usermanagement/login.html', context)
+        user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('shipments:pages:shipments:list')
+        else:
+            context['errors'] = "User name or password is incorrect"
+            context['username'] = username
+            return render(request, 'accounts/usermanagement/login.html', context)
+    return render(request, 'accounts/usermanagement/login.html', context)
