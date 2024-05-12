@@ -5,7 +5,7 @@ from django.db import models
 class UserManager(BaseUserManager):
     def create_user(
         self,
-        email,
+        # email,
         phone_number,
         password=None,
         role='user',
@@ -13,7 +13,7 @@ class UserManager(BaseUserManager):
         **extra_fields
     ):
         user = self.model(
-            email=email,
+            # email=email,
             phone_number=phone_number,
             role=role,
             is_blocked=is_blocked,
@@ -25,7 +25,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(
         self,
-        email,
+        # email,
         phone_number,
         password=None,
         role='admin',
@@ -34,7 +34,7 @@ class UserManager(BaseUserManager):
     ):
         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(email, phone_number, password, role, is_blocked, **extra_fields)
+        return self.create_user(phone_number, password, role, is_blocked, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):

@@ -1,10 +1,10 @@
 {% extends 'datatable_base.html' %}
 {%load static %}
 {% load static %}
-{% block title %} Ledger Report{% endblock %}
-{% block pagetitle %}Ledger Report{% endblock %}
+{% block title %} Salary Report{% endblock %}
+{% block pagetitle %}Salary Report{% endblock %}
 {%block addbutton%}
-<a href="{% url 'ledger:pages:salary:create' %}" class="btn btn-primary btn-sm">Add Ledger</a>
+<a href="{% url 'ledger:pages:salary:create' %}" class="btn btn-primary btn-sm">Add Salary</a>
 {% endblock %}
 {% block content %}
 {% endblock %}
@@ -18,7 +18,7 @@
     {{ form }}
     
     <button type="submit" class="btn btn-sm btn-primary mr-2 ">Filter</button>
-    <a type="button" href="{% url 'ledger:pages:list' %}?user=&from_date=&to_date=" class="btn btn-sm btn-secondary mr-2" >Reset Filter</a>
+    <a type="button" href="{% url 'ledger:pages:salary:list' %}?user=&from_date=&to_date=" class="btn btn-sm btn-secondary mr-2" >Reset Filter</a>
 </form>
         
     <!-- /.dropdown js__dropdown -->
@@ -34,8 +34,8 @@
                             <th>Balance</th>
                             <th>Company Balance</th>
                             <th>Remarks</th>
-                            <th>Entry Type</th>
-                            <th>Leadger Id</th>
+                            {% comment %} <th>Entry Type</th> {% endcomment %}
+                            {% comment %} <th>Leadger Id</th> {% endcomment %}
                           </tr>
                         </thead>
                         <tfoot>
@@ -48,8 +48,8 @@
                                 <th>Balance</th>
                                 <th>Company Balance</th>
                                 <th>Remarks</th>
-                                <th>Entry Type</th>
-                                <th>Leadger Id</th>
+                                {% comment %} <th>Entry Type</th> {% endcomment %}
+                                {% comment %} <th>Leadger Id</th> {% endcomment %}
                               </tr>
                              
                                 
@@ -91,7 +91,7 @@
             paging: true,
             processing: true,
 
-            sAjaxSource:"{% url 'ledger:pages:ledger_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
+            sAjaxSource:"{% url 'ledger:pages:salary:ledger_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
 
             
             
@@ -147,8 +147,8 @@
                 {name: "Balance", data: 9},
 
                 {name: "Remarks", data: 6},
-                {name: "Entry Type", data: 7},
-                {name: "Leadger Id", data: 8},
+                {% comment %} {name: "Entry Type", data: 7}, {% endcomment %}
+                {% comment %} {name: "Leadger Id", data: 8}, {% endcomment %}
             
             ],
         });

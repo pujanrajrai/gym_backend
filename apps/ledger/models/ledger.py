@@ -15,6 +15,7 @@ entry_type = [
     ('Ledger Entry', 'Ledger Entry'),
     ('Invoice', 'Invoice'),
     ('Cancel Invoice', 'Cancel Invoice'),
+    ('Salary', 'Salary'),
     ('Other', 'Other'),
 ]
 

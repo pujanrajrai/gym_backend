@@ -110,7 +110,7 @@ class CreateStaffForm(forms.ModelForm):
         phone_number = self.cleaned_data['phone_number']
         if User.objects.filter(phone_number=phone_number).exists():
             raise forms.ValidationError("phone_number already exists.")
-        return
+        return phone_number
 
 
 class CreateUserForm(forms.ModelForm):

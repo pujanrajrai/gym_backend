@@ -1,14 +1,16 @@
 
 <div class="tab">
-    <a id="adminTab" href="{% url 'accounts:pages:user_list' %}?tab=admin" class="{% if tab == 'admin' %}active{% endif %}">
-        Admin
+    <a id="userTab" href="{% url 'accounts:pages:user_list' %}?tab=user" class="{% if tab == 'user' %}active{% endif %}">
+        User
     </a>
     <a id="staffTab" href="{% url 'accounts:pages:user_list' %}?tab=staff" class="{% if tab == 'staff' %}active{% endif %}">
         Staff
     </a>
-    <a id="userTab" href="{% url 'accounts:pages:user_list' %}?tab=user" class="{% if tab == 'user' %}active{% endif %}">
-        User
+   
+    <a id="adminTab" href="{% url 'accounts:pages:user_list' %}?tab=admin" class="{% if tab == 'admin' %}active{% endif %}">
+        Admin
     </a>
+    
 </div>
 
 <script>

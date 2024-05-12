@@ -80,6 +80,11 @@ class UserPlanDetail(BaseModel):
 
 @receiver(post_save, sender=UserPlan)
 def create_ledger(sender, instance, created, **kwargs):
+    try:
+        company_balance = Ledger.objects.latest(
+            'created_date').company_balance+instance.total
+    except:
+        company_balance = instance.total
     if created:
         try:
             with transaction.atomic():
@@ -94,8 +99,7 @@ def create_ledger(sender, instance, created, **kwargs):
                     entry_type="Invoice",
                     leaserid=instance.pk,
                     balance=last_balance + instance.total,
-                    company_balance=Ledger.objects.latest(
-                        'created_date').company_balance+instance.total,
+                    company_balance=company_balance,
                 )
                 print("success")
                 print(credit_ledger)

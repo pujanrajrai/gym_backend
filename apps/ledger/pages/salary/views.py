@@ -35,7 +35,7 @@ class LedgerListView(ServerSideDatatableView):
             to_date = datetime.strptime(to_date_str, '%b %d, %Y')
         else:
             to_date = None
-        queryset = Ledger.objects.all()
+        queryset = Ledger.objects.filter(entry_type='Salary')
         if user:
             queryset = queryset.filter(user__phone_number=user)
         if from_date:
@@ -59,7 +59,7 @@ class LedgerListView(ServerSideDatatableView):
 
 
 def list_ledger(request):
-    context = {"current": "ledger"}
+    context = {"current": "salary"}
     form = LedgerFilterForm(request.GET)
     if form.is_valid():
         context["user"] = request.GET.get('user')
@@ -68,12 +68,12 @@ def list_ledger(request):
     else:
         print(form.error)
     context["form"] = form
-    return render(request, 'ledger/list.html', context)
+    return render(request, 'salary/list.html', context)
 
 
 def create_ledger(request):
     form = LedgerForm()
-    context = {'form': form, "current": "ledger"}
+    context = {'form': form, "current": "salary"}
 
     if request.method == 'POST':
         form = LedgerForm(request.POST)
@@ -86,44 +86,35 @@ def create_ledger(request):
             except User.DoesNotExist:
                 messages.error(request, 'User not found.')
                 context['form'] = form
-                return render(request, 'ledger/create.html', context)
+                return render(request, 'salary/create.html', context)
 
             last_balance = ledger_last_balance(user)
 
-            # Debit ledger entry
-            if request.POST['_type'] == 'Debit':
-                new_balance = last_balance - Decimal(request.POST['amount'])
-                try:
-                    company_balance = Ledger.objects.latest(
-                        'created_date').company_balance-Decimal(request.POST['amount'])
-                except:
-                    company_balance = -Decimal(request.POST['amount'])
-            else:
-                new_balance = last_balance + Decimal(request.POST['amount'])
-                try:
-                    company_balance = Ledger.objects.latest(
-                        'created_date').company_balance+Decimal(request.POST['amount'])
-                except:
-                    company_balance = Decimal(request.POST['amount'])
+            new_balance = last_balance - Decimal(request.POST['amount'])
+            try:
+                company_balance = Ledger.objects.latest(
+                    'created_date').company_balance-Decimal(request.POST['amount'])
+            except:
+                company_balance = -Decimal(request.POST['amount'])
 
             myledger = Ledger.objects.create(
                 user=user,
-                _type=request.POST['_type'],
-                particular=request.POST['particular'],
+                _type='Credit',
+                particular='Employee Salary',
                 amount=request.POST['amount'],
-                remarks=request.POST['remarks'],
-                entry_type=request.POST['entry_type'],
+                remarks='Salary',
+                entry_type='Salary',
                 balance=new_balance,
                 company_balance=company_balance,
             )
-
             messages.success(request, 'Ledger created successfully.')
             query_params = {
                 'user': '',  # Add your user parameter here
                 'from_date': '',  # Add your from_date parameter here
                 'to_date': '',  # Add your to_date parameter here
             }
-            url = reverse('ledger:pages:list') + '?' + urlencode(query_params)
+            url = reverse('ledger:pages:salary:list') + \
+                '?' + urlencode(query_params)
             return HttpResponseRedirect(url)
         else:
             messages.error(request, 'Ledger creation failed.')
