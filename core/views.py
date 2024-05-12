@@ -33,7 +33,7 @@ def login(request):
         else:
             context['errors'] = "User name or password is incorrect"
             context['username'] = username
-            return render(request, 'accounts/login.html', context)
+            return render(request, 'login.html', context)
     return render(request, 'login.html', context)
 
 
