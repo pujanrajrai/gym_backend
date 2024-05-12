@@ -7,8 +7,15 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from decorators import has_roles
 
 
+
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin','staff']), name='dispatch')
 class UserListView(ListView):
     model = User
     template_name = 'users/list.html'
@@ -32,6 +39,9 @@ class UserListView(ListView):
         return queryset
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CreateAdmin(SuccessMessageMixin, CreateView):
     model = User
     form_class = CreateAdminForm
@@ -47,6 +57,8 @@ class CreateAdmin(SuccessMessageMixin, CreateView):
         return context
 
 
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CreateStaff(SuccessMessageMixin, CreateView):
     model = User
     form_class = CreateStaffForm
@@ -62,6 +74,8 @@ class CreateStaff(SuccessMessageMixin, CreateView):
         return context
 
 
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin','staff']), name='dispatch')
 class CreateUser(SuccessMessageMixin, CreateView):
     model = User
     form_class = CreateUserForm
@@ -82,6 +96,9 @@ class CreateUser(SuccessMessageMixin, CreateView):
         return context
 
 
+
+@login_required()
+@has_roles(['admin','staff'])
 def block_user(request, id):
     try:
         user = get_object_or_404(User, pk=id)
@@ -108,6 +125,9 @@ def block_user(request, id):
         return redirect('accounts:pages:user_list')
 
 
+
+@login_required()
+@has_roles(['admin','staff'])
 def unblock_user(request, id):
     try:
         user = get_object_or_404(User, pk=id)
@@ -125,6 +145,10 @@ def unblock_user(request, id):
         return redirect('accounts:pages:user_list')
 
 
+
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class StaffProfileDetailView(DetailView):
     model = StaffProfile
     template_name = 'staff/detail.html'
@@ -136,6 +160,9 @@ class StaffProfileDetailView(DetailView):
         return context
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin','staff']), name='dispatch')
 class UserProfileDetailView(DetailView):
     model = UserProfile
     template_name = 'users/detail.html'
@@ -147,6 +174,9 @@ class UserProfileDetailView(DetailView):
         return context
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class AdminProfileDetailView(DetailView):
     model = User
     template_name = 'admin/detail.html'
@@ -174,6 +204,9 @@ def profile_redirect(request, id):
         # raise Httpresponse error something went wrong
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class StaffProfileUpdateView(SuccessMessageMixin, UpdateView):
     form_class = StaffProfileUpdateForm
     success_message = 'Staff Profile Updated Successfully'
@@ -190,6 +223,8 @@ class StaffProfileUpdateView(SuccessMessageMixin, UpdateView):
         return context
 
 
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class AdminProfileUpdateView(SuccessMessageMixin, UpdateView):
     form_class = AdminProfileUpdateForm
     success_message = 'Admin Profile Updated Successfully'
@@ -206,6 +241,8 @@ class AdminProfileUpdateView(SuccessMessageMixin, UpdateView):
         return context
 
 
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin','staff']), name='dispatch')
 class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     form_class = UserProfileUpdateForm
     success_message = 'User Profile Updated Successfully'
