@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from plan.models import Plan
 from accounts.models.users import User
 from accounts.models.profiles import UserProfile
-from . forms import SearchCustomerForm
+from . forms import SearchCustomerForm,CreatePlanForm
 from django.shortcuts import render, get_object_or_404, redirect
 
 
@@ -22,8 +22,9 @@ class PlanListView(ListView):
 
 class PlanCreateView(CreateView):
     model = Plan
+    form_class=CreatePlanForm
+    sucess_message='Plan Created Sucessfully'
     template_name = 'plan/create.html'
-    fields = ['name', 'price', 'default_month', 'description']
 
     def get_success_url(self):
         return reverse_lazy('plan:pages:list')
@@ -36,8 +37,9 @@ class PlanCreateView(CreateView):
 
 class PlanUpdateView(UpdateView):
     model = Plan
+    form_class=CreatePlanForm
+    sucess_message='Plan Updated Sucessfully'
     template_name = 'plan/update.html'
-    fields = ['name', 'price', 'default_month', 'description']
 
     def get_success_url(self):
         return reverse_lazy('plan:pages:list')
