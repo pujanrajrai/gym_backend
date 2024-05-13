@@ -16,8 +16,15 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django_serverside_datatable.views import ServerSideDatatableView
 from datetime import datetime
 from accounts.models.users import User
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from decorators import has_roles
 
 
+
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin','staff']), name='dispatch')
 class LedgerListView(ServerSideDatatableView):
     def get_queryset(self):
         user = self.request.GET.get('user')
@@ -57,7 +64,8 @@ class LedgerListView(ServerSideDatatableView):
         'company_balance'
     ]
 
-
+@login_required()
+@has_roles(['admin'])
 def list_ledger(request):
     context = {"current": "ledger"}
     form = LedgerFilterForm(request.GET)
@@ -70,7 +78,8 @@ def list_ledger(request):
     context["form"] = form
     return render(request, 'ledger/list.html', context)
 
-
+@login_required()
+@has_roles(['admin'])
 def create_ledger(request):
     form = LedgerForm()
     context = {'form': form, "current": "ledger"}

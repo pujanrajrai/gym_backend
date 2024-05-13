@@ -1,6 +1,6 @@
 from django import forms
 from accounts.models.users import User
-
+from plan.models import Plan
 
 class SearchCustomerForm(forms.Form):
     user = forms.ModelChoiceField(
@@ -11,9 +11,21 @@ class SearchCustomerForm(forms.Form):
         required=False
     )
 
-    # def __init__(self, *args, **kwargs):
-    #     super(SearchCustomerForm, self).__init__(*args, **kwargs)
-    #     self.fields['user'].label_from_instance = self.label_from_instance
 
-    # def label_from_instance(self, obj):
-    #     return f"{obj.name} - {obj.phone_number}"
+
+
+class CreatePlanForm(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields = [
+            'name',
+            'price',
+            "default_month",
+            'description',
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control col-6', 'placeholder': 'Enter Plan Name'}),
+            'price': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Price'}),
+            'default_month': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Default Month'}),
+            'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Description'}),
+        }
