@@ -190,7 +190,7 @@ class AdminProfileDetailView(DetailView):
 
 def profile_redirect(request, id):
     user = User.objects.get(pk=id)
-
+    import pdb;pdb.set_trace()
     if user.role == "admin":
         return redirect(f'/accounts/pages/admindetail/{user.pk}/')
     elif user.role == "staff":

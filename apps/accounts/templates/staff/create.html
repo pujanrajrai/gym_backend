@@ -8,7 +8,6 @@
 
 <form method="post" onsubmit="myFunction()" enctype="multipart/form-data">
   {% csrf_token %}
-  {{form.phone_number}}
   {% for field in form %}
   <div class="form-group col-md-6">
       {{ field.label_tag }} {{ field }} 

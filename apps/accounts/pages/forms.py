@@ -16,12 +16,7 @@ class CreateAdminForm(forms.ModelForm):
             attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}),
         required=True
     )
-    role = forms.ChoiceField(
-        choices=role_choices,  # Correctly reference role_choices from your model
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
+    
     class Meta:
         model = User
         fields = [
@@ -29,7 +24,6 @@ class CreateAdminForm(forms.ModelForm):
             'phone_number',
             'password',
             'password2',
-            'role'
         ]
 
         widgets = {
@@ -46,9 +40,20 @@ class CreateAdminForm(forms.ModelForm):
         if password and password2 and password != password2:
             self.add_error('password2', 'Passwords do not match.')
         cleaned_data["password"] = password
-
+        cleaned_data["role"] = "admin"
         return cleaned_data
 
+
+    def save(self, commit=True):
+        # Call the parent class's save method to save the form data
+        instance = super().save(commit=False)
+        
+        # Set the role to 'admin' for the user instance
+        instance.role = 'admin'
+        
+        if commit:
+            instance.save()
+        return instance
 
 class CreateStaffForm(forms.ModelForm):
 
