@@ -1,7 +1,7 @@
 {% extends 'form_base.html' %}
 {% load static %}
-{% block title %}Add Ledger{% endblock %}
-{% block pagetitle %}Add Ledger{% endblock %}
+{% block title %}Add Expenses{% endblock %}
+{% block pagetitle %}Add Expenses{% endblock %}
 {%block addbutton%}
 {%endblock%}
 {% block body %}
@@ -9,10 +9,11 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="ml-5">
-        <span style="margin-left:14px; color:red;"><b>Create Ledger :</b></span><br><br>
+        <span style="margin-left:14px; color:red;"><b>Create Expenses :</b></span><br><br>
     </div>
     {% for field in form %}
     <div class="form-group col-md-12">
+
         {{ field.label_tag }} {{ field }}
         {{ field.errors }}
         {% if field.help_text %}
@@ -20,7 +21,7 @@
         {% endif %}
     </div>
     {% endfor %}
-    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Create Ledger</button>
+    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Create Expenses</button>
 </form>
 {% endblock %}
 

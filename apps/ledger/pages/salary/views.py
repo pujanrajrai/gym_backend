@@ -21,10 +21,9 @@ from django.contrib.auth.decorators import login_required
 from decorators import has_roles
 
 
-
 @method_decorator(login_required(), name='dispatch')
 @method_decorator(has_roles(['admin']), name='dispatch')
-class LedgerListView(ServerSideDatatableView):
+class SalaryListView(ServerSideDatatableView):
     def get_queryset(self):
         user = self.request.GET.get('user')
         from_date_str = self.request.GET.get('from_date')
@@ -35,7 +34,6 @@ class LedgerListView(ServerSideDatatableView):
             from_date = datetime.strptime(from_date_str, '%b %d, %Y')
         else:
             from_date = None
-
         if to_date_str and to_date_str != 'None':
             # Use '%b' for abbreviated month
             to_date = datetime.strptime(to_date_str, '%b %d, %Y')
@@ -43,7 +41,7 @@ class LedgerListView(ServerSideDatatableView):
             to_date = None
         queryset = Ledger.objects.filter(entry_type='Salary')
         if user:
-            queryset = queryset.filter(user__phone_number=user)
+            queryset = queryset.filter(user=user)
         if from_date:
             queryset = queryset.filter(created_date__gte=from_date)
         if to_date:
@@ -64,37 +62,35 @@ class LedgerListView(ServerSideDatatableView):
     ]
 
 
-
 @login_required()
 @has_roles(['admin'])
-def list_ledger(request):
+def list_salary(request):
     context = {"current": "salary"}
-    form = LedgerFilterForm(request.GET)
+    form = SalaryFilterForm(request.GET)
     if form.is_valid():
         context["user"] = request.GET.get('user')
         context["from_date"] = form.cleaned_data['from_date']
         context["to_date"] = form.cleaned_data['to_date']
     else:
-        print(form.error)
+        print(form.errors)
     context["form"] = form
     return render(request, 'salary/list.html', context)
 
 
-
 @login_required()
 @has_roles(['admin'])
-def create_ledger(request):
-    form = LedgerForm()
+def create_salary(request):
+    form = SalaryForm()
     context = {'form': form, "current": "salary"}
 
     if request.method == 'POST':
-        form = LedgerForm(request.POST)
+        form = SalaryForm(request.POST)
 
         if form.is_valid():
             # Get user based on phone number
             try:
                 user = User.objects.get(
-                    phone_number=request.POST['user'])
+                    pk=request.POST['user'])
             except User.DoesNotExist:
                 messages.error(request, 'User not found.')
                 context['form'] = form
@@ -109,7 +105,7 @@ def create_ledger(request):
             except:
                 company_balance = -Decimal(request.POST['amount'])
 
-            myledger = Ledger.objects.create(
+            mysalary = Ledger.objects.create(
                 user=user,
                 _type='Credit',
                 particular='Employee Salary',
@@ -119,7 +115,7 @@ def create_ledger(request):
                 balance=new_balance,
                 company_balance=company_balance,
             )
-            messages.success(request, 'Ledger created successfully.')
+            messages.success(request, 'Salary created successfully.')
             query_params = {
                 'user': '',  # Add your user parameter here
                 'from_date': '',  # Add your from_date parameter here
@@ -129,7 +125,7 @@ def create_ledger(request):
                 '?' + urlencode(query_params)
             return HttpResponseRedirect(url)
         else:
-            messages.error(request, 'Ledger creation failed.')
+            messages.error(request, 'Salary creation failed.')
             context['form'] = form
 
-    return render(request, 'ledger/create.html', context)
+    return render(request, 'salary/create.html', context)

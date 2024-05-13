@@ -61,6 +61,15 @@
             </li>
           </ul>
           <ul class="menu js__accordion">
+            <li class="{% if current == "expesnses" %}current{%endif%}">
+              <a class="" href="{% url 'ledger:pages:expenses:list' %}?user=&from_date=&to_date="">
+                <i class="menu-icon material-symbols-outlined">
+                    currency_exchange
+                </i>
+                  <span>Expenses</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
             <li class="{% if current == "logout" %}current{%endif%}">
               <a class="" href="{% url 'logout' %}?user=&from_date=&to_date="  onclick="return confirm('Are you sure you want to Logout?');">
                 <i class="menu-icon material-symbols-outlined">

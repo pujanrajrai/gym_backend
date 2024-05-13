@@ -5,15 +5,8 @@ from django import forms
 
 
 class LedgerForm(forms.Form):
-    userss = User.objects.all()
-
-    user_choices = [(user.phone_number, user.phone_number) for user in userss]
-
-    user = forms.ChoiceField(
-        choices=[('', 'Select user')] + user_choices,
-        widget=forms.Select(
-            attrs={'class': 'form-control mt-2 mb-2', 'data-live-search': 'true'})
-    )
+    user = forms.ModelChoiceField(queryset=User.objects.all(
+    ), label="User", required=False, widget=forms.Select(attrs={'class': 'ui fluid search dropdown clearable'}))
 
     _type = forms.ChoiceField(
         choices=[('Debit', 'Debit'), ('Credit', 'Credit')],
@@ -46,36 +39,9 @@ class LedgerForm(forms.Form):
 
 
 class LedgerFilterForm(forms.Form):
-    # user = forms.ModelChoiceField(
-    #     queryset=user.objects.all(),  # Replace with your actual queryset
-    #     widget=forms.Select(attrs={'class': 'form-control mt-2 mb-2'}),
-    #     empty_label='Select user',
-    #     required=False
-
-    # )
-    userss = User.objects.all()
-
-    user_choices = [(user.phone_number, user.phone_number) for user in userss]
-
-    user = forms.ChoiceField(
-        choices=[('', 'Select user')] + user_choices,
-        widget=forms.Select(
-            attrs={'class': 'form-control mt-2 mb-2', 'data-live-search': 'true'}),
-        required=False
-    )
-
-    from_date = forms.DateField(
-        widget=forms.DateInput(
-            attrs={'class': 'form-control mt-2 mb-2', 'type': 'date'}),
-        required=False
-    )
-    to_date = forms.DateField(
-        widget=forms.DateInput(
-            attrs={'class': 'form-control mt-2 mb-2', 'type': 'date'}),
-        required=False
-    )
-    # from_date = forms.DateField(required=False,
-    #                             widget=forms.DateInput(
-    #                                 attrs={'type': 'date'}))
-    # to_date = forms.DateField(required=False, widget=forms.DateInput(
-    #     attrs={'type': 'date'}))
+    user = forms.ModelChoiceField(queryset=User.objects.all(
+    ), label="User", required=False, widget=forms.Select(attrs={'class': 'ui fluid search dropdown clearable'}))
+    from_date = forms.DateField(label="From Date", required=False, widget=forms.DateInput(
+        attrs={'class': 'form-control', 'type': 'date'}))
+    to_date = forms.DateField(label="To Date", required=False, widget=forms.DateInput(
+        attrs={'class': 'form-control', 'type': 'date'}))

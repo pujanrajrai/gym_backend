@@ -3,8 +3,8 @@ from . import views
 app_name = "salary"
 
 urlpatterns = [
-    path('list/', views.list_ledger, name='list'),
+    path('list/', views.list_salary, name='list'),
     path('list_datatable/',
-         views.LedgerListView.as_view(), name="ledger_datatable"),
-    path('create/', views.create_ledger, name='create'),
+         views.SalaryListView.as_view(), name="salary_datatable"),
+    path('create/', views.create_salary, name='create'),
 ]

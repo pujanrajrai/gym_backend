@@ -23,88 +23,43 @@
     <!-- Data Table -->
     <link rel="stylesheet" href="{% static 'assets//plugin/datatables/jquery.dataTables.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets//plugin/datatables/responsive.dataTables.min.css' %}">
-    <script src="{% static 'assets//scripts/jquery.min.js' %}"></script>
-    <script src="{% static 'debug_toolbar/js/toolbar.js' %}" async type="module"></script>
+
+    <link href="{% static 'assets/plugin/semantic/semantic.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'assets/scripts/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/plugin/semantic/semantic.min.js' %}"></script>
+        <script src="{% static 'debug_toolbar/js/toolbar.js' %}" async type="module"></script>
     <script src="{% static 'assets//plugin/datatables/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'assets//plugin/datatables/dataTables.responsive.min.js' %}"></script>
     <!-- End Datatable -->
 
-    <link href="{% static 'assets//plugin/bootstrap/css/bootstrap5.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets//plugin/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'assets//style.css' %}">
+    
     <script src="{% static 'assets/plugin/nepali-date-picker/nepali.datepicker.v3.7.min.js' %}"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-    <link rel="stylesheet" href="{% static 'assets//style.css' %}">
+    
+
 
     {% block style %}{% endblock %}
 
-<style>
-    .dropdown {
-        cursor: pointer;
-    }
-
-    .dropbtn {
-        background-color: var(--primary);
-        color: var(--white);
-        padding: 12px;
-        margin-bottom: 20px;
-        font-size: 13px;
-        border: none;
-    }
-
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: var(--white);
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }
-
-    .dropdown-content a {
-        color: var(--black);
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-    }
-
-    .dropdown-content a:hover {
-        background-color: var(--secondary);
-        color: var(--white);
-    }
-
-    .dropdown:hover .dropdown-content {
-        display: block;
-    }
-
-    .dropdown:hover .dropbtn {
-        background-color: var(--secondary);
-    }
-    
-.material-symbols-outlined{
-    font-size:11px;
-}
-</style>
 
 
 </head>
 
 <body>
 
-    
-
 <!-- Back to top button -->
 <button type="button" class="btn btn-primary btn-floating btn-sm" title="Back To Top" id="btn-back-to-top">
     <i class="fas fa-arrow-up"></i>
 </button>
+
 {% include 'navbar.html' %}
 <!-- /.main-menu -->
 <div class="container">
+
 </div>
+
 <div class="fixed-navbar">
     <div class="pull-left">
         <button type="button"
@@ -125,7 +80,6 @@
 
 <div id="wrapper">
     <div class="main-content">
-        
         {% if messages %}
             {% for message in messages %}
                 {% if message.tags == 'success' %}
@@ -140,12 +94,16 @@
         {% endif %}
 
         
-                
-                        
-
                 {% block table %}
                 
                 {% endblock %}
+                <script>
+                    $('.ui.dropdown').dropdown({ fullTextSearch: true });
+                    $('.ui.dropdown.clearable').dropdown({
+                        clearable: true
+                      });
+
+                </script>
 
                 <style>
                     div.container {
@@ -155,10 +113,10 @@
                 <script>
                     $(document).ready(function () {
                         var table = $('#example').DataTable({
+                            responsive: true,
                             paging: true,
-                            orderClasses: true,
+                            {% comment %} orderClasses: false, {% endcomment %}
                             processing: true,
-                            "order": [] 
                         });
                     });
                 </script>
@@ -171,7 +129,20 @@
     </div>
     <!--/#wrapper -->
 
+    <center>
+		<footer class="footer">
+			<ul class="list-inline">
+				<li><span>Copyright &copy; Halesi Department,
+						<script
+							type="text/JavaScript"> var theDate=new Date(); document.write(theDate.getFullYear()) </script>
+						<p class="developedby">Designed and Developed by, <a href="https://itnepalsolutions.com/"
+								target="_blank" class="badge footer-badge">IT
+								Nepal Solutions</a></p>
+					</span></li>
 
+			</ul>
+		</footer>
+	</center>
 
     <script src="{% static 'assets/scripts/all.min.js' %}"></script>
 
@@ -186,6 +157,12 @@
     <!-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> -->
 
     <script src="{% static 'assets/scripts/main.js' %}"></script>
+    {% comment %} <script>
+        window.addEventListener('load', function() {
+          var button = document.querySelector('.menu-mobile-button');
+          button.click();
+        });
+    </script> {% endcomment %}
 
     {% block js %}
 

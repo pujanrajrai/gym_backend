@@ -9,7 +9,7 @@ GENDER_CHOICES = [
 
 
 class StaffProfile(BaseModel):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="staff_profile"
@@ -46,7 +46,7 @@ class StaffProfile(BaseModel):
 
 
 class UserProfile(BaseModel):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="user_profile"

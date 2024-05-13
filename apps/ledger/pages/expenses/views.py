@@ -22,8 +22,8 @@ from decorators import has_roles
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
-class LedgerListView(ServerSideDatatableView):
+@method_decorator(has_roles(['admin']), name='dispatch')
+class ExpensesListView(ServerSideDatatableView):
     def get_queryset(self):
         user = self.request.GET.get('user')
         from_date_str = self.request.GET.get('from_date')
@@ -34,13 +34,12 @@ class LedgerListView(ServerSideDatatableView):
             from_date = datetime.strptime(from_date_str, '%b %d, %Y')
         else:
             from_date = None
-
         if to_date_str and to_date_str != 'None':
             # Use '%b' for abbreviated month
             to_date = datetime.strptime(to_date_str, '%b %d, %Y')
         else:
             to_date = None
-        queryset = Ledger.objects.all()
+        queryset = Ledger.objects.filter(entry_type='Expenses')
         if user:
             queryset = queryset.filter(user=user)
         if from_date:
@@ -65,9 +64,9 @@ class LedgerListView(ServerSideDatatableView):
 
 @login_required()
 @has_roles(['admin'])
-def list_ledger(request):
-    context = {"current": "ledger"}
-    form = LedgerFilterForm(request.GET)
+def list_expenses(request):
+    context = {"current": "expenses"}
+    form = ExpensesFilterForm(request.GET)
     if form.is_valid():
         context["user"] = request.GET.get('user')
         context["from_date"] = form.cleaned_data['from_date']
@@ -75,17 +74,17 @@ def list_ledger(request):
     else:
         print(form.errors)
     context["form"] = form
-    return render(request, 'ledger/list.html', context)
+    return render(request, 'expenses/list.html', context)
 
 
 @login_required()
 @has_roles(['admin'])
-def create_ledger(request):
-    form = LedgerForm()
-    context = {'form': form, "current": "ledger"}
+def create_expenses(request):
+    form = ExpensesForm()
+    context = {'form': form, "current": "expenses"}
 
     if request.method == 'POST':
-        form = LedgerForm(request.POST)
+        form = ExpensesForm(request.POST)
 
         if form.is_valid():
             # Get user based on phone number
@@ -95,47 +94,38 @@ def create_ledger(request):
             except User.DoesNotExist:
                 messages.error(request, 'User not found.')
                 context['form'] = form
-                return render(request, 'ledger/create.html', context)
+                return render(request, 'expenses/create.html', context)
 
             last_balance = ledger_last_balance(user)
 
-            # Debit ledger entry
-            if request.POST['_type'] == 'Debit':
-                new_balance = last_balance - Decimal(request.POST['amount'])
-                try:
-                    company_balance = Ledger.objects.latest(
-                        'created_date').company_balance-Decimal(request.POST['amount'])
-                except:
-                    company_balance = -Decimal(request.POST['amount'])
-            else:
-                new_balance = last_balance + Decimal(request.POST['amount'])
-                try:
-                    company_balance = Ledger.objects.latest(
-                        'created_date').company_balance+Decimal(request.POST['amount'])
-                except:
-                    company_balance = Decimal(request.POST['amount'])
+            new_balance = last_balance - Decimal(request.POST['amount'])
+            try:
+                company_balance = Ledger.objects.latest(
+                    'created_date').company_balance-Decimal(request.POST['amount'])
+            except:
+                company_balance = -Decimal(request.POST['amount'])
 
-            myledger = Ledger.objects.create(
+            myexpenses = Ledger.objects.create(
                 user=user,
-                _type=request.POST['_type'],
-                particular=request.POST['particular'],
+                _type='Credit',
+                particular='Expenses',
                 amount=request.POST['amount'],
-                remarks=request.POST['remarks'],
-                entry_type=request.POST['entry_type'],
+                remarks='Expenses',
+                entry_type='Expenses',
                 balance=new_balance,
                 company_balance=company_balance,
             )
-
-            messages.success(request, 'Ledger created successfully.')
+            messages.success(request, 'Expenses created successfully.')
             query_params = {
                 'user': '',  # Add your user parameter here
                 'from_date': '',  # Add your from_date parameter here
                 'to_date': '',  # Add your to_date parameter here
             }
-            url = reverse('ledger:pages:list') + '?' + urlencode(query_params)
+            url = reverse('ledger:pages:expenses:list') + \
+                '?' + urlencode(query_params)
             return HttpResponseRedirect(url)
         else:
-            messages.error(request, 'Ledger creation failed.')
+            messages.error(request, 'Expenses creation failed.')
             context['form'] = form
 
-    return render(request, 'ledger/create.html', context)
+    return render(request, 'expenses/create.html', context)
