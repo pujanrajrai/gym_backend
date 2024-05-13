@@ -49,7 +49,7 @@ class CreateAdmin(SuccessMessageMixin, CreateView):
     template_name = 'admin/create.html'
 
     def get_success_url(self):
-        return reverse_lazy('accounts:pages:user_list')
+        return reverse_lazy('accounts:pages:user_list') + '?tab=admin'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -66,7 +66,7 @@ class CreateStaff(SuccessMessageMixin, CreateView):
     template_name = 'staff/create.html'
 
     def get_success_url(self):
-        return reverse_lazy('accounts:pages:user_list')
+        return reverse_lazy('accounts:pages:user_list')+ '?tab=staff'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -88,7 +88,7 @@ class CreateUser(SuccessMessageMixin, CreateView):
         return initial
 
     def get_success_url(self):
-        return reverse_lazy('accounts:pages:user_list')
+        return reverse_lazy('accounts:pages:user_list')+ '?tab=user'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
