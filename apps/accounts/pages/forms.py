@@ -62,6 +62,7 @@ class CreateStaffForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control col-6'}),
     )
     email = forms.CharField(
+        required=False,
         max_length=150,
         widget=forms.EmailInput(attrs={'class': 'form-control col-6'}),
     )
@@ -126,6 +127,7 @@ class CreateUserForm(forms.ModelForm):
                                'class': 'form-control', 'placeholder': 'Enter your Phone Number', "pattern": "\d*"}),
     )
     email = forms.CharField(
+        required=False,
         max_length=150,
         widget=forms.EmailInput(attrs={'class': 'form-control col-6'}),
     )

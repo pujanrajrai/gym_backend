@@ -190,7 +190,6 @@ class AdminProfileDetailView(DetailView):
 
 def profile_redirect(request, id):
     user = User.objects.get(pk=id)
-    import pdb;pdb.set_trace()
     if user.role == "admin":
         return redirect(f'/accounts/pages/admindetail/{user.pk}/')
     elif user.role == "staff":
@@ -198,7 +197,7 @@ def profile_redirect(request, id):
         return redirect(f'/accounts/pages/staffdetail/{staffprofile.pk}/')
     elif user.role == "user":
         # userprofile = UserProfile.objects.get(user=user)
-        return redirect(f'/plan/pages/userplan/create/user/plan/{user.pk}/')
+        return redirect(f'/plan/pages/userplan/current/plan/{user.pk}/')
     else:
         pass
         # raise Httpresponse error something went wrong
