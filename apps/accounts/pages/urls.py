@@ -23,4 +23,6 @@ urlpatterns = [
          name='admin_profile_update'),
     path('user/<str:pk>/update/', views.UserProfileUpdateView.as_view(),
          name='user_profile_update'),
+    path('user/expire/', views.expire_plan_list,
+         name='expire_plan_list'),
 ]

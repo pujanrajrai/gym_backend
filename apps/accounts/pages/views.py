@@ -10,7 +10,9 @@ from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from decorators import has_roles
-
+from plan.models.userplan import UserPlan,UserPlanDetail
+from django.utils import timezone
+from django.shortcuts import render
 
 
 
@@ -37,6 +39,7 @@ class UserListView(ListView):
         elif tab == 'user':
             return queryset.filter(role='user')
         return queryset
+
 
 
 
@@ -94,6 +97,7 @@ class CreateUser(SuccessMessageMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['current'] = 'users'
         return context
+        
 
 
 
@@ -287,3 +291,46 @@ def custom_login(request):
             context['username'] = username
             return render(request, 'accounts/usermanagement/login.html', context)
     return render(request, 'accounts/usermanagement/login.html', context)
+
+
+
+from datetime import datetime, timedelta
+
+
+
+def expire_plan_list(request):
+    try:
+        # Retrieve the list of UserPlan objects sorted by the ending date
+        user_plans = UserPlan.objects.all().order_by('ending_date')
+        # Calculate the remaining days until the plan expires
+        today = timezone.now().date()
+        for user_plan in user_plans:
+            # Access the related UserPlanDetail objects
+            plan_details = UserPlanDetail.objects.filter(userplan=user_plan)
+            if plan_details.exists():
+                # Assuming there's only one plan detail associated with each user plan
+                plan_detail = plan_details.first()
+                # Access the related Plan object through the plan_detail
+                plan = plan_detail.plan
+                # Calculate the ending date based on the starting date and plan duration
+                if user_plan.starting_date and plan.default_month:
+                    ending_date = user_plan.starting_date + timedelta(days=plan.default_month * 30)
+                    user_plan.ending_date = ending_date
+                    # Calculate remaining days until expiration
+                    remaining_days = (ending_date - today).days
+                    user_plan.remaining_days = remaining_days
+                else:
+                    user_plan.ending_date = None
+                    user_plan.remaining_days = None
+
+        context = {
+            'user_plans': user_plans,
+            'current': 'expire_list',
+        }
+    except Exception as e:
+        # If an exception occurs, include the error message in the context
+        context = {
+            'error_message': str(e)
+        }
+        
+    return render(request, 'users/aboutoexpire.html', context)
