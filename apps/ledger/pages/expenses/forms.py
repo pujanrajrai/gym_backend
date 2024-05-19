@@ -4,7 +4,7 @@ from accounts.models.users import User
 from django import forms
 
 
-class SalaryForm(forms.Form):
+class ExpensesForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.filter(role="staff"
                                                                ), label="User", required=False, widget=forms.Select(attrs={'class': 'ui fluid search dropdown clearable'}))
 
@@ -21,13 +21,13 @@ class SalaryForm(forms.Form):
     )
 
     entry_type = forms.ChoiceField(
-        choices=[('Salary', 'Salary')],
+        choices=[('Expenses', 'Expenses')],
         widget=forms.Select(attrs={'class': 'form-control mt-2 mb-2'}),
         initial='Invoice'  # Set default value if needed
     )
 
 
-class SalaryFilterForm(forms.Form):
+class ExpensesFilterForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.filter(role="staff"
                                                                ), label="User", required=False, widget=forms.Select(attrs={'class': 'ui fluid search dropdown clearable'}))
 

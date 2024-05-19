@@ -8,4 +8,6 @@ urlpatterns = [
          views.LedgerListView.as_view(), name="ledger_datatable"),
     path('create/', views.create_ledger, name='create'),
     path('salary/', include('ledger.pages.salary.urls')),
+    path('expesnses/', include('ledger.pages.expenses.urls')),
+
 ]

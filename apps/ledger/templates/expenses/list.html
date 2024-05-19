@@ -1,10 +1,10 @@
 {% extends 'datatable_base.html' %}
 {%load static %}
 {% load static %}
-{% block title %} Ledger Report{% endblock %}
-{% block pagetitle %}Ledger Report{% endblock %}
+{% block title %} Expenses Report{% endblock %}
+{% block pagetitle %}Expenses Report{% endblock %}
 {%block addbutton%}
-<a href="{% url 'ledger:pages:create' %}" class="btn btn-primary btn-sm">Add Ledger</a>
+<a href="{% url 'ledger:pages:expenses:create' %}" class="btn btn-primary btn-sm">Add Expenses</a>
 {% endblock %}
 {% block content %}
 {% endblock %}
@@ -30,7 +30,7 @@
         <div class="col-md-2" style="margin-top:25px;">
             
             <button type="submit" class="btn btn-sm btn-primary mr-2 ">Filter</button>
-    <a type="button" href="{% url 'ledger:pages:list' %}?user=&from_date=&to_date=" class="btn btn-sm btn-secondary mr-2" >Reset Filter</a>
+    <a type="button" href="{% url 'ledger:pages:expenses:list' %}?user=&from_date=&to_date=" class="btn btn-sm btn-secondary mr-2" >Reset Filter</a>
         </div>
         
     </div>
@@ -49,10 +49,7 @@
                             <th>Debit</th>
                             <th>Credit</th>
                             <th>Balance</th>
-                            <th>Company Balance</th>
                             <th>Remarks</th>
-                            <th>Entry Type</th>
-                            <th>Leadger Id</th>
                           </tr>
                         </thead>
                         <tfoot>
@@ -63,14 +60,8 @@
                                 <th>Debit</th>
                                 <th>Credit</th>
                                 <th>Balance</th>
-                                <th>Company Balance</th>
                                 <th>Remarks</th>
-                                <th>Entry Type</th>
-                                <th>Leadger Id</th>
-                              </tr>
-                             
-                                
-                                
+                              </tr>   
                             </tr>
                         </tfoot>
                 <tbody>
@@ -95,7 +86,7 @@
             paging: true,
             processing: true,
 
-            sAjaxSource:"{% url 'ledger:pages:ledger_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
+            sAjaxSource:"{% url 'ledger:pages:expenses:expenses_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
 
             
             
@@ -148,12 +139,8 @@
                 
             },
                 {name: "Balance", data: 5},
-                {name: "Balance", data: 9},
 
                 {name: "Remarks", data: 6},
-                {name: "Entry Type", data: 7},
-                {name: "Leadger Id", data: 8},
-            
             ],
         });
     });

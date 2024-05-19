@@ -72,4 +72,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['role']
 
     def __str__(self):
-        return self.phone_number
+        role = self.role
+        if role == "user":
+            return f"{self.phone_number} {self.user_profile.fullname}"
+        elif role == "staff":
+            return f"{self.phone_number} {self.staff_profile.fullname}"
+        else:
+            return f"{self.phone_number}"
