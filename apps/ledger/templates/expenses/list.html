@@ -15,10 +15,7 @@
 
 <form method="get" action="" class="form-inline mb-3" id="filter-form">
     <div class="row">
-        <div class="col-md-4">
-            {{form.user.label_tag}}
-            {{ form.user }}
-        </div>
+        
         <div class="col-md-2">
             {{form.from_date.label_tag}}
             {{ form.from_date }}
@@ -28,7 +25,6 @@
             {{ form.to_date }}
         </div>
         <div class="col-md-2" style="margin-top:25px;">
-            
             <button type="submit" class="btn btn-sm btn-primary mr-2 ">Filter</button>
     <a type="button" href="{% url 'ledger:pages:expenses:list' %}?user=&from_date=&to_date=" class="btn btn-sm btn-secondary mr-2" >Reset Filter</a>
         </div>
@@ -44,7 +40,6 @@
             <thead>
                         <tr>
                             <th>Create Date</th>
-                            <th>User</th>
                             <th>Particular</th>
                             <th>Debit</th>
                             <th>Credit</th>
@@ -55,7 +50,6 @@
                         <tfoot>
                             <tr>
                                 <th>Create Date</th>
-                                <th>User</th>
                                 <th>Particular</th>
                                 <th>Debit</th>
                                 <th>Credit</th>
@@ -87,9 +81,6 @@
             processing: true,
 
             sAjaxSource:"{% url 'ledger:pages:expenses:expenses_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
-
-            
-            
             
             columns: [
             {
@@ -112,7 +103,6 @@
                     return formattedDate;
                 }
             },
-                {name: "User", data: 1},
                 {name: "Particular", data: 2},
                 {
                     name: 'Debit',
@@ -138,7 +128,7 @@
                 }   
                 
             },
-                {name: "Balance", data: 5},
+                {name: "Balance", data: 9},
 
                 {name: "Remarks", data: 6},
             ],

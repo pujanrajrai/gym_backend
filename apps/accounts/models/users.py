@@ -53,7 +53,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=[
             ('admin', 'admin'),
             ('staff', 'staff'),
-            ('user', 'user')
+            ('user', 'user'),
+            ('company', 'company')
         ],
         default='user'
     )

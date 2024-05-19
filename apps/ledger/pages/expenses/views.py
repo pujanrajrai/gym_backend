@@ -90,7 +90,7 @@ def create_expenses(request):
             # Get user based on phone number
             try:
                 user = User.objects.get(
-                    pk=request.POST['user'])
+                    phone_number='expenses')
             except User.DoesNotExist:
                 messages.error(request, 'User not found.')
                 context['form'] = form
@@ -107,7 +107,7 @@ def create_expenses(request):
 
             myexpenses = Ledger.objects.create(
                 user=user,
-                _type='Credit',
+                _type='Debit',
                 particular='Expenses',
                 amount=request.POST['amount'],
                 remarks='Expenses',

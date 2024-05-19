@@ -5,9 +5,6 @@ from django import forms
 
 
 class ExpensesForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=User.objects.filter(role="staff"
-                                                               ), label="User", required=False, widget=forms.Select(attrs={'class': 'ui fluid search dropdown clearable'}))
-
     amount = forms.DecimalField(
         widget=forms.NumberInput(attrs={'class': 'form-control mt-2 mb-2'}),
         max_digits=10,
@@ -28,9 +25,6 @@ class ExpensesForm(forms.Form):
 
 
 class ExpensesFilterForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=User.objects.filter(role="staff"
-                                                               ), label="User", required=False, widget=forms.Select(attrs={'class': 'ui fluid search dropdown clearable'}))
-
     from_date = forms.DateField(
         widget=forms.DateInput(
             attrs={'class': 'form-control mt-2 mb-2', 'type': 'date'}),
