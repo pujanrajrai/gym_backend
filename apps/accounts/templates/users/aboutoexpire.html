@@ -1,0 +1,70 @@
+
+
+
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}Expire List{% endblock %}
+{% block pagetitle %}Expire List{% endblock %}
+{%block addbutton%}
+{% endblock %}
+
+{% block table %}
+    <div class="box-content">
+        <!-- /.dropdown js__dropdown -->
+        <div class="table-responsive">
+            <table id="example" class="display compact nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>User Profile</th>
+                        <th>Starting Date</th>
+                        <th>Ending Date</th>
+                        <th>Remaining Days</th>
+                        {% comment %} <th>Plan Price</th>
+                        <th>Discount</th> {% endcomment %}
+                        <th>Total Cost</th>
+                        <th>Cancelled</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>User Profile</th>
+                        <th>Starting Date</th>
+                        <th>Ending Date</th>
+                        <th>Remaining Days</th>
+                        {% comment %} <th>Plan Price</th>
+                        <th>Discount</th> {% endcomment %}
+                        <th>Total Cost</th>
+                        <th>Cancelled</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for user_plan in user_plans %}
+                    <tr>
+                        <td>{{ user_plan.userprofile.fullname }}</td>
+                        <td>{{ user_plan.starting_date }}</td>
+                        <td>{{ user_plan.ending_date }}</td>
+                        <td>{{ user_plan.remaining_days }}</td>
+                        {% comment %} <td>{{ user_plan.plan_price }}</td>
+                        <td>{{ user_plan.discount }}</td> {% endcomment %}
+                        <td>{{ user_plan.total }}</td>
+                        <td>{{ user_plan.is_cancelled }}</td>
+                        <td><a href="{% url 'accounts:pages:profile_redirect' user.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Plan</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+    </script>
+{% endblock %}
+

@@ -4,7 +4,7 @@
         Current Plan
     </a>
     <a href="{% url 'plan:pages:userplan:previous_plan' userprofile.user.pk %}" class="{% if tab == 'previous_plan' %}active{% endif %}">
-        Previous Plan
+        My Plans
     </a>
     <a href="{% url 'plan:pages:userplan:create_user_plan' userprofile.user.pk %}" class="{% if tab == 'add_new' %}active{% endif %}">
         Add New

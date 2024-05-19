@@ -43,6 +43,15 @@
             </li>
           </ul>
           <ul class="menu js__accordion">
+            <li class="{% if current == "expire_list" %}current{%endif%}">
+              <a class="" href="{% url 'accounts:pages:expire_plan_list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Plan Expiry</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
             <li class="{% if current == "ledger" %}current{%endif%}">
               <a class="" href="{% url 'ledger:pages:list' %}?user=&from_date=&to_date=">
                 <i class="menu-icon material-symbols-outlined">

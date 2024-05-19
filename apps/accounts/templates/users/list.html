@@ -33,6 +33,7 @@
                         <th>Email</th>
                         <th>Phone Number</th>
                         <th>Role</th>
+                        <th>Full Name</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@
                         <th>Email</th>
                         <th>Phone Number</th>
                         <th>Role</th>
+                        <th>Full Name</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>
@@ -50,6 +52,7 @@
                         <td>{{ user.email }}</td>
                         <td>{{ user.phone_number }}</td>
                         <td>{{ user.role }}</td>
+                        <td>{{ user.user_profile.fullname }}</td>
                         <td>
                             {% if user.is_blocked %}
                             <a href="{% url 'accounts:pages:unblock_user' user.id %}" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>
