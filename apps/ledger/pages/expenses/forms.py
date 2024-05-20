@@ -16,6 +16,11 @@ class ExpensesForm(forms.Form):
         widget=forms.Textarea(attrs={'class': 'form-control mt-2 mb-2'}),
         required=False  # Set to True if remarks are required
     )
+    expenses_date = forms.DateField(
+        widget=forms.DateInput(
+            attrs={'class': 'form-control mt-2 mb-2', 'type': 'date'}),
+        required=False
+    )
 
     entry_type = forms.ChoiceField(
         choices=[('Expenses', 'Expenses')],

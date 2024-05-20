@@ -15,7 +15,8 @@
             <table id="example" class="display compact nowrap" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Customer</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
                         <th>Plan Name</th>
                         <th>Starting Date</th>
                         <th>Ending Date</th>
@@ -26,7 +27,8 @@
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Customer</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
                         <th>Plan Name</th>
                         <th>Starting Date</th>
                         <th>Ending Date</th>
@@ -38,6 +40,7 @@
                 <tbody>
                     {% for user in users %}
                     <tr>
+                        <td>{{ user.user_profile.fullname }}</td>
                         <td>{{ user.phone_number }}</td>
                         <td>{{ user.user_profile.userplan.first.userplandetails.first.plan.name }}</td>
                         <td>{{ user.user_profile.userplan.first.starting_date }}</td>

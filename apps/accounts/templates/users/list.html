@@ -30,29 +30,37 @@
             <table id="example" class="display compact nowrap" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Email</th>
+                        
+                        <th>Full Name</th>
                         <th>Phone Number</th>
                         <th>Role</th>
-                        <th>Full Name</th>
+                        <th>Email</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Email</th>
+                        <th>Full Name</th>
                         <th>Phone Number</th>
                         <th>Role</th>
-                        <th>Full Name</th>
+                        <th>Email</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>
                 <tbody>
                     {% for user in users %}
                     <tr>
-                        <td>{{ user.email }}</td>
+                        {% if user.role == "user" %}
+                        <td>{{ user.user_profile.fullname }}</td>
+                        {%elif user.role == "staff" %}
+                        <td>{{ user.staff_profile.fullname }}</td>
+                        {%else%}
+                        <td></td>
+                        {%endif%}
+
                         <td>{{ user.phone_number }}</td>
                         <td>{{ user.role }}</td>
-                        <td>{{ user.user_profile.fullname }}</td>
+                        <td>{{ user.email }}</td>
                         <td>
                             {% if user.is_blocked %}
                             <a href="{% url 'accounts:pages:unblock_user' user.id %}" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>

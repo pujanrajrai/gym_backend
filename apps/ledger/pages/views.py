@@ -1,4 +1,5 @@
 # import pytz
+from rest_framework.response import Response
 from urllib.parse import urlencode
 from django.urls import reverse
 from django.http import HttpResponse
@@ -21,46 +22,140 @@ from django.contrib.auth.decorators import login_required
 from decorators import has_roles
 
 
-@method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
-class LedgerListView(ServerSideDatatableView):
-    def get_queryset(self):
-        user = self.request.GET.get('user')
-        from_date_str = self.request.GET.get('from_date')
-        to_date_str = self.request.GET.get('to_date')
+# @method_decorator(login_required(), name='dispatch')
+# @method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+# class LedgerListView(ServerSideDatatableView):
+#     def get_queryset(self):
+#         user = self.request.GET.get('user')
+#         from_date_str = self.request.GET.get('from_date')
+#         to_date_str = self.request.GET.get('to_date')
+
+#         if from_date_str and from_date_str != 'None':
+#             # Use '%b' for abbreviated month
+#             from_date = datetime.strptime(from_date_str, '%b %d, %Y')
+#         else:
+#             from_date = None
+
+#         if to_date_str and to_date_str != 'None':
+#             # Use '%b' for abbreviated month
+#             to_date = datetime.strptime(to_date_str, '%b %d, %Y')
+#         else:
+#             to_date = None
+#         queryset = Ledger.objects.all()
+#         if user:
+#             queryset = queryset.filter(user=user)
+#         if from_date:
+#             queryset = queryset.filter(created_date__gte=from_date)
+#         if to_date:
+#             queryset = queryset.filter(created_date__lte=to_date)
+#         return queryset
+
+#     columns = [
+#         'created_date',
+#         'user',
+#         'particular',
+#         '_type',
+#         'amount',
+#         'balance',
+#         'remarks',
+#         'entry_type',
+#         'leaserid',
+#         'company_balance'
+#     ]
+from rest_framework import serializers
+from rest_framework.views import APIView
+
+
+class LedgerSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        myuser = obj.user
+        role = obj.user.role
+        if role == "user":
+            return f"{myuser.user_profile.fullname}-{myuser.phone_number}"
+        elif role == "staff":
+            return f"{myuser.staff_profile.fullname}-{myuser.phone_number} "
+        else:
+            return f"{myuser.phone_number}"
+
+    class Meta:
+        model = Ledger
+        fields = [
+            'created_date',
+            'user',
+            'particular',
+            '_type',
+            'amount',
+            'balance',
+            'remarks',
+            'entry_type',
+            'leaserid',
+            'company_balance'
+        ]
+
+
+class LedgerListView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        draw = int(request.GET.get('draw', 1))
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))
+        search_value = request.GET.get('search[value]', '')
+
+        order_column_index = request.GET.get('order[0][column]', 0)
+        order_column = request.GET.get(
+            f'columns[{order_column_index}][data]', 'created_date')
+        order_dir = request.GET.get('order[0][dir]', 'asc')
+
+        user = request.GET.get('user')
+        from_date_str = request.GET.get('from_date')
+        to_date_str = request.GET.get('to_date')
 
         if from_date_str and from_date_str != 'None':
-            # Use '%b' for abbreviated month
             from_date = datetime.strptime(from_date_str, '%b %d, %Y')
         else:
             from_date = None
 
         if to_date_str and to_date_str != 'None':
-            # Use '%b' for abbreviated month
             to_date = datetime.strptime(to_date_str, '%b %d, %Y')
         else:
             to_date = None
+
         queryset = Ledger.objects.all()
+
         if user:
             queryset = queryset.filter(user=user)
         if from_date:
             queryset = queryset.filter(created_date__gte=from_date)
         if to_date:
             queryset = queryset.filter(created_date__lte=to_date)
-        return queryset
 
-    columns = [
-        'created_date',
-        'user__phone_number',
-        'particular',
-        '_type',
-        'amount',
-        'balance',
-        'remarks',
-        'entry_type',
-        'leaserid',
-        'company_balance'
-    ]
+        if search_value:
+            queryset = queryset.filter(
+                Q(user__icontains=search_value) |
+                Q(particular__icontains=search_value) |
+                Q(_type__icontains=search_value) |
+                Q(remarks__icontains=search_value)
+            )
+
+        total_records = queryset.count()
+
+        if order_dir == 'desc':
+            order_column = f'-{order_column}'
+
+        queryset = queryset.order_by(order_column)[start:start + length]
+
+        serializer = LedgerSerializer(queryset, many=True)
+
+        response = {
+            'draw': draw,
+            'recordsTotal': total_records,
+            'recordsFiltered': total_records,  # Adjust this if you add filters
+            'data': serializer.data
+        }
+
+        return Response(response)
 
 
 @login_required()

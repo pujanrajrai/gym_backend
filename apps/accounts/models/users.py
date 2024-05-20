@@ -75,8 +75,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         role = self.role
         if role == "user":
-            return f"{self.phone_number} {self.user_profile.fullname}"
+            return f"{self.user_profile.fullname} {self.phone_number}"
         elif role == "staff":
-            return f"{self.phone_number} {self.staff_profile.fullname}"
+            return f"{self.staff_profile.fullname} {self.phone_number} "
         else:
             return f"{self.phone_number}"

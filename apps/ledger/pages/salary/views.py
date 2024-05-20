@@ -50,7 +50,7 @@ class SalaryListView(ServerSideDatatableView):
 
     columns = [
         'created_date',
-        'user__phone_number',
+        'user__staff_profile__fullname',
         'particular',
         '_type',
         'amount',
@@ -58,7 +58,7 @@ class SalaryListView(ServerSideDatatableView):
         'remarks',
         'entry_type',
         'leaserid',
-        'company_balance'
+        'company_balance',
     ]
 
 
@@ -110,7 +110,7 @@ def create_salary(request):
                 _type='Credit',
                 particular='Employee Salary',
                 amount=request.POST['amount'],
-                remarks='Salary',
+                remarks=request.POST["remarks"],
                 entry_type='Salary',
                 balance=new_balance,
                 company_balance=company_balance,

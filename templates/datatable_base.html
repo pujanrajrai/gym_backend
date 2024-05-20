@@ -8,9 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Halesi Department">
     <meta name="author" content="">
-
     <title>{% block title %}{% endblock %}</title>
-
     <!-- Favicon -->
     <!-- Favicon -->
     <link href="{% static 'assets//images/logo.png' %}" rel="icon">
@@ -98,10 +96,13 @@
                 
                 {% endblock %}
                 <script>
-                    $('.ui.dropdown').dropdown({ fullTextSearch: true });
-                    $('.ui.dropdown.clearable').dropdown({
+                    $('.ui.dropdown').dropdown({ 
+                        fullTextSearch: true ,
                         clearable: true
-                      });
+                    });
+                    {% comment %} $('.ui.dropdown.clearable').dropdown({
+                        clearable: true
+                      }); {% endcomment %}
 
                 </script>
 
@@ -115,10 +116,15 @@
                         var table = $('#example').DataTable({
                             responsive: true,
                             paging: true,
-                            {% comment %} orderClasses: false, {% endcomment %}
                             processing: true,
+                            pageLength: 200, // Set the default row count to 200
+                            lengthMenu: [
+                                [10, 20, 50, 100, 200], // Define the available row count options
+                                [10, 20, 50, 100, 200]  // Labels for the options
+                            ]
                         });
                     });
+                    
                 </script>
                 <!-- /.box-content -->
             </div>

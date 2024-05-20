@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from datetime import datetime, timedelta
 from django.contrib.auth import logout
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -32,6 +33,8 @@ class UserListView(ListView):
         queryset = super().get_queryset()
 
         tab = self.request.GET.get('tab')
+        if tab == None:
+            tab = "user"
         if tab == 'admin':
             return queryset.filter(role='admin')
         elif tab == 'staff':
@@ -284,47 +287,30 @@ def custom_login(request):
 
 
 # def expire_plan_list(request):
-#     try:
-#         # Retrieve the list of UserPlan objects sorted by the ending date
-#         user_plans = UserPlan.objects.all().order_by('ending_date')
-#         # Calculate the remaining days until the plan expires
-#         today = timezone.now().date()
-#         for user_plan in user_plans:
-#             # Access the related UserPlanDetail objects
-#             plan_details = UserPlanDetail.objects.filter(userplan=user_plan)
-#             if plan_details.exists():
-#                 # Assuming there's only one plan detail associated with each user plan
-#                 plan_detail = plan_details.first()
-#                 # Access the related Plan object through the plan_detail
-#                 plan = plan_detail.plan
-#                 # Calculate the ending date based on the starting date and plan duration
-#                 if user_plan.starting_date and plan.default_month:
-#                     ending_date = user_plan.starting_date + \
-#                         timedelta(days=plan.default_month * 30)
-#                     user_plan.ending_date = ending_date
-#                     # Calculate remaining days until expiration
-#                     remaining_days = (ending_date - today).days
-#                     user_plan.remaining_days = remaining_days
-#                 else:
-#                     user_plan.ending_date = None
-#                     user_plan.remaining_days = None
-
-#         context = {
-#             'user_plans': user_plans,
-#             'current': 'expire_list',
-#         }
-#     except Exception as e:
-#         # If an exception occurs, include the error message in the context
-#         context = {
-#             'error_message': str(e)
-#         }
-
+#     users = User.objects.filter(role="user")
+#     context = {
+#         "users": users,
+#         "current": "expiry"
+#     }
 #     return render(request, 'users/aboutoexpire.html', context)
 
 
 def expire_plan_list(request):
-    users = User.objects.filter(role="user")
+    # Fetch users with related data using select_related and prefetch_related
+    users = User.objects.filter(role="user").select_related('user_profile').prefetch_related(
+        Prefetch(
+            'user_profile__userplan',
+            queryset=UserPlan.objects.select_related(
+                'userprofile').prefetch_related('userplandetails__plan')
+        )
+    )
+    for user in users:
+        for plan in user.user_profile.userplan.all():
+            plan.highest_ending_date_value = plan.highest_ending_date()
+            plan.remaining_days_value = plan.remaining_days()
+
     context = {
-        "users": users
+        "users": users,
+        "current": "expiry"
     }
     return render(request, 'users/aboutoexpire.html', context)

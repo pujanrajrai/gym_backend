@@ -16,15 +16,14 @@ from django.contrib.auth.decorators import login_required
 from decorators import has_roles
 
 
-
-
 def getuserprofile(pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
     return userprofile
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def search_customer(request):
     context = {
         "form": SearchCustomerForm(),
@@ -48,10 +47,8 @@ def search_customer(request):
     return render(request, 'plan/search_customer.html', context)
 
 
-
-
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin','staff']), name='dispatch')
+@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
 class SearchCustomerAPIView(View):
     def get(self, request, *args, **kwargs):
         suggestions = User.objects.filter(
@@ -61,10 +58,8 @@ class SearchCustomerAPIView(View):
         return JsonResponse({'suggestions': suggestion_list})
 
 
-
-
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin','staff']), name='dispatch')
+@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
 class CreateUser(SuccessMessageMixin, CreateView):
     model = User
     form_class = CreateUserForm
@@ -84,8 +79,9 @@ class CreateUser(SuccessMessageMixin, CreateView):
         context['current'] = 'users'
         return context
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def current_plan(request, pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
@@ -102,8 +98,9 @@ def current_plan(request, pk):
     }
     return render(request, 'plan/current_plan.html', context)
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def invoice_print(request, pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
@@ -120,8 +117,9 @@ def invoice_print(request, pk):
     return render(request, 'plan/current_plan.html', context)
     return render(request, 'plan/invoice_print.html')
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def usercreate_plan(request, pk):
     context = {}
     user = User.objects.get(pk=pk)
@@ -160,8 +158,9 @@ def usercreate_plan(request, pk):
             request, "only user can have plans other cannot have plans")
         return redirect(request.META.get('HTTP_REFERER'))
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def previous_plan(request, pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
@@ -173,8 +172,9 @@ def previous_plan(request, pk):
     }
     return render(request, 'plan/previous_plan.html', context)
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def plan_details(request, pk):
     userplan = UserPlan.objects.get(pk=pk)
     userprofile = userplan.userprofile
@@ -185,8 +185,9 @@ def plan_details(request, pk):
     }
     return render(request, 'plan/plan_details.html', context)
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def print_invoice(request, pk):
     userplan = UserPlan.objects.get(pk=pk)
     userprofile = userplan.userprofile
@@ -197,8 +198,9 @@ def print_invoice(request, pk):
     }
     return render(request, 'print_invoice.html', context)
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def delete_user_plan(request, pk):
     userplan = UnConfirmUserPlanDetail.objects.get(pk=pk)
     userplan.hard_delete()
@@ -206,8 +208,9 @@ def delete_user_plan(request, pk):
         request, "Plan Removed Successfully")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+
 @login_required()
-@has_roles(['admin','staff'])
+@has_roles(['admin', 'staff'])
 def issue_userplan(request, pk):
     unconfirm_userplan = UnConfirmUserPlan.objects.get(pk=pk)
     unconfirm_userplan.starting_date = request.POST.get("starting_date")

@@ -15,7 +15,7 @@
 
 <form method="get" action="" class="form-inline mb-3" id="filter-form">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             {{form.user.label_tag}}
             {{ form.user }}
         </div>
@@ -52,7 +52,7 @@
                             <th>Company Balance</th>
                             <th>Remarks</th>
                             <th>Entry Type</th>
-                            <th>Leadger Id</th>
+                            {% comment %} <th>Leadger Id</th> {% endcomment %}
                           </tr>
                         </thead>
                         <tfoot>
@@ -66,10 +66,8 @@
                                 <th>Company Balance</th>
                                 <th>Remarks</th>
                                 <th>Entry Type</th>
-                                <th>Leadger Id</th>
+                                {% comment %} <th>Leadger Id</th> {% endcomment %}
                               </tr>
-                             
-                                
                                 
                             </tr>
                         </tfoot>
@@ -83,7 +81,6 @@
 <script>
   
     $(document).ready(function () {
-            
         $('#items-table').dataTable({
             order: [[0, 'desc']],
             lengthMenu: [
@@ -94,70 +91,59 @@
             serverSide: true,
             paging: true,
             processing: true,
-
-            sAjaxSource:"{% url 'ledger:pages:ledger_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
-
-            
-            
-            
-            columns: [
-            {
-                name: "Create Date",
-                data: 0,
-                render: function (data) {
-                    // Parse the input date string
-                    var date = new Date(data);
-                    
-                    // Format the date as desired (example: "August 15, 2023 12:34 PM")
-                    var formattedDate = date.toLocaleString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: true
-                    });
-                    
-                    return formattedDate;
+            ajax: {
+                url: "{% url 'ledger:pages:ledger_datatable' %}",
+                type: "GET",
+                data: function (d) {
+                    d.user = "{{ user }}";
+                    d.from_date = "{{ from_date }}";
+                    d.to_date = "{{ to_date }}";
                 }
             },
-                {name: "User", data: 1},
-                {name: "Particular", data: 2},
+            columns: [
+                {
+                    name: "Create Date",
+                    data: "created_date",
+                    render: function (data) {
+                        // Parse the input date string
+                        var date = new Date(data);
+    
+                        // Extract the individual components
+                        var year = date.getFullYear();
+                        var month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                        var day = String(date.getDate()).padStart(2, '0');
+                        var hours = String(date.getHours()).padStart(2, '0');
+                        var minutes = String(date.getMinutes()).padStart(2, '0');
+    
+                        // Format the date as yyyy-mm-dd h:m
+                        var formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+    
+                        return formattedDate;
+                    }
+                },
+                { name: "User", data: "user" },
+                { name: "Particular", data: "particular" },
                 {
                     name: 'Debit',
                     data: function (row) {
-                        if (row[3]=="Debit"){
-                            return  row[4];
-                        }
-                        else{
-                            return '';
-                        }
-                        
+                        return row._type === "Debit" ? row.amount : '';
                     }
                 },
-            {
-                name: 'Credit',
-                data: function (row) {
-                    if (row[3]=="Credit"){
-                        return row[4];
+                {
+                    name: 'Credit',
+                    data: function (row) {
+                        return row._type === "Credit" ? row.amount : '';
                     }
-                    else{
-                        return '';
-                    }
-                }   
-                
-            },
-                {name: "Balance", data: 5},
-                {name: "Balance", data: 9},
-
-                {name: "Remarks", data: 6},
-                {name: "Entry Type", data: 7},
-                {name: "Leadger Id", data: 8},
-            
+                },
+                { name: "Balance", data: "balance" },
+                { name: "Company Balance", data: "company_balance" },
+                { name: "Remarks", data: "remarks" },
+                { name: "Entry Type", data: "entry_type" },
+                {% comment %} { name: "Ledger Id", data: "leaserid" }, {% endcomment %}
             ],
         });
     });
-
+    
     
 </script>
     <script>

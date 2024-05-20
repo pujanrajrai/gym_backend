@@ -2,6 +2,7 @@ from django import forms
 from accounts.models.users import User
 from plan.models import Plan
 
+
 class SearchCustomerForm(forms.Form):
     user = forms.ModelChoiceField(
         widget=forms.TextInput(
@@ -11,7 +12,13 @@ class SearchCustomerForm(forms.Form):
         required=False
     )
 
-
+# class LedgerFilterForm(forms.Form):
+#     user = forms.ModelChoiceField(queryset=User.objects.all(
+#     ), label="User", required=False, widget=forms.Select(attrs={'class': 'ui fluid search dropdown clearable'}))
+#     from_date = forms.DateField(label="From Date", required=False, widget=forms.DateInput(
+#         attrs={'class': 'form-control', 'type': 'date'}))
+#     to_date = forms.DateField(label="To Date", required=False, widget=forms.DateInput(
+#         attrs={'class': 'form-control', 'type': 'date'}))
 
 
 class CreatePlanForm(forms.ModelForm):

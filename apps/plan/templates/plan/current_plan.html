@@ -50,8 +50,9 @@
             <img src="{% static 'home/img/filter.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
         </div>
         <div class="col-lg-1">
-            <img src="{% static 'home/img/edit.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
-        </div>
+            <a href="{% url 'accounts:pages:user_profile_update' userprofile.pk %}">
+                <img src="{% static 'home/img/edit.png' %}" id="filter" style="width:20px;height:20px; cursor:pointer;">
+            </a>        </div>
     </div>
     
 </div>

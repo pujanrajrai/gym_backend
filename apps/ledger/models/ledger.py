@@ -65,6 +65,10 @@ class Ledger(BaseModel):
         blank=True,
         null=True
     )
+    expenses_date = models.DateField(
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return f"{self.user}-{self._type}-{self.particular}-{self.amount}-{self.balance}"

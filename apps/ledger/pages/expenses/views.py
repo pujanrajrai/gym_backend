@@ -58,7 +58,9 @@ class ExpensesListView(ServerSideDatatableView):
         'remarks',
         'entry_type',
         'leaserid',
-        'company_balance'
+        'company_balance',
+        "expenses_date",
+
     ]
 
 
@@ -110,10 +112,11 @@ def create_expenses(request):
                 _type='Debit',
                 particular='Expenses',
                 amount=request.POST['amount'],
-                remarks='Expenses',
+                remarks=request.POST["remarks"],
                 entry_type='Expenses',
                 balance=new_balance,
                 company_balance=company_balance,
+                expenses_date=request.POST["expenses_date"],
             )
             messages.success(request, 'Expenses created successfully.')
             query_params = {
