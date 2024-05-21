@@ -27,4 +27,6 @@ urlpatterns = [
          name='expire_plan_list'),
     path('dashboard/report/', views.dashboard_report,
          name='dashboard_report'),
+    path('dashboard/export/', views.dashboard_export,
+         name='dashboard_export'),
 ]
