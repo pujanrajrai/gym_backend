@@ -61,7 +61,7 @@
     </div>
 </form>
 <div class="float-right">
-    <a class="btn btn-primary btn-sm" href="{% url 'accounts:pages:dashboard_export' %}?export-{date}">Export</a>
+    <a class="btn btn-primary btn-sm" href="{% url 'accounts:pages:dashboard_export' %}?{% if user %}user={{ user }}&{% endif %}{% if from_date %}from_date={{ from_date }}&{% endif %}{% if to_date %}to_date={{ to_date }}&{% endif %}">Export</a>
 </div><br>
 <div class="row mt-5">
 
@@ -117,5 +117,12 @@
     });
 </script>
 
-
+<script>
+    function resetFilter() {
+        document.querySelector('input[name="from_date"]').value = '';
+        document.querySelector('input[name="to_date"]').value = ''; 
+        document.querySelector('select[name="user"]').selectedIndex = -1;
+        document.getElementById('filter-form').submit();
+    }
+    </script>
 {% endblock %}

@@ -414,14 +414,14 @@ def dashboard_report(request):
 from openpyxl import Workbook
 
 
-# @login_required
-# @has_roles(['admin'])
+@login_required
+@has_roles(['admin'])
 def dashboard_export(request):
     date_range = request.GET.get('date_range')
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
     user_id = request.GET.get('user')
-
+    import pdb;pdb.set_trace()
     # Filter data based on company if selected
     if user_id and user_id != 'All':
         user_filter = Q(userprofile__user=user_id)
@@ -499,8 +499,7 @@ def dashboard_export(request):
             item.userplandetails.first().plan.name if item.userplandetails else None,
             item.starting_date.strftime(
                 '%Y-%m-%d %H:%M:%S')  if item.created_date else None,
-            item.highest_ending_date().strftime(
-                '%Y-%m-%d %H:%M:%S') ,
+            item.highest_ending_date() if item.highest_ending_date() else None ,
             item.remaining_days(),
             item.total,
             
