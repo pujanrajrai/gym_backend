@@ -14,7 +14,7 @@ from decorators import has_roles
 from plan.models.userplan import UserPlan, UserPlanDetail
 from django.utils import timezone
 from django.shortcuts import render
-
+from django.http import HttpResponse
 
 @method_decorator(login_required(), name='dispatch')
 @method_decorator(has_roles(['admin', 'staff']), name='dispatch')
@@ -417,70 +417,69 @@ from openpyxl import Workbook
 # @login_required
 # @has_roles(['admin'])
 def dashboard_export(request):
-    form = DateRangeForm(request.GET or None)
-    import pdb;pdb.set_trace()
-    if form.is_valid():
-        date_range = form.cleaned_data.get('date_range')
-        from_date = form.cleaned_data.get('from_date')
-        to_date = form.cleaned_data.get('to_date')
-        user_id = form.cleaned_data.get('user')
+    date_range = request.GET.get('date_range')
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+    user_id = request.GET.get('user')
 
-        # Filter data based on company if selected
-        if user_id and user_id != 'All':
-            user_filter = Q(userprofile__user=user_id)
+    # Filter data based on company if selected
+    if user_id and user_id != 'All':
+        user_filter = Q(userprofile__user=user_id)
+    else:
+        user_filter = Q()
+
+    # Filter data based on date range
+    if date_range == DateRangeForm.CUSTOM:
+        # Custom date range
+        date_filter = Q(created_date__range=[from_date, to_date])
+    else:
+        # Predefined date ranges
+        today = date.today()
+        if date_range == DateRangeForm.TODAY:
+            date_filter = Q(created_date__range=[
+                            today, today+timedelta(days=1)])
+
+        elif date_range == DateRangeForm.YESTERDAY:
+            date_filter = Q(created_date__range=[
+                today - timedelta(days=1), today])
+        elif date_range == DateRangeForm.THIS_WEEK:
+            start_of_week = today - timedelta(days=today.weekday())
+            date_filter = Q(created_date__range=[
+                            start_of_week, start_of_week + timedelta(days=6)])
+        elif date_range == DateRangeForm.THIS_MONTH:
+            start_of_month = today.replace(day=1)
+            end_of_month = start_of_month.replace(
+                day=1, month=start_of_month.month + 1) - timedelta(days=1)
+            date_filter = Q(created_date__range=[
+                            start_of_month, end_of_month])
+        elif date_range == DateRangeForm.LAST_MONTH:
+            start_of_last_month = (today.replace(
+                day=1) - timedelta(days=1)).replace(day=1)
+            end_of_last_month = start_of_last_month.replace(
+                day=1, month=start_of_last_month.month + 1) - timedelta(days=1)
+            date_filter = Q(created_date__range=[
+                            start_of_last_month, end_of_last_month])
+        elif date_range == DateRangeForm.LAST_THREE_MONTHS:
+            three_months_ago = today - timedelta(days=90)
+            date_filter = Q(created_date__range=[
+                            three_months_ago, today])
+        elif date_range == DateRangeForm.THIS_YEAR:
+            start_of_year = date(today.year, 1, 1)
+            end_of_year = date(today.year, 12, 31)
+            date_filter = Q(created_date__range=[
+                            start_of_year, end_of_year])
         else:
-            user_filter = Q()
-
-        # Filter data based on date range
-        if date_range == DateRangeForm.CUSTOM:
-            # Custom date range
-            date_filter = Q(created_date__range=[from_date, to_date])
-        else:
-            # Predefined date ranges
-            today = date.today()
-            if date_range == DateRangeForm.TODAY:
-                date_filter = Q(created_date__range=[
-                                today, today+timedelta(days=1)])
-
-            elif date_range == DateRangeForm.YESTERDAY:
-                date_filter = Q(created_date__range=[
-                    today - timedelta(days=1), today])
-            elif date_range == DateRangeForm.THIS_WEEK:
-                start_of_week = today - timedelta(days=today.weekday())
-                date_filter = Q(created_date__range=[
-                                start_of_week, start_of_week + timedelta(days=6)])
-            elif date_range == DateRangeForm.THIS_MONTH:
-                start_of_month = today.replace(day=1)
-                end_of_month = start_of_month.replace(
-                    day=1, month=start_of_month.month + 1) - timedelta(days=1)
-                date_filter = Q(created_date__range=[
-                                start_of_month, end_of_month])
-            elif date_range == DateRangeForm.LAST_MONTH:
-                start_of_last_month = (today.replace(
-                    day=1) - timedelta(days=1)).replace(day=1)
-                end_of_last_month = start_of_last_month.replace(
-                    day=1, month=start_of_last_month.month + 1) - timedelta(days=1)
-                date_filter = Q(created_date__range=[
-                                start_of_last_month, end_of_last_month])
-            elif date_range == DateRangeForm.LAST_THREE_MONTHS:
-                three_months_ago = today - timedelta(days=90)
-                date_filter = Q(created_date__range=[
-                                three_months_ago, today])
-            elif date_range == DateRangeForm.THIS_YEAR:
-                start_of_year = date(today.year, 1, 1)
-                end_of_year = date(today.year, 12, 31)
-                date_filter = Q(created_date__range=[
-                                start_of_year, end_of_year])
-            else:
-                date_filter = Q()  # No filtering
-    queryset = User.objects.filter(user_filter).filter(date_filter)
+            date_filter = Q()  # No filtering
+    queryset = UserPlan.objects.filter(user_filter).filter(date_filter)
 
     workbook = Workbook()
     worksheet = workbook.active
 
     # Add column headers
     headers = [
-        'Customer',
+        'Phone Number',
+        'Full Name',
+        'Address',
         'Plan Name',
         'Starting Date',
         'Ending Date',
@@ -492,16 +491,18 @@ def dashboard_export(request):
 
     # Add data rows
     for item in queryset:
-        
+        # import pdb;pdb.set_trace()
         row_data = [
-            item.phone_number,
-            item.user_profile.userplan.first.userplandetails.first.plan.name,
-            item.user_profile.userplan.first.starting_date.strftime(
-                '%Y-%m-%d %H:%M:%S') if item.created_date else None,
-            item.user_profile.userplan.first.highest_date.strftime(
-                '%Y-%m-%d %H:%M:%S') if item.created_date else None,
-            item.user_profile.userplan.first.remaining_days,
-            item.user_profile.userplan.first.total,
+            item.userprofile.user.phone_number,
+            item.userprofile.fullname,
+            item.userprofile.address,
+            item.userplandetails.first().plan.name if item.userplandetails else None,
+            item.starting_date.strftime(
+                '%Y-%m-%d %H:%M:%S')  if item.created_date else None,
+            item.highest_ending_date().strftime(
+                '%Y-%m-%d %H:%M:%S') ,
+            item.remaining_days(),
+            item.total,
             
         ]
         row_data = [str(value) if isinstance(value, datetime)
