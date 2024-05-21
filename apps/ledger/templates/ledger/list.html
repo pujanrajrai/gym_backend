@@ -4,6 +4,7 @@
 {% block title %} Ledger Report{% endblock %}
 {% block pagetitle %}Ledger Report{% endblock %}
 {%block addbutton%}
+
 <a href="{% url 'ledger:pages:create' %}" class="btn btn-primary btn-sm">Add Ledger</a>
 {% endblock %}
 {% block content %}
@@ -37,7 +38,9 @@
     <br>
     <br> 
 </form>
-        
+<div class="float-right">
+    <a class="btn btn-primary btn-sm" href="{% url 'ledger:pages:export_ledger_to_excel' %}?{% if user %}user={{ user }}&{% endif %}{% if from_date %}from_date={{ from_date }}&{% endif %}{% if to_date %}to_date={{ to_date }}&{% endif %}">Export Ledger</a>
+</div><br>
     <!-- /.dropdown js__dropdown -->
     <div class="table-responsive">
         <table id="items-table" class="display compact nowrap" style="width:100%">

@@ -19,7 +19,7 @@ from accounts.models.users import User
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from decorators import has_roles
-
+from openpyxl import Workbook
 
 @method_decorator(login_required(), name='dispatch')
 @method_decorator(has_roles(['admin', 'staff']), name='dispatch')
@@ -139,3 +139,82 @@ def create_ledger(request):
             context['form'] = form
 
     return render(request, 'ledger/create.html', context)
+
+
+
+
+@login_required
+@has_roles(['admin'])
+def export_ledger_to_excel(request):
+    user = request.GET.get('user')
+    from_date_str = request.GET.get('from_date')
+    to_date_str = request.GET.get('to_date')
+
+    if from_date_str and from_date_str != 'None':
+        # Use '%b' for abbreviated month
+        from_date = datetime.strptime(from_date_str, '%b %d, %Y')
+    else:
+        from_date = None
+
+    if to_date_str and to_date_str != 'None':
+        # Use '%b' for abbreviated month
+        to_date = datetime.strptime(to_date_str, '%b %d, %Y')
+    else:
+        to_date = None
+    queryset = Ledger.objects.all()
+    if user:
+        queryset = queryset.filter(user=user)
+    if from_date:
+        queryset = queryset.filter(created_date__gte=from_date)
+    if to_date:
+        queryset = queryset.filter(created_date__lte=to_date)
+
+
+    workbook = Workbook()
+    worksheet = workbook.active
+
+    # Add column headers
+    headers = [
+        'created_date',
+        'User',
+        'Particular',
+        'Debit',
+        'Credit',
+        'Balance',
+        'Company Balance',
+        'Remarks',
+        'Entry Type',
+        'Ledger ID',
+    ]
+    worksheet.append(headers)
+
+    # Add data rows
+    for item in queryset:
+        debit = item.amount if item._type == 'Debit' else None
+        credit = item.amount if item._type == 'Credit' else None
+        
+        row_data = [
+            item.created_date.strftime(
+                '%Y-%m-%d %H:%M:%S') if item.created_date else None,
+            item.user.phone_number,
+            item.particular,
+            debit,
+            credit,
+            item.balance,
+            item.company_balance,
+            item.remarks,
+            item.entry_type,
+            item.leaserid,
+            
+        ]
+        row_data = [str(value) if isinstance(value, datetime)
+                    else value for value in row_data]
+        worksheet.append(row_data)
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=ledger_export.xlsx'
+    # messages.success(request, 'Ledger exported successfully.')
+    workbook.save(response)
+
+    return response
