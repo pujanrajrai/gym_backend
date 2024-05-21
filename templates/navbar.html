@@ -16,6 +16,15 @@
           <h5 class="title">Home</h5>
           <!-- /.title -->
           <ul class="menu js__accordion">
+            <li class="{% if current == "dashboard" %}current{%endif%}">
+              <a class="" href="{% url 'accounts:pages:dashboard_report' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Dashboard</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
             <li class="{% if current == "users" %}current{%endif%}">
               <a class="" href="{% url 'accounts:pages:user_list' %}?tab=user">
                 <i class="menu-icon material-symbols-outlined">

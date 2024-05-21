@@ -1,0 +1,285 @@
+{% extends 'form_base.html' %}
+
+{% block dash_title %} Daily Report Dashboard{% endblock %}
+
+{% block body %}
+<style>
+    @media (max-width: 769px) {
+        #filterBtn {
+            margin-top: 5px;
+        }
+
+        #resetBtn {
+            margin-top: 5px;
+
+        }
+
+        @media (min-width: 769px) {
+            #filterBtn {
+                margin-top: 5px;
+            }
+
+            #resetBtn {
+                margin-top: 5px;
+                margin-bottom: 25px;
+
+
+            }
+        }
+
+    }
+</style>
+<form id="filter-form" method="get" enctype="multipart/form-data" onsubmit="myFunction()">
+    {% if form.errors %}
+    {{ form.errors }}
+    {% endif %}
+    <div class="row">
+        {% for field in form %}
+        <div class="col-md-2{% if field.label == 'From Date' or field.label == 'To Date' %} date-fields{% endif %}">
+            <div class="form-group">
+                {{ field.label_tag }} {{ field }}
+                {{ field.errors }}
+                {% if field.help_text %}
+                <p class="help">{{ field.help_text|safe }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <br>
+        <div class="col-md-1">
+            <button type="submit" id="filterBtn" name="create_and_add" class="btn btn-primary btn-sm">
+                Filter
+            </button>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" id="resetBtn" class="btn btn-secondary btn-sm mr-2 mt-4" onclick="resetFilter()">Reset
+                Filter</button>
+        </div>
+        <div class="col-md-12 mb-5">
+        </div>
+    </div>
+</form>
+
+<div class="row mt-5">
+    {% comment %} <a href="{% url 'report:pages:purchase_order:list' %}"> {% endcomment %}
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Income</p>
+                    <p class="counter">{% if total_income %}Rs.{{ total_income|floatformat:2 }}{% else %}0{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% comment %} </a>
+    <a href="{% url 'report:pages:purchaseinvoice:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Purchase Invoice</p>
+                    <p class="counter">
+                        {% if total_purchase_invoice %}Rs.{{ total_purchase_invoice|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:purchase_return:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Purchase Return</p>
+                    <p class="counter">
+                        {% if total_purchase_return %}Rs.{{ total_purchase_return|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <a href="{% url 'report:pages:sales_order:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Sales Order</p>
+                    <p class="counter">{% if total_sales_order %}{{ total_sales_order|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:salesinvoice:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Credit Sales</p>
+                    <p class="counter">{% if total_credit_sales %}{{ total_credit_sales|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:sales_return:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Sales Return</p>
+                    <p class="counter">{% if total_sales_return %}{{ total_sales_return|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:supplier_payment:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Supplier Payment</p>
+                    <p class="counter">{% if total_supplier_payment %}{{ total_supplier_payment|floatformat:2 }}{% else %}0{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:due_collection:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Due Collection</p>
+                    <p class="counter">{% if total_due_collection %}{{ total_due_collection|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <a href="{% url 'report:pages:not_clear_cheque:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Not Clear Cheque</p>
+                    <p class="counter">{% if total_not_cheque_clear %}{{ total_not_cheque_clear|floatformat:2 }}{% else %}0{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:delivery_detail:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Delivery</p>
+                    <p class="counter">{% if total_delivery_detail %}{{ total_delivery_detail|floatformat:2 }}{% else %}0{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:expenses:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Expenses</p>
+                    <p class="counter">{% if total_expenses %}{{ total_expenses|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:bank_deposite_amount:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Bank Deposit</p>
+                    <p class="counter">
+                        {% if total_bank_deposit_amount %}{{ total_bank_deposit_amount|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'report:pages:current_denominations:list' %}">
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        shopping_cart
+                    </i>
+                    <p class="text text-white">Total Denomination</p>
+                    <p class="counter">{% if total_denomination %}{{ total_denomination|floatformat:2 }}{% else %}0{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </a> {% endcomment %}
+
+</div>
+
+
+{% endblock %}
+{% block js %}
+<script>
+    function resetFilter() {
+        // Resetting the input fields
+        document.querySelector('input[name="from_date"]').value = '';
+        document.querySelector('input[name="to_date"]').value = '';
+        // Resetting the select field
+        document.querySelector('select[name="date_range"]').value = 'today';
+        // Submitting the form
+        $('#filter-form').submit();
+    }
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dateRangeSelect = document.getElementById("date_range");
+        var fromDateDiv = document.getElementById("from_date").parentNode.parentNode;
+        var toDateDiv = document.getElementById("to_date").parentNode.parentNode;
+        // Hide date fields and their parent divs initially
+        fromDateDiv.style.display = "none";
+        toDateDiv.style.display = "none";
+
+        // Show/hide date fields and their parent divs based on date range selection
+        dateRangeSelect.addEventListener("change", function() {
+            if (this.value === 'custom') {
+                fromDateDiv.style.display = "block";
+                toDateDiv.style.display = "block";
+            } else {
+                fromDateDiv.style.display = "none";
+                toDateDiv.style.display = "none";
+            }
+        });
+    });
+</script>
+
+
+{% endblock %}

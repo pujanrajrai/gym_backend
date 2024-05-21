@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from accounts.models.users import User
 from accounts.models.profiles import StaffProfile, UserProfile
-from .forms import CreateAdminForm, CreateStaffForm, CreateUserForm, StaffProfileUpdateForm, UserProfileUpdateForm, AdminProfileUpdateForm
+from .forms import CreateAdminForm, CreateStaffForm, CreateUserForm,StaffProfileUpdateForm, UserProfileUpdateForm, AdminProfileUpdateForm,DateRangeForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -328,3 +328,84 @@ def expire_plan_list(request):
         "users": users
     }
     return render(request, 'users/aboutoexpire.html', context)
+
+
+from datetime import date, timedelta
+from django.db.models import Sum, Q
+
+
+def dashboard_report(request):
+    form = DateRangeForm(request.GET or None)
+
+    if form.is_valid():
+        date_range = form.cleaned_data.get('date_range')
+        from_date = form.cleaned_data.get('from_date')
+        to_date = form.cleaned_data.get('to_date')
+        user_id = form.cleaned_data.get('user')
+
+        # Filter data based on company if selected
+        if user_id and user_id != 'All':
+            user_filter = Q(userprofile__user=user_id)
+        else:
+            user_filter = Q()
+
+        # Filter data based on date range
+        if date_range == DateRangeForm.CUSTOM:
+            # Custom date range
+            date_filter = Q(created_date__range=[from_date, to_date])
+        else:
+            # Predefined date ranges
+            today = date.today()
+            if date_range == DateRangeForm.TODAY:
+                date_filter = Q(created_date__range=[
+                                today, today+timedelta(days=1)])
+
+            elif date_range == DateRangeForm.YESTERDAY:
+                date_filter = Q(created_date__range=[
+                    today - timedelta(days=1), today])
+            elif date_range == DateRangeForm.THIS_WEEK:
+                start_of_week = today - timedelta(days=today.weekday())
+                date_filter = Q(created_date__range=[
+                                start_of_week, start_of_week + timedelta(days=6)])
+            elif date_range == DateRangeForm.THIS_MONTH:
+                start_of_month = today.replace(day=1)
+                end_of_month = start_of_month.replace(
+                    day=1, month=start_of_month.month + 1) - timedelta(days=1)
+                date_filter = Q(created_date__range=[
+                                start_of_month, end_of_month])
+            elif date_range == DateRangeForm.LAST_MONTH:
+                start_of_last_month = (today.replace(
+                    day=1) - timedelta(days=1)).replace(day=1)
+                end_of_last_month = start_of_last_month.replace(
+                    day=1, month=start_of_last_month.month + 1) - timedelta(days=1)
+                date_filter = Q(created_date__range=[
+                                start_of_last_month, end_of_last_month])
+            elif date_range == DateRangeForm.LAST_THREE_MONTHS:
+                three_months_ago = today - timedelta(days=90)
+                date_filter = Q(created_date__range=[
+                                three_months_ago, today])
+            elif date_range == DateRangeForm.THIS_YEAR:
+                start_of_year = date(today.year, 1, 1)
+                end_of_year = date(today.year, 12, 31)
+                date_filter = Q(created_date__range=[
+                                start_of_year, end_of_year])
+            else:
+                date_filter = Q()  # No filtering
+        
+        # Apply filters to queryset for each model
+        total_income = UserPlan.objects.filter(user_filter).filter(date_filter).aggregate(total_sum=Sum('total'))['total_sum']
+        # import pdb;pdb.set_trace()
+        
+
+    else:
+        # If form is not valid, set totals to None
+        total_income = None
+        
+
+    context = {
+        "current":"dashboard",
+        "form": form,
+        "total_income": total_income,
+       
+    }
+    return render(request, 'dashboard.html', context)
