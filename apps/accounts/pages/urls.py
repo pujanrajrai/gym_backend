@@ -25,4 +25,8 @@ urlpatterns = [
          name='user_profile_update'),
     path('user/expire/', views.expire_plan_list,
          name='expire_plan_list'),
+    path('dashboard/report/', views.dashboard_report,
+         name='dashboard_report'),
+    path('dashboard/export/', views.dashboard_export,
+         name='dashboard_export'),
 ]
