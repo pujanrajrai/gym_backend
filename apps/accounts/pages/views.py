@@ -1,10 +1,13 @@
+from openpyxl import Workbook
+from django.db.models import Sum, Q
+from datetime import date, timedelta
 from django.db.models import Prefetch
 from datetime import datetime, timedelta
 from django.contrib.auth import logout
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from accounts.models.users import User
 from accounts.models.profiles import StaffProfile, UserProfile
-from .forms import CreateAdminForm, CreateStaffForm, CreateUserForm,StaffProfileUpdateForm, UserProfileUpdateForm, AdminProfileUpdateForm,DateRangeForm
+from .forms import CreateAdminForm, CreateStaffForm, CreateUserForm, StaffProfileUpdateForm, UserProfileUpdateForm, AdminProfileUpdateForm, DateRangeForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -16,6 +19,7 @@ from plan.models.userplan import UserPlan, UserPlanDetail
 from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponse
+
 
 @method_decorator(login_required(), name='dispatch')
 @method_decorator(has_roles(['admin', 'staff']), name='dispatch')
@@ -316,23 +320,19 @@ def expire_plan_list(request):
     return render(request, 'users/aboutoexpire.html', context)
 
 
-from datetime import date, timedelta
-from django.db.models import Sum, Q
-
-
 def dashboard_report(request):
     form = DateRangeForm(request.GET or None)
-    context={}
+    context = {}
 
     if form.is_valid():
         date_range = form.cleaned_data.get('date_range')
         from_date = form.cleaned_data.get('from_date')
         to_date = form.cleaned_data.get('to_date')
         user_id = form.cleaned_data.get('user')
-        context["user"]=user_id
-        context["from_date"]=from_date
-        context["to_date"]=to_date
-        context["date_range"]=date_range
+        context["user"] = user_id
+        context["from_date"] = from_date
+        context["to_date"] = to_date
+        context["date_range"] = date_range
 
         # Filter data based on company if selected
         if user_id and user_id != 'All':
@@ -382,41 +382,45 @@ def dashboard_report(request):
                                 start_of_year, end_of_year])
             else:
                 date_filter = Q()  # No filtering
-        
+
         # Apply filters to queryset for each model
-        total_income = UserPlan.objects.filter(user_filter).filter(date_filter).aggregate(total_sum=Sum('total'))['total_sum']
+        total_income = UserPlan.objects.filter(user_filter).filter(
+            date_filter).aggregate(total_sum=Sum('total'))['total_sum']
         # import pdb;pdb.set_trace()
-        
 
     else:
         # If form is not valid, set totals to None
         total_income = None
-        
-    context["total_income"]=total_income
-    context["current"]="dashboard"
-    context["form"]=form
+
+    context["total_income"] = total_income
+    context["current"] = "dashboard"
+    context["form"] = form
 
     return render(request, 'dashboard.html', context)
-
-
-from openpyxl import Workbook
 
 
 @login_required
 @has_roles(['admin'])
 def dashboard_export(request):
     date_range = request.GET.get('date_range')
-    from_date = request.GET.get('from_date')
-    to_date = request.GET.get('to_date')
+    from_date_str = request.GET.get('from_date')
+    to_date_str = request.GET.get('to_date')
     user_id = request.GET.get('user')
+    # Convert from_date and to_date from string to date using the correct format
+    date_format = '%B %d, %Y'
+    from_date = datetime.strptime(
+        from_date_str, date_format) if from_date_str else None
+    to_date = datetime.strptime(
+        to_date_str, date_format) if to_date_str else None
+
     # Filter data based on company if selected
     if user_id and user_id != 'All':
         user_filter = Q(userprofile__user=user_id)
     else:
         user_filter = Q()
-
     # Filter data based on date range
     if date_range == DateRangeForm.CUSTOM:
+
         # Custom date range
         date_filter = Q(created_date__range=[from_date, to_date])
     else:
@@ -464,15 +468,16 @@ def dashboard_export(request):
 
     # Add column headers
     headers = [
-        'Phone Number',
+        'Date',
         'Full Name',
+        'Phone Number',
         'Address',
         'Plan Name',
         'Starting Date',
         'Ending Date',
         'Remaining Days',
         'Total Cost',
-        
+
     ]
     worksheet.append(headers)
 
@@ -480,16 +485,17 @@ def dashboard_export(request):
     for item in queryset:
         # import pdb;pdb.set_trace()
         row_data = [
-            item.userprofile.user.phone_number,
+            item.created_date,
             item.userprofile.fullname,
+            item.userprofile.user.phone_number,
             item.userprofile.address,
             item.userplandetails.first().plan.name if item.userplandetails else None,
             item.starting_date.strftime(
-                '%Y-%m-%d %H:%M:%S')  if item.created_date else None,
-            item.highest_ending_date() if item.highest_ending_date() else None ,
+                '%Y-%m-%d %H:%M:%S') if item.created_date else None,
+            item.highest_ending_date() if item.highest_ending_date() else None,
             item.remaining_days(),
             item.total,
-            
+
         ]
         row_data = [str(value) if isinstance(value, datetime)
                     else value for value in row_data]

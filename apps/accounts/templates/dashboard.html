@@ -56,15 +56,14 @@
             <button type="submit" id="resetBtn" class="btn btn-secondary btn-sm mr-2 mt-4" onclick="resetFilter()">Reset
                 Filter</button>
         </div>
+        <div class="col-md-1" style="margin-left:20px;">
+            <a class="btn btn-primary btn-sm" href="{% url 'accounts:pages:dashboard_export' %}?user={{ user}}&from_date={{ from_date }}&to_date={{ to_date }}&date_range={{ date_range }}">Export</a>
+        </div>
         <div class="col-md-12 mb-5">
         </div>
     </div>
 </form>
-<div class="float-right">
-    <a class="btn btn-primary btn-sm" href="{% url 'accounts:pages:dashboard_export' %}?user={{ user}}&from_date={{ from_date }}&to_date={{ to_date }}&date_range={{ date_range }}">Export</a>
-</div><br>
 <div class="row mt-5">
-
         <div class="col-lg-3 col-md-6 col-xs-12">
             <div class="box-content bg-primary text-white">
                 <div class="statistics-box with-icon">
@@ -79,8 +78,8 @@
         </div>
 </div>
 
-
 {% endblock %}
+
 {% block js %}
 <script>
     function resetFilter() {
@@ -100,20 +99,22 @@
         var dateRangeSelect = document.getElementById("date_range");
         var fromDateDiv = document.getElementById("from_date").parentNode.parentNode;
         var toDateDiv = document.getElementById("to_date").parentNode.parentNode;
-        // Hide date fields and their parent divs initially
-        fromDateDiv.style.display = "none";
-        toDateDiv.style.display = "none";
-
-        // Show/hide date fields and their parent divs based on date range selection
-        dateRangeSelect.addEventListener("change", function() {
-            if (this.value === 'custom') {
+        
+        function toggleDateFields() {
+            if (dateRangeSelect.value === 'custom') {
                 fromDateDiv.style.display = "block";
                 toDateDiv.style.display = "block";
             } else {
                 fromDateDiv.style.display = "none";
                 toDateDiv.style.display = "none";
             }
-        });
+        }
+
+        // Execute on load
+        toggleDateFields();
+
+        // Execute on change
+        dateRangeSelect.addEventListener("change", toggleDateFields);
     });
 </script>
 
@@ -124,5 +125,5 @@
         document.querySelector('select[name="user"]').selectedIndex = -1;
         document.getElementById('filter-form').submit();
     }
-    </script>
+</script>
 {% endblock %}
