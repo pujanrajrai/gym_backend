@@ -336,12 +336,17 @@ from django.db.models import Sum, Q
 
 def dashboard_report(request):
     form = DateRangeForm(request.GET or None)
+    context={}
 
     if form.is_valid():
         date_range = form.cleaned_data.get('date_range')
         from_date = form.cleaned_data.get('from_date')
         to_date = form.cleaned_data.get('to_date')
         user_id = form.cleaned_data.get('user')
+        context["user"]=user_id
+        context["from_date"]=from_date
+        context["to_date"]=to_date
+        context["date_range"]=date_range
 
         # Filter data based on company if selected
         if user_id and user_id != 'All':
@@ -401,13 +406,10 @@ def dashboard_report(request):
         # If form is not valid, set totals to None
         total_income = None
         
+    context["total_income"]=total_income
+    context["current"]="dashboard"
+    context["form"]=form
 
-    context = {
-        "current":"dashboard",
-        "form": form,
-        "total_income": total_income,
-       
-    }
     return render(request, 'dashboard.html', context)
 
 
@@ -421,7 +423,6 @@ def dashboard_export(request):
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
     user_id = request.GET.get('user')
-    import pdb;pdb.set_trace()
     # Filter data based on company if selected
     if user_id and user_id != 'All':
         user_filter = Q(userprofile__user=user_id)

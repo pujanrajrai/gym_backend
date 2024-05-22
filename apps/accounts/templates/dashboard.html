@@ -61,7 +61,7 @@
     </div>
 </form>
 <div class="float-right">
-    <a class="btn btn-primary btn-sm" href="{% url 'accounts:pages:dashboard_export' %}?{% if user %}user={{ user }}&{% endif %}{% if from_date %}from_date={{ from_date }}&{% endif %}{% if to_date %}to_date={{ to_date }}&{% endif %}">Export</a>
+    <a class="btn btn-primary btn-sm" href="{% url 'accounts:pages:dashboard_export' %}?user={{ user}}&from_date={{ from_date }}&to_date={{ to_date }}&date_range={{ date_range }}">Export</a>
 </div><br>
 <div class="row mt-5">
 
