@@ -53,8 +53,8 @@
             </button>
         </div>
         <div class="col-md-1">
-            <button type="submit" id="resetBtn" class="btn btn-secondary btn-sm mr-2 mt-4" onclick="resetFilter()">Reset
-                Filter</button>
+            <a type="submit" id="resetBtn" class="btn btn-secondary btn-sm mr-2 mt-4" href="{% url 'accounts:pages:dashboard_report' %}">Reset
+                Filter</a>
         </div>
         <div class="col-md-1" style="margin-left:20px;">
             <a class="btn btn-primary btn-sm" href="{% url 'accounts:pages:dashboard_export' %}?user={{ user}}&from_date={{ from_date }}&to_date={{ to_date }}&date_range={{ date_range }}">Export</a>
@@ -75,24 +75,54 @@
                     </p>
                 </div>
             </div>
+           
         </div>
+        <div class="col-lg-3 col-md-6 col-xs-12">
+
+        <div class="box-content bg-primary text-white">
+            <div class="statistics-box with-icon">
+                <i class="ico material-symbols-outlined">
+                    money
+                </i>
+                <p class="text text-white">Total Salary</p>
+                <p class="counter">{% if total_salary %}Rs.{{ total_salary|floatformat:2 }}{% else %}0{% endif %}
+                </p>
+            </div>
+        </div>
+
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12">
+
+            <div class="box-content bg-primary text-white">
+                <div class="statistics-box with-icon">
+                    <i class="ico material-symbols-outlined">
+                        money
+                    </i>
+                    <p class="text text-white">Total Expenses</p>
+                    <p class="counter">{% if total_expenses %}Rs.{{ total_expenses|floatformat:2 }}{% else %}0{% endif %}
+                    </p>
+                </div>
+            </div>
+    
+            </div>
+            <div class="col-lg-3 col-md-6 col-xs-12">
+                <div class="box-content bg-primary text-white">
+                    <div class="statistics-box with-icon">
+                        <i class="ico material-symbols-outlined">
+                            shopping_cart
+                        </i>
+                        <p class="text text-white">Profit/Loss</p>
+                        <p class="counter">{% if pl %}Rs.{{ pl|floatformat:2 }}{% else %}0{% endif %}
+                        </p>
+                    </div>
+                </div>
+               
+            </div>
 </div>
 
 {% endblock %}
 
 {% block js %}
-<script>
-    function resetFilter() {
-        // Resetting the input fields
-        document.querySelector('input[name="from_date"]').value = '';
-        document.querySelector('input[name="to_date"]').value = '';
-        // Resetting the select field
-        document.querySelector('select[name="date_range"]').value = 'today';
-        // Submitting the form
-        $('#filter-form').submit();
-    }
-</script>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -118,12 +148,4 @@
     });
 </script>
 
-<script>
-    function resetFilter() {
-        document.querySelector('input[name="from_date"]').value = '';
-        document.querySelector('input[name="to_date"]').value = ''; 
-        document.querySelector('select[name="user"]').selectedIndex = -1;
-        document.getElementById('filter-form').submit();
-    }
-</script>
 {% endblock %}

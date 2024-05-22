@@ -1,6 +1,6 @@
 from openpyxl import Workbook
 from django.db.models import Sum, Q
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.db.models import Prefetch
 from datetime import datetime, timedelta
 from django.contrib.auth import logout
@@ -16,9 +16,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from decorators import has_roles
 from plan.models.userplan import UserPlan, UserPlanDetail
-from django.utils import timezone
+# from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponse
+from ledger.models import Ledger
 
 
 @method_decorator(login_required(), name='dispatch')
@@ -350,7 +351,6 @@ def dashboard_report(request):
             if date_range == DateRangeForm.TODAY:
                 date_filter = Q(created_date__range=[
                                 today, today+timedelta(days=1)])
-
             elif date_range == DateRangeForm.YESTERDAY:
                 date_filter = Q(created_date__range=[
                     today - timedelta(days=1), today])
@@ -385,14 +385,30 @@ def dashboard_report(request):
 
         # Apply filters to queryset for each model
         total_income = UserPlan.objects.filter(user_filter).filter(
-            date_filter).aggregate(total_sum=Sum('total'))['total_sum']
+            date_filter).aggregate(total_sum=Sum('total'))['total_sum'] or 0
+
+        # Calculate total salary
+        total_salary = Ledger.objects.filter(date_filter).filter(
+            entry_type="salary").aggregate(total_sum=Sum('amount'))['total_sum'] or 0
+
+        # Calculate total expenses
+        total_expenses = Ledger.objects.filter(date_filter).filter(
+            entry_type="expenses").aggregate(total_sum=Sum('amount'))['total_sum'] or 0
+
+        pl = total_income-total_salary-total_expenses
         # import pdb;pdb.set_trace()
 
     else:
         # If form is not valid, set totals to None
         total_income = None
+        pl = None
+        total_salary = None
+        total_expenses = None
 
     context["total_income"] = total_income
+    context["pl"] = pl
+    context["total_salary"] = total_salary
+    context["total_expenses"] = total_expenses
     context["current"] = "dashboard"
     context["form"] = form
 
