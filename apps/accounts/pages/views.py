@@ -23,7 +23,7 @@ from ledger.models import Ledger
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class UserListView(ListView):
     model = User
     template_name = 'users/list.html'
@@ -84,7 +84,7 @@ class CreateStaff(SuccessMessageMixin, CreateView):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CreateUser(SuccessMessageMixin, CreateView):
     model = User
     form_class = CreateUserForm
@@ -106,7 +106,7 @@ class CreateUser(SuccessMessageMixin, CreateView):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def block_user(request, id):
     try:
         user = get_object_or_404(User, pk=id)
@@ -134,7 +134,7 @@ def block_user(request, id):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def unblock_user(request, id):
     try:
         user = get_object_or_404(User, pk=id)
@@ -166,7 +166,7 @@ class StaffProfileDetailView(DetailView):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class UserProfileDetailView(DetailView):
     model = UserProfile
     template_name = 'users/detail.html'
@@ -243,7 +243,7 @@ class AdminProfileUpdateView(SuccessMessageMixin, UpdateView):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class UserProfileUpdateView(SuccessMessageMixin, UpdateView):
     form_class = UserProfileUpdateForm
     success_message = 'User Profile Updated Successfully'
@@ -321,6 +321,9 @@ def expire_plan_list(request):
     return render(request, 'users/aboutoexpire.html', context)
 
 
+
+@login_required
+@has_roles(['admin'])
 def dashboard_report(request):
     form = DateRangeForm(request.GET or None)
     context = {}

@@ -48,7 +48,7 @@ def search_customer(request):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class SearchCustomerAPIView(View):
     def get(self, request, *args, **kwargs):
         suggestions = User.objects.filter(
@@ -59,7 +59,7 @@ class SearchCustomerAPIView(View):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CreateUser(SuccessMessageMixin, CreateView):
     model = User
     form_class = CreateUserForm
@@ -81,7 +81,7 @@ class CreateUser(SuccessMessageMixin, CreateView):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def current_plan(request, pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
@@ -100,7 +100,7 @@ def current_plan(request, pk):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def invoice_print(request, pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
@@ -119,7 +119,7 @@ def invoice_print(request, pk):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def usercreate_plan(request, pk):
     context = {}
     user = User.objects.get(pk=pk)
@@ -160,7 +160,7 @@ def usercreate_plan(request, pk):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def previous_plan(request, pk):
     user = User.objects.get(pk=pk)
     userprofile = UserProfile.objects.get(user=user)
@@ -174,7 +174,7 @@ def previous_plan(request, pk):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def plan_details(request, pk):
     userplan = UserPlan.objects.get(pk=pk)
     userprofile = userplan.userprofile
@@ -187,7 +187,7 @@ def plan_details(request, pk):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def print_invoice(request, pk):
     userplan = UserPlan.objects.get(pk=pk)
     userprofile = userplan.userprofile
@@ -200,7 +200,7 @@ def print_invoice(request, pk):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def delete_user_plan(request, pk):
     userplan = UnConfirmUserPlanDetail.objects.get(pk=pk)
     userplan.hard_delete()
@@ -210,7 +210,7 @@ def delete_user_plan(request, pk):
 
 
 @login_required()
-@has_roles(['admin', 'staff'])
+@has_roles(['admin'])
 def issue_userplan(request, pk):
     unconfirm_userplan = UnConfirmUserPlan.objects.get(pk=pk)
     unconfirm_userplan.starting_date = request.POST.get("starting_date")

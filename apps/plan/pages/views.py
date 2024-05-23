@@ -13,7 +13,7 @@ from decorators import has_roles
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin', 'staff']), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class PlanListView(ListView):
     model = Plan
     template_name = 'plan/list.html'
