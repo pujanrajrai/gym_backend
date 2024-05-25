@@ -27,6 +27,7 @@ DJANGO_APP = [
     'accounts',
     'plan',
     'ledger',
+    'rental',
 ]
 
 THIRD_PARTY_APP = [
