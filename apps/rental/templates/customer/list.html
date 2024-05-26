@@ -1,0 +1,67 @@
+
+
+
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}Customer List{% endblock %}
+{% block pagetitle %}Customer List{% endblock %}
+{%block addbutton%}
+<a href="{% url 'rental:customer:create' %}" class="btn btn-primary btn-sm">Add Customer</a>
+
+{% endblock %}
+
+{% block table %}
+    <div class="box-content">
+        <!-- /.dropdown js__dropdown -->
+        <div class="table-responsive">
+            <table id="example" class="display compact nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        
+                        <th>Full Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Secondary Phone Number</th>
+                        <th>Address</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Secondary Phone Number</th>
+                        <th>Address</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.phone_number }}</td>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.secondary_phone_number }}</td>
+                        <td>{{ customer.address }}</td>
+                        <td>
+                            <a href="{% url 'rental:customer:detail' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
+                            <a href="{% url 'rental:customer:update' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;Update Profile</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+    </script>
+{% endblock %}
+
