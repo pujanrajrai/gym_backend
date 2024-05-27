@@ -88,6 +88,24 @@
             </li>
           </ul>
           <ul class="menu js__accordion">
+            <li class="{% if current == "customer" %}current{%endif%}">
+              <a class="" href="{% url 'rental:customer:list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Customer</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "customer" %}current{%endif%}">
+              <a class="" href="{% url 'rental:property:list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Property</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
             <li class="{% if current == "logout" %}current{%endif%}">
               <a class="" href="{% url 'logout' %}?user=&from_date=&to_date="  onclick="return confirm('Are you sure you want to Logout?');">
                 <i class="menu-icon material-symbols-outlined">

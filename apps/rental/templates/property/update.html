@@ -1,0 +1,30 @@
+{% extends 'form_base.html' %}
+{% load static %}
+{% block title %}Update Property{% endblock %}
+{% block pagetitle %}Update Property{% endblock %}
+{%block addbutton%}
+{%endblock%}
+{% block body %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="ml-5">
+        <span style="margin-left:14px; color:red;"><b>Update Property :</b></span><br><br>
+    </div>
+    {% for field in form %}
+    <div class="form-group col-md-12">
+        {{ field.label_tag }} {{ field }}
+        {{ field.errors }}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Update Property</button>
+</form>
+{% endblock %}
+
+{% block js%}
+
+
+{%endblock%}
