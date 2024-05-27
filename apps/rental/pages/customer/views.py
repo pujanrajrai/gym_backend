@@ -41,7 +41,7 @@ class CustomerUpdateView(UpdateView):
     model = Customer
     form_class = CustomerForm
     template_name = 'customer/update.html'
-    success_url = reverse_lazy('customer_list')
+    success_url = reverse_lazy('rental:customer:list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

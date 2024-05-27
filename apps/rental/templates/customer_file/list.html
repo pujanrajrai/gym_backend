@@ -3,10 +3,10 @@
 
 {% extends 'datatable_base.html' %}
 {% load static %}
-{% block title %}Customer List{% endblock %}
-{% block pagetitle %}Customer List{% endblock %}
+{% block title %}Customer File List{% endblock %}
+{% block pagetitle %}Customer File List{% endblock %}
 {%block addbutton%}
-<a href="{% url 'rental:customer:create' %}" class="btn btn-primary btn-sm">Add Customer</a>
+<a href="{% url 'rental:customer_file:create' %}" class="btn btn-primary btn-sm">Add Customer File</a>
 
 {% endblock %}
 
@@ -18,11 +18,8 @@
                 <thead>
                     <tr>
                         
-                        <th>Full Name</th>
-                        <th>Phone Number</th>
-                        <th>Email</th>
-                        <th>Secondary Phone Number</th>
-                        <th>Address</th>
+                        <th>Document Name</th>
+                        <th>Document</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -37,16 +34,14 @@
                     </tr>
                 </tfoot>
                 <tbody>
-                    {% for customer in customers %}
+                    {% for document in documents %}
                     <tr>
-                        <td>{{ customer.name }}</td>
-                        <td>{{ customer.phone_number }}</td>
-                        <td>{{ customer.email }}</td>
-                        <td>{{ customer.secondary_phone_number }}</td>
-                        <td>{{ customer.address }}</td>
+                        <td>{{ document.name }}</td>
+                        <td>{{ document.file.url }}</td>
+                       
                         <td>
-                            <a href="{% url 'rental:customer_file:list' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
-                            <a href="{% url 'rental:customer:update' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;Update Profile</a>
+                            {% comment %} <a href="{% url 'rental:customer:detail' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
+                            <a href="{% url 'rental:customer:update' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;Update Profile</a> {% endcomment %}
                         </td>
                     </tr>
                     {% endfor %}
