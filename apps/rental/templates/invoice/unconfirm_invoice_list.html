@@ -1,0 +1,67 @@
+
+
+
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}Unconfirm Invoice List{% endblock %}
+{% block pagetitle %}Unconfirm Invoice List{% endblock %}
+{%block addbutton%}
+<a href="{% url 'rental:invoice:generate_invoice' %}" class="btn btn-primary btn-sm">Add Unconfirm Invoice</a>
+{% endblock %}
+
+{% block table %}
+    <div class="box-content">
+        <!-- /.dropdown js__dropdown -->
+        <div class="table-responsive">
+            <table id="example" class="display compact nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Property</th>
+                        <th>Month</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Property</th>
+                        <th>Month</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.customer }}</td>
+                        <td>{{ invoice.myproperty }}</td>
+                        <td>
+                            {{invoice.month_name}}
+                        </td>
+                        <td>
+                            {{invoice.total_price}}
+                        </td>
+                        <td>
+                            <a href="{% url 'rental:invoice:issue_invoice' invoice.id %}"  class="btn btn-sm btn-success"><i class="fa fa-edit"></i>&nbsp;Issue</a> 
+                            <a href="{% url 'rental:invoice:delete_unconfirm_invoice' invoice.id %}" onclick="return confirm('Are you sure you want to delete The unconfirm invoice. Its ireversable?');" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>&nbsp;Delete</a> 
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+    </script>
+{% endblock %}
+

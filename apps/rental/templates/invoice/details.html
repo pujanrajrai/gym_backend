@@ -1,0 +1,122 @@
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}Invoice Detail{% endblock %}
+{% block pagetitle %}Invoice Detail{% endblock %}
+{%block addbutton%}
+{% if invoice.can_be_cancelled and not invoice.is_cancelled %}
+<a href="{% url 'rental:invoice:cancel_invoice' invoice.pk %}" onclick="return confirm('Are you sure you want to cancel invoice. Its ireversable?');" class="btn btn-sm btn-primary">
+  <i class="fa fa-trash"></i> Cancel Bill
+</a>
+{%endif%}
+{%endblock%}
+{%block style%}
+<style>
+    .invoice-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+      }
+      .invoice-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .invoice-title {
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .invoice-details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .invoice-info {
+        flex: 1;
+      }
+      .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .invoice-table th, .invoice-table td {
+        padding: 8px;
+        border: 1px solid #ccc;
+        text-align: left;
+      }
+      .invoice-total {
+        text-align: right;
+      }
+  </style>
+{%endblock%}
+{% block table %}
+        <div class="invoice-container" {% if invoice.is_cancelled%}style="text-decoration: line-through; color: red;"{%endif%}>
+            <div class="invoice-header">
+              <div class="invoice-title">Invoice Details</div>
+            </div>
+            <div class="invoice-details">
+              <div class="invoice-info">
+                {% if invoice.is_cancelled%}
+                <p style="text-decoration: line-through; color: red;"><strong>Billid:</strong> {{invoice.invoiceid}}</p>
+                {%else%}
+                <p><strong>Billid:</strong> {{invoice.pk}}</p>
+                {%endif%}
+                <p><strong>Date:</strong> {{invoice.created_date|date}}</p>
+              </div>
+              <div class="invoice-info">
+                <p><strong>Customer:</strong> {{invoice.customer.name}}</p>
+                <p><strong>Contact:</strong>{% if invoice.customer.phone_number %}{{invoice.customer.phone_number}}{%else%}Not Avliable{%endif%}</p>
+              </div>
+              
+              <div class="invoice-info">
+                <p><strong>Month:</strong> {{invoice.month_name}}</p>
+              </div>
+            </div>
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                <tr>
+                  <td>Property Rent</td>
+                  <td>{{invoice.property_rent}}</td>
+                </tr>
+                <tr>
+                  <td>Electricity Amount</td>
+                  <td>{{invoice.total_electricity_amount}}</td>   
+                </tr>   
+                <tr>
+                  <td>Water Amount</td>
+                  <td>{{invoice.total_water_amount}}</td>   
+                </tr>
+                <tr>
+                  <td>Garbage Amount</td>
+                  <td>{{invoice.total_garbage_amount}}</td>   
+                </tr>
+                <tr>
+                  <td>Miscellaneous Amount</td>
+                  <td>{{invoice.miscellaneous_amount}}</td>   
+                </tr>      
+              </tbody>
+            </table>
+            <div class="invoice-total">
+              <p><strong>Total Amount:</strong> {{invoice.total_price|floatformat:2}}</p>
+            </div>
+            <div class="" style="padding:5px;border:2px solid gray;">
+              <p><strong>Remarks:</strong> {{invoice.remarks}}</p>
+            </div>
+          
+{% endblock %}
+
+{%block js%}
+
+
+<script>
+    $('.ui.dropdown').dropdown();
+
+</script>
+
+{%endblock%}

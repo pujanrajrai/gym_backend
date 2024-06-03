@@ -23,6 +23,8 @@
                         <th>Email</th>
                         <th>Secondary Phone Number</th>
                         <th>Address</th>
+                        <th>Is Active</th>
+
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -33,6 +35,7 @@
                         <th>Email</th>
                         <th>Secondary Phone Number</th>
                         <th>Address</th>
+                        <th>Is Active</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>
@@ -44,9 +47,22 @@
                         <td>{{ customer.email }}</td>
                         <td>{{ customer.secondary_phone_number }}</td>
                         <td>{{ customer.address }}</td>
+                        <td>{{ customer.is_active }}</td>
                         <td>
-                            <a href="{% url 'rental:customer_file:list' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
-                            <a href="{% url 'rental:customer:update' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;Update Profile</a>
+                            <a href="{% url 'rental:customer:details' customer.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
+                            {% if customer.is_active %}
+                            <a href="{% url 'rental:customer:customer_active_status_toggle' customer.pk %}" 
+                            class="btn btn-sm btn-danger" 
+                            onclick="return confirm('Are you sure you want to make this customer inactive?');">
+                            <i class="fa fa-lock"></i>&nbsp;Make Inactive
+                         </a>
+                            {%else%}
+                            <a href="{% url 'rental:customer:customer_active_status_toggle' customer.pk %}" 
+                                                     class="btn btn-sm btn-success" 
+                                                     onclick="return confirm('Are you sure you want to make this customer active?');">
+                                                     <i class="fa fa-unlock"></i>&nbsp; Make Active
+                                                  </a>                            {%endif%}
+
                         </td>
                     </tr>
                     {% endfor %}

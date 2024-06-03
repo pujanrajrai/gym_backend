@@ -1,0 +1,51 @@
+
+
+
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}Payments List{% endblock %}
+{% block pagetitle %}Payments List{% endblock %}
+{%block addbutton%}
+<a href="{% url 'rental:payment:create' %}" class="btn btn-primary btn-sm">Add Payments</a>
+
+{% endblock %}
+
+{% block table %}
+    <div class="box-content">
+        <!-- /.dropdown js__dropdown -->
+        <div class="table-responsive">
+            <table id="example" class="display compact nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.customer.name }}</td>
+                        <td>{{ payment.amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+    </script>
+{% endblock %}
+

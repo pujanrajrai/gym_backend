@@ -1,0 +1,100 @@
+{% extends 'form_base.html' %}
+{% load static %}
+{% block title %} Invoice Detail{% endblock %}
+{% block pagetitle %}Invoice Detail{% endblock %}
+{%block addbutton%}
+{%endblock%}
+{% block body %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="ml-5">
+        <span style="margin-left:14px; color:red;"><b>Invoice Detail :</b></span><br><br>
+    </div>
+    {% for field in form %}
+    {% if field.label == "Remarks" %}
+    <div class="form-group col-md-12">
+    {%else%}
+    <div class="form-group col-md-4">
+    {%endif%}
+
+        {{ field.label_tag }}
+        {% if field.label == "Total garbage amount" %}
+        <span style="font-size:12px;">
+        Per Month: {{garbage_amount}}
+        </span>
+        {%endif%}
+        {% if field.label == "Property rent" %}
+        <span style="font-size:12px;">
+        Per Month: {{rent_amount}}
+        </span>
+        {%endif%}
+        {% if field.label == "Total electricity unit" %}
+        <span style="font-size:12px;">
+        Electricity Per Unit: {{electricity_per_unit_price}}
+        </span>
+        {%endif%}
+        {% if field.label == "Total water unit" %}
+        <span style="font-size:12px;">
+        Water Per Unit: {{water_per_unit_price}}
+        </span>
+        {%endif%}
+        {{ field }}
+        
+        {{ field.errors }}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div class="form-group col-md-12">
+        <button type="submit" name="save" class="btn btn-sm btn-primary">
+            <i class="fa fa-plus"></i>&nbsp;Save Invoice Detail
+        </button>
+        <button type="submit" name="issue" class="btn btn-sm btn-primary">
+            <i class="fa fa-plus"></i>&nbsp;Issue Invoice
+        </button>
+    </div>
+
+</form>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rentAmount = {{ rent_amount }};
+        const electricityPerUnitPrice = {{ electricity_per_unit_price }};
+        const waterPerUnitPrice = {{ water_per_unit_price }};
+
+        const electricityUnitsField = document.getElementById("id_total_electricity_unit");
+        const electricityAmountField = document.getElementById("id_total_electricity_amount");
+        const waterUnitsField = document.getElementById("id_total_water_unit");
+        const waterAmountField = document.getElementById("id_total_water_amount");
+        const garbageAmountField = document.getElementById("id_total_garbage_amount");
+        const miscellaneousAmountField = document.getElementById("id_miscellaneous_amount");
+        const totalPriceField = document.getElementById("id_total_price");
+
+        function calculateTotalPrice() {
+            const totalElectricityAmount = parseFloat(electricityUnitsField.value || 0) * electricityPerUnitPrice;
+            electricityAmountField.value = totalElectricityAmount.toFixed(2);
+
+            const totalWaterAmount = parseFloat(waterUnitsField.value || 0) * waterPerUnitPrice;
+            waterAmountField.value = totalWaterAmount.toFixed(2);
+
+            const garbageAmount = parseFloat(garbageAmountField.value || 0);
+            const miscellaneousAmount = parseFloat(miscellaneousAmountField.value || 0);
+
+            const totalPrice = rentAmount + totalElectricityAmount + totalWaterAmount + garbageAmount + miscellaneousAmount;
+            totalPriceField.value = totalPrice.toFixed(2);
+        }
+
+        electricityUnitsField.addEventListener("input", calculateTotalPrice);
+        waterUnitsField.addEventListener("input", calculateTotalPrice);
+        garbageAmountField.addEventListener("input", calculateTotalPrice);
+        miscellaneousAmountField.addEventListener("input", calculateTotalPrice);
+
+        // Initial calculation
+        calculateTotalPrice();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'form_base.html' %}
+{% load static %}
+{% block title %}Generate Invoice{% endblock %}
+{% block pagetitle %}Generate Invoice{% endblock %}
+{%block addbutton%}
+{%endblock%}
+{% block body %}
+<form method="post">
+    {% csrf_token %}
+    <div class="field">
+        {{ form.type1.label_tag }}{{ form.type1 }}
+    </div>
+    <div class="field">
+        {{ form.type2.label_tag }}{{ form.type2 }}
+    </div>
+    <div class="field">
+        {{ form.type3.label_tag }}{{ form.type3 }}
+    </div>
+    <div class="field">
+        {{ form.type4.label_tag }}{{ form.type4 }}
+    </div>
+    <div class="field">
+        {{ form.month.label_tag }}{{ form.month }}
+    </div>
+    
+    <div style="margin-top:10px;">
+    <button type="submit" class="btn btn-sm btn-primary" style="float:right;margin-right:15px;"><i class="fa fa-plus"></i>&nbsp;Generate Invoice</button>
+    </div>
+</form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var type2Field = document.getElementById('id_type2');
+    var type3Field = document.getElementById('id_type3').closest('.field');
+    var type4Field = document.getElementById('id_type4').closest('.field');
+
+    function toggleFields() {
+        var type2Value = type2Field.value;
+
+        if (type2Value === 'single') {
+            type4Field.style.display = 'block';
+            document.getElementById('id_type4').required = true;
+
+            type3Field.style.display = 'none';
+            document.getElementById('id_type3').required = false;
+        } else if (type2Value === 'multiple') {
+            type3Field.style.display = 'block';
+            document.getElementById('id_type3').required = true;
+
+            type4Field.style.display = 'none';
+            document.getElementById('id_type4').required = false;
+        } else {
+            type3Field.style.display = 'none';
+            document.getElementById('id_type3').required = false;
+
+            type4Field.style.display = 'none';
+            document.getElementById('id_type4').required = false;
+        }
+    }
+
+    type2Field.addEventListener('change', toggleFields);
+
+    // Call once on page load to set initial state
+    toggleFields();
+});
+</script>
+
+{% comment %} 
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="ml-5">
+        <span style="margin-left:14px; color:red;"><b>Generate Invoice :</b></span><br><br>
+    </div>
+    
+    {% for field in form %}
+    <div class="form-group col-md-12">
+        {{ field.label_tag }} {{ field }}
+        {{ field.errors }}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-sm btn-primary" style="float:right;margin-right:15px;"><i class="fa fa-plus"></i>&nbsp;Generate Invoice</button>
+</form>
+     {% endcomment %}
+{% endblock %}
+
+{% block js%}
+
+
+{%endblock%}

@@ -1,0 +1,61 @@
+
+
+
+{% extends 'datatable_base.html' %}
+{% load static %}
+{% block title %}Customer Property List{% endblock %}
+{% block pagetitle %}Customer Property List{% endblock %}
+{%block addbutton%}
+<a href="{% url 'rental:customer_property:create' %}" class="btn btn-primary btn-sm">Add Customer Property</a>
+
+{% endblock %}
+
+{% block table %}
+    <div class="box-content">
+        <!-- /.dropdown js__dropdown -->
+        <div class="table-responsive">
+            <table id="example" class="display compact nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Customer</th>
+                        <th>Terminated</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Property</th>
+                        <th>Customer</th>
+                        <th>Terminated</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for property in customer_properties %}
+                    <tr>
+                        <td>{{ property.myproperty }}</td>
+                        <td>{{ property.customer }}</td>
+                        <td>{{ property.is_terminated }}</td>
+
+                        <td>
+                            {% comment %} <a href="{% url 'rental:customer_file:list' customer.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>{% endcomment %}
+                            <a href="{% url 'rental:customer_property:terminate_contract' property.id %}" onclick="return confirm('Are you sure you want to Terminated The Contract Its ireversable?');" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;Terminated Contract</a> 
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function confirmStatusChange() {
+            if (confirm('Are you sure ?')) {
+                return true;  // Proceed with the link
+            }
+            return false;  // Cancel the link
+        }
+    </script>
+{% endblock %}
+

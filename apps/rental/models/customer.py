@@ -23,12 +23,19 @@ class Customer(BaseModel):
     address = models.CharField(
         max_length=100
     )
+    is_active = models.BooleanField(
+        default=True
+    )
 
     def __str__(self):
         return self.name
 
 
 class CustomerDocument(BaseModel):
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.PROTECT
+    )
     name = models.CharField(
         max_length=100
     )

@@ -13,7 +13,7 @@
     <!-- /.header -->
     <div class="content">
         <div class="navigation">
-          <h5 class="title">Home</h5>
+          <h5 class="title">GYM</h5>
           <!-- /.title -->
           <ul class="menu js__accordion">
             <li class="{% if current == "dashboard" %}current{%endif%}">
@@ -87,6 +87,7 @@
                   <span>Expenses</span></a>
             </li>
           </ul>
+          <h5 class="title">Rental</h5>
           <ul class="menu js__accordion">
             <li class="{% if current == "customer" %}current{%endif%}">
               <a class="" href="{% url 'rental:customer:list' %}">
@@ -97,12 +98,57 @@
             </li>
           </ul>
           <ul class="menu js__accordion">
-            <li class="{% if current == "customer" %}current{%endif%}">
+            <li class="{% if current == "property" %}current{%endif%}">
               <a class="" href="{% url 'rental:property:list' %}">
                 <i class="menu-icon material-symbols-outlined">
                     people
                 </i>
                   <span>Property</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "customer_property" %}current{%endif%}">
+              <a class="" href="{% url 'rental:customer_property:list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Customer Property</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "generate_invoice" %}current{%endif%}">
+              <a class="" href="{% url 'rental:invoice:unconfirm_invoice_list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Generate Invoice</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "invoices" %}current{%endif%}">
+              <a class="" href="{% url 'rental:invoice:invoice_list' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Invoice List</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "payment" %}current{%endif%}">
+              <a class="" href="{% url 'rental:payment:list' %}?customer=&from_date=&to_date=">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Payment</span></a>
+            </li>
+          </ul>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "rental_ledger" %}current{%endif%}">
+              <a class="" href="{% url 'rental:ledger:list' %}?customer=&from_date=&to_date=">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Ledger</span></a>
             </li>
           </ul>
           <ul class="menu js__accordion">
