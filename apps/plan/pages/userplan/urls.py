@@ -6,6 +6,7 @@ urlpatterns = [
     path(
         'search/user', views.search_customer, name='search_customer'
     ),
+
     path(
         'search/user/api/', views.SearchCustomerAPIView.as_view(), name='search_customer_api'
     ),
@@ -35,5 +36,8 @@ urlpatterns = [
     ),
     path(
         'print/invoice/<str:pk>/', views.print_invoice, name="print_invoice"
+    ),
+    path(
+        'extends/user/plan/<str:pk>', views.extends, name='extend_user_plan'
     ),
 ]

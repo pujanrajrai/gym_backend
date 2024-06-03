@@ -230,3 +230,28 @@ def issue_userplan(request, pk):
     else:
         messages.error(request, f'{message}')
         return redirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required()
+@has_roles(['admin'])
+def extends(request, pk):
+    user = User.objects.filter(role="user").get(pk=pk)
+    userprofile = UserProfile.objects.get(user=user)
+    last_plan = UserPlan.objects.filter(
+        userprofile=userprofile).latest('created_date')
+    last_plan_details = last_plan.userplandetails.all()
+    userplan, created = UnConfirmUserPlan.objects.get_or_create(
+        userprofile=userprofile
+    )
+
+    UnConfirmUserPlanDetail.objects.filter(userplan=userplan).delete()
+
+    for plan in last_plan_details:
+        try:
+            UnConfirmUserPlanDetail.objects.create(
+                userplan=userplan,
+                plan=plan.plan
+            )
+        except Exception as e:
+            print(e)
+    return redirect(f'/plan/pages/userplan/create/user/plan/{user.pk}/')

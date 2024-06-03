@@ -47,7 +47,9 @@
                         <td>{{ user.user_profile.userplan.first.highest_ending_date }}</td>
                         <td>{{ user.user_profile.userplan.first.remaining_days }}</td>
                         <td>{{ user.user_profile.userplan.first.total }}</td>
-                        <td><a href="{% url 'accounts:pages:profile_redirect' user.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Plan</a></td>
+                        <td><a href="{% url 'accounts:pages:profile_redirect' user.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Plan</a>&nbsp;
+                            <a href="{% url 'plan:pages:userplan:extend_user_plan' user.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;Extends</a></td>
+
                     </tr>
                     {% endfor %}
                 </tbody>

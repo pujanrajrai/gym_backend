@@ -321,7 +321,6 @@ def expire_plan_list(request):
     return render(request, 'users/aboutoexpire.html', context)
 
 
-
 @login_required
 @has_roles(['admin'])
 def dashboard_report(request):
