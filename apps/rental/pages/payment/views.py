@@ -1,7 +1,9 @@
-from rental.models import Payment, Customer
+from django.shortcuts import get_object_or_404
+from rental.models import Payment, Customer, ledger_last_balance
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .forms import PaymentForm
+from django.http import JsonResponse
 
 
 def payment_list(request):
@@ -27,3 +29,9 @@ def payment_create(request):
         "current": "payment"
     }
     return render(request, 'payments/create.html', context)
+
+
+def due_amount(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    customer_balance = ledger_last_balance(customer)
+    return JsonResponse({"balance": customer_balance})

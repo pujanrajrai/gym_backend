@@ -9,6 +9,8 @@ urlpatterns = [
     path(
         'create/', views.payment_create, name='create'
     ),
-
+    path(
+        'customer/due/<str:pk>/', views.due_amount, name="customer_due_amount"
+    )
 
 ]

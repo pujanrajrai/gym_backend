@@ -2,8 +2,8 @@
 {% load static %}
 {% block title %}Add Payments{% endblock %}
 {% block pagetitle %}Add Payments{% endblock %}
-{%block addbutton%}
-{%endblock%}
+{% block addbutton %}
+{% endblock %}
 {% block body %}
 
 <form method="post" enctype="multipart/form-data">
@@ -13,7 +13,12 @@
     </div>
     {% for field in form %}
     <div class="form-group col-md-12">
-        {{ field.label_tag }} {{ field }}
+        {{ field.label_tag }}
+        {% if field.label == 'Amount' %}
+        <p id="due-amount-container" style=""></p>
+
+        {%endif%}
+        {{ field }}
         {{ field.errors }}
         {% if field.help_text %}
         <p class="help">{{ field.help_text|safe }}</p>
@@ -23,8 +28,64 @@
     <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;Create Payments</button>
 </form>
 {% endblock %}
+{% block js %}
+<script>
+    $(document).ready(function() {
+        let initialBalance = 0;
 
-{% block js%}
+        function fetchDueAmount(customerId) {
+            if (customerId) {
+                $.ajax({
+                    url: `/rental/payment/customer/due/${customerId}/`,
+                    method: 'GET',
+                    success: function(response) {
+                        initialBalance = parseFloat(response.balance);
+                        updateBalanceDisplay(initialBalance);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching due amount:', error);
+                    }
+                });
+            } else {
+                $('#due-amount-container').html('');
+            }
+        }
 
+        function updateBalanceDisplay(balance) {
+            if (balance < 0) {
+                $('#due-amount-container').html('Due Amount: ' + Math.abs(balance).toFixed(2));
+            } else if (balance > 0) {
+                $('#due-amount-container').html('Surplus Amount: ' + balance.toFixed(2));
+            } else {
+                $('#due-amount-container').html('No Due Amount');
+            }
+        }
 
-{%endblock%}
+        function calculateNewBalance() {
+            let paymentAmount = parseFloat($('#id_amount').val());
+            if (isNaN(paymentAmount)) {
+                paymentAmount = 0;
+            }
+            let newBalance = initialBalance + paymentAmount;
+            updateBalanceDisplay(newBalance);
+        }
+
+        // Fetch due amount on customer change
+        $('#id_customer').change(function() {
+            let customerId = $(this).val();
+            fetchDueAmount(customerId);
+        });
+
+        // Fetch due amount on load if a customer is pre-selected
+        let preSelectedCustomer = $('#id_customer').val();
+        if (preSelectedCustomer) {
+            fetchDueAmount(preSelectedCustomer);
+        }
+
+        // Update balance on payment amount change
+        $('#id_amount').on('input', function() {
+            calculateNewBalance();
+        });
+    });
+</script>
+{% endblock %}
