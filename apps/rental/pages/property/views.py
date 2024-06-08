@@ -5,6 +5,14 @@ from django.contrib.auth.decorators import login_required
 from rental.models.myproperty import Property
 from .forms import PropertyForm
 
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from decorators import has_roles
+
+
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class PropertyListView(ListView):
     model = Property
     template_name = 'property/list.html'
@@ -15,6 +23,9 @@ class PropertyListView(ListView):
         context['current'] = 'property'
         return context
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class PropertyCreateView(CreateView):
     model = Property
     form_class = PropertyForm
@@ -26,6 +37,9 @@ class PropertyCreateView(CreateView):
         context['current'] = 'property'
         return context
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class PropertyUpdateView(UpdateView):
     model = Property
     form_class = PropertyForm

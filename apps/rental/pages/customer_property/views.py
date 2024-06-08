@@ -4,7 +4,15 @@ from .forms import CustomerPropertyForms, CustomerPropertyUpdateForms
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from decorators import has_roles
 
+
+
+
+@login_required()
+@has_roles(['admin'])
 def customer_property_create(request):
     form = CustomerPropertyForms()
     if request.method == 'POST':
@@ -24,6 +32,10 @@ def customer_property_create(request):
     return render(request, 'customer_property/create.html', context)
 
 
+
+
+@login_required()
+@has_roles(['admin'])
 def customer_property_list(request):
     customer_properies = CustomerProperty.objects.all()
     context = {
@@ -33,6 +45,10 @@ def customer_property_list(request):
     return render(request, 'customer_property/list.html', context)
 
 
+
+
+@login_required()
+@has_roles(['admin'])
 def terminated_contract(request, pk):
     customer_property = CustomerProperty.objects.get(pk=pk)
     customer_property.is_terminated = True

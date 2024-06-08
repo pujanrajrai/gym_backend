@@ -53,7 +53,7 @@
                             <th>Debit</th>
                             <th>Credit</th>
                             <th>Balance</th>
-                            <th>Company Balance</th>
+                            {% comment %} <th>Company Balance</th> {% endcomment %}
                             <th>Remarks</th>
                             <th>Entry Type</th>
                             {% comment %} <th>Leadger Id</th> {% endcomment %}
@@ -68,7 +68,7 @@
                                 <th>Debit</th>
                                 <th>Credit</th>
                                 <th>Balance</th>
-                                <th>Company Balance</th>
+                                {% comment %} <th>Company Balance</th> {% endcomment %}
                                 <th>Remarks</th>
                                 <th>Entry Type</th>
                                 {% comment %} <th>Leadger Id</th> {% endcomment %}
@@ -147,7 +147,7 @@
                     }
                 },
                 { name: "Balance", data: "balance" },
-                { name: "Company Balance", data: "company_balance" },
+                {% comment %} { name: "Company Balance", data: "company_balance" }, {% endcomment %}
                 { name: "Remarks", data: "remarks" },
                 { name: "Entry Type", data: "entry_type" },
                 {% comment %} { name: "Ledger Id", data: "leaserid" }, {% endcomment %}

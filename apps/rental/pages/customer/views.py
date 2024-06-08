@@ -6,7 +6,13 @@ from django.contrib import messages
 from rental.models.customer import Customer, CustomerDocument
 from .forms import CustomerForm, CustomerDocumentForm
 
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from decorators import has_roles
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CustomerListView(ListView):
     model = Customer
     template_name = 'customer/list.html'
@@ -18,6 +24,9 @@ class CustomerListView(ListView):
         return context
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CustomerCreateView(CreateView):
     model = Customer
     form_class = CustomerForm
@@ -30,6 +39,9 @@ class CustomerCreateView(CreateView):
         return context
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CustomerUpdateView(UpdateView):
     model = Customer
     form_class = CustomerForm
@@ -50,6 +62,9 @@ class CustomerUpdateView(UpdateView):
         return reverse_lazy('rental:customer:details', kwargs={'pk': self.object.pk})
 
 
+
+@login_required()
+@has_roles(['admin'])
 def active_inactive_toggle(request, pk):
     customer = Customer.objects.get(pk=pk)
     active_status = customer.is_active
@@ -61,6 +76,9 @@ def active_inactive_toggle(request, pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
+
+@login_required()
+@has_roles(['admin'])
 def customer_details(request, pk):
     customer = Customer.objects.get(pk=pk)
     customer_document = CustomerDocument.objects.filter(customer=customer)
@@ -72,6 +90,9 @@ def customer_details(request, pk):
     return render(request, 'customer/details.html', context)
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(has_roles(['admin']), name='dispatch')
 class CustomerDocumentCreateView(CreateView):
     model = CustomerDocument
     form_class = CustomerDocumentForm
@@ -92,6 +113,9 @@ class CustomerDocumentCreateView(CreateView):
         return reverse_lazy('rental:customer:details', kwargs={'pk': self.object.customer.pk})
 
 
+
+@login_required()
+@has_roles(['admin'])
 def delete_document(request, pk):
     document = CustomerDocument.objects.get(pk=pk)
     document.delete()
