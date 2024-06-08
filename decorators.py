@@ -33,3 +33,33 @@ def has_roles(allowed_roles):
                 return HttpResponse(f'error occored {e}')
         return wrap
     return decorator
+
+
+def is_renta_user(allowed_roles):
+    def decorator(view_function):
+        def wrap(request, *args, **kwargs):
+            try:
+                user = request.user
+                if user.is_authenticated:
+                    username = request.user
+
+                    if not user.is_blocked:
+                        if user.role in allowed_roles:
+                            if user.is_rental_user:
+                                return view_function(request, *args, **kwargs)
+                            else:
+                                raise PermissionDenied
+                        else:
+                            raise PermissionDenied
+                    else:
+                        auth.logout(request)
+                        return HttpResponse('Your account is blocked. Please contact admin')
+                else:
+                    return redirect('accounts:pages:users:')
+            except PermissionDenied:
+                return render(request, '403.html', status=403)
+            except Exception as e:
+                print(e)
+                return HttpResponse(f'error occored {e}')
+        return wrap
+    return decorator

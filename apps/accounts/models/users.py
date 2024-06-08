@@ -67,6 +67,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(
         default=False
     )
+    is_rental_user = models.BooleanField(
+        default=False,
+        blank=True,
+        null=True
+    )
     objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'

@@ -1,89 +1,98 @@
-
-
-
 {% extends 'datatable_base.html' %}
 {% load static %}
 {% block title %}User List{% endblock %}
 {% block pagetitle %}User List{% endblock %}
-{%block addbutton%}
-{% comment %} <a href="{% url 'accounts:pages:users:createadmin' %}" class="btn btn-sm btn-primary">
-<i class="fa fa-plus"></i>Add User
-</a> {% endcomment %}
-
+{% block addbutton %}
 <div class="dropdown">
     <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        AddUser
+        Add User
     </button>
     <div class="dropdown-menu" aria-labelledby="exportDropdown">
-        <a class="dropdown-item" href="{% url 'accounts:pages:admin_create' %}" >Create Admin</a>
-    <a class="dropdown-item" href="{% url 'accounts:pages:staff_create' %}">Create Staff</a>
-    <a class="dropdown-item" href="{% url 'accounts:pages:user_create' %}">Create User</a>
+        <a class="dropdown-item" href="{% url 'accounts:pages:admin_create' %}">Create Admin</a>
+        <a class="dropdown-item" href="{% url 'accounts:pages:staff_create' %}">Create Staff</a>
+        <a class="dropdown-item" href="{% url 'accounts:pages:user_create' %}">Create User</a>
     </div>
 </div>
 {% endblock %}
 
 {% block table %}
 {% include 'users/tab.html' %}
-    <div class="box-content">
-        <!-- /.dropdown js__dropdown -->
-        <div class="table-responsive">
-            <table id="example" class="display compact nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        
-                        <th>Full Name</th>
-                        <th>Phone Number</th>
-                        <th>Role</th>
-                        <th>Email</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Phone Number</th>
-                        <th>Role</th>
-                        <th>Email</th>
-                        <th>Action</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        {% if user.role == "user" %}
-                        <td>{{ user.user_profile.fullname }}</td>
-                        {%elif user.role == "staff" %}
-                        <td>{{ user.staff_profile.fullname }}</td>
-                        {%else%}
-                        <td></td>
-                        {%endif%}
-
-                        <td>{{ user.phone_number }}</td>
-                        <td>{{ user.role }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>
-                            {% if user.is_blocked %}
-                            <a href="{% url 'accounts:pages:unblock_user' user.id %}" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>
-                            {% else %}
-                            <a href="{% url 'accounts:pages:block_user' user.id %}" class="btn btn-sm btn-dark" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Block</a>
-                            {% endif %}
-                            <a href="{% url 'accounts:pages:profile_redirect' user.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
-        
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="box-content">
+    <div class="table-responsive">
+        <table id="example" class="display compact nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>S.N</th>
+                    <th>Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>S.N</th>
+                    <th>Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td></td>
+                    {% if user.role == "user" %}
+                    <td>{{ user.user_profile.fullname }}</td>
+                    {% elif user.role == "staff" %}
+                    <td>{{ user.staff_profile.fullname }}</td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                    <td>{{ user.phone_number }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.is_blocked %}
+                        <a href="{% url 'accounts:pages:unblock_user' user.id %}" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>
+                        {% else %}
+                        <a href="{% url 'accounts:pages:block_user' user.id %}" class="btn btn-sm btn-dark" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Block</a>
+                        {% endif %}
+                        <a href="{% url 'accounts:pages:profile_redirect' user.id %}" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    
-    <script>
-        function confirmStatusChange() {
-            if (confirm('Are you sure ?')) {
-                return true;  // Proceed with the link
-            }
-            return false;  // Cancel the link
-        }
-    </script>
+</div>
 {% endblock %}
 
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        // Destroy any existing DataTable instance
+        if ($.fn.DataTable.isDataTable('#example')) {
+            $('#example').DataTable().destroy();
+        }
+        // Initialize the DataTable
+        $('#example').DataTable({
+            "drawCallback": function(settings) {
+                var api = this.api();
+                var start = api.page.info().start;
+                api.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+                    cell.innerHTML = start + i + 1;
+                });
+            }
+        });
+    });
+
+    function confirmStatusChange() {
+        return confirm('Are you sure ?');
+    }
+</script>
+
+{% endblock %}
