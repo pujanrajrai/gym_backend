@@ -62,6 +62,7 @@ def generate_invoice_view(request):
 def unconfirm_invoice_list(request):
     invoices = UnconfirmInvoice.objects.all()
     context = {
+        "current":"generate_invoice",
         "invoices": invoices
     }
     return render(request, 'invoice/unconfirm_invoice_list.html', context)
