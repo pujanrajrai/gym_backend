@@ -166,6 +166,14 @@ def invoice_details(request, pk):
     }
     return render(request, 'invoice/details.html', context)
 
+@login_required()
+@has_roles(['admin'])
+def invoice_print(request, pk):
+    invoice = Invoice.objects.get(pk=pk)
+    context = {
+        "invoice": invoice
+    }
+    return render(request, 'invoice/print.html',context)
 
 
 

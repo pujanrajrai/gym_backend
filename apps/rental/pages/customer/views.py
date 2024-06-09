@@ -8,11 +8,11 @@ from .forms import CustomerForm, CustomerDocumentForm
 
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from decorators import has_roles
+from decorators import is_renta_user
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin']), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerListView(ListView):
     model = Customer
     template_name = 'customer/list.html'
@@ -26,7 +26,7 @@ class CustomerListView(ListView):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin']), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerCreateView(CreateView):
     model = Customer
     form_class = CustomerForm
@@ -41,7 +41,7 @@ class CustomerCreateView(CreateView):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin']), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerUpdateView(UpdateView):
     model = Customer
     form_class = CustomerForm
@@ -64,7 +64,7 @@ class CustomerUpdateView(UpdateView):
 
 
 @login_required()
-@has_roles(['admin'])
+@is_renta_user(['admin'])
 def active_inactive_toggle(request, pk):
     customer = Customer.objects.get(pk=pk)
     active_status = customer.is_active
@@ -78,7 +78,7 @@ def active_inactive_toggle(request, pk):
 
 
 @login_required()
-@has_roles(['admin'])
+@is_renta_user(['admin'])
 def customer_details(request, pk):
     customer = Customer.objects.get(pk=pk)
     customer_document = CustomerDocument.objects.filter(customer=customer)
@@ -92,7 +92,7 @@ def customer_details(request, pk):
 
 
 @method_decorator(login_required(), name='dispatch')
-@method_decorator(has_roles(['admin']), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerDocumentCreateView(CreateView):
     model = CustomerDocument
     form_class = CustomerDocumentForm
@@ -115,7 +115,7 @@ class CustomerDocumentCreateView(CreateView):
 
 
 @login_required()
-@has_roles(['admin'])
+@is_renta_user(['admin'])
 def delete_document(request, pk):
     document = CustomerDocument.objects.get(pk=pk)
     document.delete()
