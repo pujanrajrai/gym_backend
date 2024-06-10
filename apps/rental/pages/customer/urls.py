@@ -23,6 +23,8 @@ urlpatterns = [
     ),
     path(
         'delete/document/<str:pk>/', views.delete_document, name="delete_document"
-    )
+    ),
+    path('dashboard/report/', views.dashboard_report,
+         name='dashboard_report'),
 
 ]
