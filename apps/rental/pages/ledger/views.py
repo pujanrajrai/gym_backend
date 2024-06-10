@@ -17,7 +17,7 @@ from django_serverside_datatable.views import ServerSideDatatableView
 from datetime import datetime
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from decorators import has_roles
+from decorators import is_renta_user
 from openpyxl import Workbook
 from rest_framework import serializers
 from rest_framework.views import APIView
@@ -25,7 +25,7 @@ from rest_framework.views import APIView
 
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from decorators import has_roles
+from decorators import is_renta_user
 
 
 
@@ -115,7 +115,7 @@ class LedgerListView(APIView):
 
 
 @login_required()
-@has_roles(['admin'])
+@is_renta_user(['admin'])
 def list_ledger(request):
     context = {"current": "rental_ledger"}
     form = LedgerFilterForm(request.GET)
@@ -130,7 +130,7 @@ def list_ledger(request):
 
 
 @login_required()
-@has_roles(['admin'])
+@is_renta_user(['admin'])
 def create_ledger(request):
     form = LedgerForm()
     context = {'form': form, "current": "ledger"}
@@ -193,7 +193,7 @@ def create_ledger(request):
 
 
 @login_required
-@has_roles(['admin'])
+@is_renta_user(['admin'])
 def export_ledger_to_excel(request):
     customer = request.GET.get('customer')
     from_date_str = request.GET.get('from_date')
