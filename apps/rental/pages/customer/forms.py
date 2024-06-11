@@ -37,7 +37,6 @@ class CustomerDocumentForm(forms.ModelForm):
             self.fields['customer'].widget.attrs['readonly'] = True
 
 
-
 class DateRangeForm(forms.Form):
     TODAY = 'today'
     YESTERDAY = 'yesterday'
@@ -58,8 +57,8 @@ class DateRangeForm(forms.Form):
         (THIS_YEAR, 'This Year'),
         (CUSTOM, 'Custom'),
     )
-    user_choices = [('All', 'All')] + [(customer.id, customer.phone_number)
-                                          for customer in Customer.objects.all()]
+    user_choices = [('All', 'All')] + [(customer.id, f"{customer.phone_number}-{customer.name}")
+                                       for customer in Customer.objects.all()]
 
     user = forms.ChoiceField(
         choices=user_choices,

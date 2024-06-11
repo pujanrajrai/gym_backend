@@ -1,10 +1,13 @@
+from datetime import date, timedelta, datetime
+from django.db.models import Sum
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from rental.models.customer import Customer, CustomerDocument
-from .forms import CustomerForm, CustomerDocumentForm,DateRangeForm
+from rental.models import Invoice, Payment
+from .forms import CustomerForm, CustomerDocumentForm, DateRangeForm
 from django.db.models import Sum, Q
 
 from django.utils.decorators import method_decorator
@@ -25,7 +28,6 @@ class CustomerListView(ListView):
         return context
 
 
-
 @method_decorator(login_required(), name='dispatch')
 @method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerCreateView(CreateView):
@@ -38,7 +40,6 @@ class CustomerCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['current'] = 'customer'
         return context
-
 
 
 @method_decorator(login_required(), name='dispatch')
@@ -63,7 +64,6 @@ class CustomerUpdateView(UpdateView):
         return reverse_lazy('rental:customer:details', kwargs={'pk': self.object.pk})
 
 
-
 @login_required()
 @is_renta_user(['admin'])
 def active_inactive_toggle(request, pk):
@@ -77,7 +77,6 @@ def active_inactive_toggle(request, pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
-
 @login_required()
 @is_renta_user(['admin'])
 def customer_details(request, pk):
@@ -89,7 +88,6 @@ def customer_details(request, pk):
         "customer_documents": customer_document
     }
     return render(request, 'customer/details.html', context)
-
 
 
 @method_decorator(login_required(), name='dispatch')
@@ -114,7 +112,6 @@ class CustomerDocumentCreateView(CreateView):
         return reverse_lazy('rental:customer:details', kwargs={'pk': self.object.customer.pk})
 
 
-
 @login_required()
 @is_renta_user(['admin'])
 def delete_document(request, pk):
@@ -123,13 +120,14 @@ def delete_document(request, pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
+# @login_required()
+# @is_renta_user(['admin'])
 
-@login_required()
-@is_renta_user(['admin'])
+
 def dashboard_report(request):
     form = DateRangeForm(request.GET or None)
     context = {}
-    
+
     if form.is_valid():
         date_range = form.cleaned_data.get('date_range')
         from_date = form.cleaned_data.get('from_date')
@@ -188,32 +186,21 @@ def dashboard_report(request):
             else:
                 date_filter = Q()  # No filtering
 
-        # Apply filters to queryset for each model
-        total_income = UserPlan.objects.filter(user_filter).filter(
-            date_filter).aggregate(total_sum=Sum('total'))['total_sum'] or 0
+        # Calculate total invoice
+        total_invoice = Invoice.objects.filter(customer_filter).filter(
+            date_filter).aggregate(total_sum=Sum('total_price'))['total_sum'] or 0
 
-        # Calculate total salary
-        total_salary = Ledger.objects.filter(date_filter).filter(
-            entry_type="salary").aggregate(total_sum=Sum('amount'))['total_sum'] or 0
-
-        # Calculate total expenses
-        total_expenses = Ledger.objects.filter(date_filter).filter(
-            entry_type="expenses").aggregate(total_sum=Sum('amount'))['total_sum'] or 0
-
-        pl = total_income-total_salary-total_expenses
-        # import pdb;pdb.set_trace()
+        # Calculate total payment
+        total_payment = Payment.objects.filter(customer_filter).filter(date_filter).filter(
+            is_cancelled=False).aggregate(total_sum=Sum('amount'))['total_sum'] or 0
 
     else:
         # If form is not valid, set totals to None
-        total_income = None
-        pl = None
-        total_salary = None
-        total_expenses = None
+        total_invoice = None
+        total_payment = None
 
-    context["total_income"] = total_income
-    context["pl"] = pl
-    context["total_salary"] = total_salary
-    context["total_expenses"] = total_expenses
+    context["total_invoice"] = total_invoice
+    context["total_payment"] = total_payment
     context["current"] = "dashboard_report"
     context["form"] = form
 
