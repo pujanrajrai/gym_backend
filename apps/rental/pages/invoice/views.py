@@ -10,6 +10,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from decorators import is_renta_user
 from decorators import is_renta_user
+from rental.pages.invoice.utils import calculate_elr
+
 
 @login_required()
 @is_renta_user(['admin'])
@@ -44,9 +46,12 @@ def generate_invoice_view(request):
                 customer_properties = CustomerProperty.objects.filter(
                     myproperty=property, is_terminated=False)
                 for customer_property in customer_properties:
+                    latest_reading = calculate_elr(property,
+                                                   customer_property.customer)
                     UnconfirmInvoice.objects.create(
                         customer=customer_property.customer,
                         myproperty=property,
+                        last_electricity_unit_reading=latest_reading,
                         month_name=month,  # You can set this dynamically as needed
                         property_rent=property.price_per_month,
                         total_electricity_unit=0,  # Set appropriate values
@@ -65,19 +70,15 @@ def generate_invoice_view(request):
     return render(request, 'invoice/generate_invoice.html', context)
 
 
-
-
 @login_required()
 @is_renta_user(['admin'])
 def unconfirm_invoice_list(request):
     invoices = UnconfirmInvoice.objects.all()
     context = {
-        "current":"generate_invoice",
+        "current": "generate_invoice",
         "invoices": invoices
     }
     return render(request, 'invoice/unconfirm_invoice_list.html', context)
-
-
 
 
 @login_required()
@@ -87,8 +88,6 @@ def delete_unconfirm_invoice(request, pk):
     invoice.delete()
     messages.success(request, f'Unconfirm Invoice Deleted Successfully')
     return redirect('rental:invoice:unconfirm_invoice_list')
-
-
 
 
 @login_required()
@@ -114,6 +113,8 @@ def issue_invoice(request, pk):
                     myproperty=obj.myproperty,
                     month_name=obj.month_name,
                     property_rent=obj.property_rent,
+                    last_electricity_unit_reading=obj.last_electricity_unit_reading,
+                    current_electricity_unit_reading=obj.current_electricity_unit_reading,
                     total_electricity_unit=obj.total_electricity_unit,
                     total_electricity_amount=obj.total_electricity_amount,
                     total_water_unit=obj.total_water_unit,
@@ -136,11 +137,10 @@ def issue_invoice(request, pk):
         "rent_amount": rent_amount,
         "garbage_amount": garbage_amount,
         "electricity_per_unit_price": electricity_per_unit_price,
-        "water_per_unit_price": water_per_unit_price
+        "water_per_unit_price": water_per_unit_price,
+        "current": "invoices"
     }
     return render(request, 'invoice/issue.html', context)
-
-
 
 
 @login_required()
@@ -149,12 +149,10 @@ def invoice_list(request):
     invoices = Invoice.objects.all()
     context = {
         "invoices": invoices,
-        "current": "invoice"
+        "current": "invoices"
     }
 
     return render(request, 'invoice/list.html', context)
-
-
 
 
 @login_required()
@@ -162,19 +160,21 @@ def invoice_list(request):
 def invoice_details(request, pk):
     invoice = Invoice.objects.get(pk=pk)
     context = {
-        "invoice": invoice
+        "invoice": invoice,
+        "current": "invoices"
     }
     return render(request, 'invoice/details.html', context)
+
 
 @login_required()
 @is_renta_user(['admin'])
 def invoice_print(request, pk):
     invoice = Invoice.objects.get(pk=pk)
     context = {
-        "invoice": invoice
-    }
-    return render(request, 'invoice/print.html',context)
+        "invoice": invoice,
 
+    }
+    return render(request, 'invoice/print.html', context)
 
 
 @login_required()

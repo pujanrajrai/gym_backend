@@ -179,3 +179,19 @@
     <!-- /.content -->
 </div>
 
+
+<script>
+  $(document).ready(function () {
+    // Scroll the current item into view after the window has fully loaded
+    $(window).on('load', function () {
+        $('.menu .current').each(function () {
+            this.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        });
+    });
+    
+});
+
+</script>

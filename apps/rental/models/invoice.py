@@ -20,6 +20,12 @@ class UnconfirmInvoice(BaseModel):
         max_length=100,
     )
     property_rent = models.FloatField()
+    last_electricity_unit_reading = models.FloatField(
+        default=0
+    )
+    current_electricity_unit_reading = models.FloatField(
+        default=0
+    )
     total_electricity_unit = models.FloatField()
     total_electricity_amount = models.FloatField()
     total_water_unit = models.FloatField()
@@ -54,6 +60,12 @@ class Invoice(BaseModel):
     )
     month_name = models.CharField(
         max_length=100,
+    )
+    last_electricity_unit_reading = models.FloatField(
+        default=0
+    )
+    current_electricity_unit_reading = models.FloatField(
+        default=0
     )
     property_rent = models.FloatField()
     total_electricity_unit = models.FloatField()

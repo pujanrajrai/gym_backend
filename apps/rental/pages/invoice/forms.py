@@ -19,6 +19,7 @@ class CustomForm(forms.Form):
         label="Include or Exclude",
         widget=forms.Select(attrs={'class': 'ui fluid search dropdown'}),
     )
+
     type2 = forms.ChoiceField(
         choices=SELECTION_TYPE_CHOICES,
         label="Selection Type",
@@ -58,6 +59,8 @@ class IssueInvoiceForm(forms.ModelForm):
             'myproperty',
             'month_name',
             'property_rent',
+            'last_electricity_unit_reading',
+            'current_electricity_unit_reading',
             'total_electricity_unit',
             'total_electricity_amount',
             'total_water_unit',
@@ -70,8 +73,9 @@ class IssueInvoiceForm(forms.ModelForm):
         widgets = {
             'month_name': forms.TextInput(attrs={"class": "form-control"}),
             'property_rent': forms.NumberInput(attrs={"class": "form-control"}),
-            'total_electricity_unit': forms.NumberInput(attrs={"class": "form-control"}),
-            'total_water_unit': forms.NumberInput(attrs={"class": "form-control"}),
+            'total_electricity_unit': forms.NumberInput(attrs={"class": "form-control", 'readonly': 'readonly'}),
+            'last_electricity_unit_reading': forms.NumberInput(attrs={"class": "form-control"}),
+            'current_electricity_unit_reading': forms.NumberInput(attrs={"class": "form-control"}),
             'total_water_unit': forms.NumberInput(attrs={"class": "form-control"}),
             'miscellaneous_amount': forms.NumberInput(attrs={"class": "form-control"}),
             'total_garbage_amount': forms.NumberInput(attrs={"class": "form-control"}),

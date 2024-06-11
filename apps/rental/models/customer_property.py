@@ -14,6 +14,10 @@ class CustomerProperty(BaseModel):
         on_delete=models.CASCADE,
         verbose_name="Property"
     )
+    electricity_unit_reading = models.FloatField(
+        null=True,
+        blank=True,
+    )
     is_terminated = models.BooleanField(
         default=False
     )

@@ -52,7 +52,7 @@
                             <th>Debit</th>
                             <th>Credit</th>
                             <th>Balance</th>
-                            <th>Company Balance</th>
+                            {% comment %} <th>Company Balance</th> {% endcomment %}
                             <th>Remarks</th>
                             <th>Entry Type</th>
                             {% comment %} <th>Leadger Id</th> {% endcomment %}
@@ -66,7 +66,7 @@
                                 <th>Debit</th>
                                 <th>Credit</th>
                                 <th>Balance</th>
-                                <th>Company Balance</th>
+                                {% comment %} <th>Company Balance</th> {% endcomment %}
                                 <th>Remarks</th>
                                 <th>Entry Type</th>
                                 {% comment %} <th>Leadger Id</th> {% endcomment %}
@@ -87,8 +87,8 @@
         $('#items-table').dataTable({
             order: [[0, 'desc']],
             lengthMenu: [
-                [10, 20, 50, 100],
-                [10, 20, 50, 100]
+                [10, 20, 50, 100,200],
+                [10, 20, 50, 100,200]
             ],
             pageLength: 20,
             serverSide: true,
@@ -139,7 +139,7 @@
                     }
                 },
                 { name: "Balance", data: "balance" },
-                { name: "Company Balance", data: "company_balance" },
+                {% comment %} { name: "Company Balance", data: "company_balance" }, {% endcomment %}
                 { name: "Remarks", data: "remarks" },
                 { name: "Entry Type", data: "entry_type" },
                 {% comment %} { name: "Ledger Id", data: "leaserid" }, {% endcomment %}

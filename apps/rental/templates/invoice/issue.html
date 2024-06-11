@@ -66,6 +66,8 @@
         const electricityPerUnitPrice = {{ electricity_per_unit_price }};
         const waterPerUnitPrice = {{ water_per_unit_price }};
 
+        const lastElectricityReadingField = document.getElementById("id_last_electricity_unit_reading");
+        const currentElectricityReadingField = document.getElementById("id_current_electricity_unit_reading");
         const electricityUnitsField = document.getElementById("id_total_electricity_unit");
         const electricityAmountField = document.getElementById("id_total_electricity_amount");
         const waterUnitsField = document.getElementById("id_total_water_unit");
@@ -75,7 +77,12 @@
         const totalPriceField = document.getElementById("id_total_price");
 
         function calculateTotalPrice() {
-            const totalElectricityAmount = parseFloat(electricityUnitsField.value || 0) * electricityPerUnitPrice;
+            const lastElectricityReading = parseFloat(lastElectricityReadingField.value || 0);
+            const currentElectricityReading = parseFloat(currentElectricityReadingField.value || 0);
+            const electricityUnits = currentElectricityReading - lastElectricityReading;
+            electricityUnitsField.value = electricityUnits;
+
+            const totalElectricityAmount = electricityUnits * electricityPerUnitPrice;
             electricityAmountField.value = totalElectricityAmount.toFixed(2);
 
             const totalWaterAmount = parseFloat(waterUnitsField.value || 0) * waterPerUnitPrice;
@@ -88,7 +95,8 @@
             totalPriceField.value = totalPrice.toFixed(2);
         }
 
-        electricityUnitsField.addEventListener("input", calculateTotalPrice);
+        lastElectricityReadingField.addEventListener("input", calculateTotalPrice);
+        currentElectricityReadingField.addEventListener("input", calculateTotalPrice);
         waterUnitsField.addEventListener("input", calculateTotalPrice);
         garbageAmountField.addEventListener("input", calculateTotalPrice);
         miscellaneousAmountField.addEventListener("input", calculateTotalPrice);
@@ -97,4 +105,5 @@
         calculateTotalPrice();
     });
 </script>
+
 {% endblock %}
