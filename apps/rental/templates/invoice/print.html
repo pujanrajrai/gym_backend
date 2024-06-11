@@ -1,16 +1,10 @@
-{% extends 'datatable_base.html' %}
+{% extends 'print_base.html' %}
 {% load static %}
-{% block title %}Invoice Detail{% endblock %}
-{% block pagetitle %}Invoice Detail{% endblock %}
-{%block addbutton%}
-{% if invoice.can_be_cancelled and not invoice.is_cancelled %}
-<a href="{% url 'rental:invoice:cancel_invoice' invoice.id %}" onclick="return confirm('Are you sure you want to cancel invoice. Its ireversable?');" class="btn btn-sm btn-primary">
-  <i class="fa fa-trash"></i> Cancel Bill
-</a>
-{%endif%}
-{%endblock%}
-{%block style%}
-<style>
+
+{% block title %}{{ invoice.customer.name }} {{ current_datetime }}{% endblock %}
+
+{% block body %}
+<style type="text/css" media="print">
     .invoice-container {
         max-width: 800px;
         margin: 0 auto;
@@ -46,13 +40,17 @@
       .invoice-total {
         text-align: right;
       }
-  </style>
-{%endblock%}
-{% block table %}
+</style>
 
-<a style="float:right;background:red;" href="{%url 'rental:invoice:invoice_print' invoice.id %}" target="blank" class="btn btn-sm btn-danger">
-  Print
-</a>
+<div style="padding:10px; margin:10px;">
+    <div class="row">
+        <div class="col-1" style="margin-right:10px;">
+            {% comment %} <img src="{% static 'assets/images/logo.png' %}" style="max-height:60px;" alt=""> {% endcomment %}
+        </div>
+        <div class="col-3">
+            {% comment %} Bouddha Fitness<br>
+            Kathmandu, Nepal {% endcomment %}
+        </div>
         <div class="invoice-container" {% if invoice.is_cancelled%}style="text-decoration: line-through; color: red;"{%endif%}>
             <div class="invoice-header">
               <div class="invoice-title">Invoice Details</div>
@@ -112,15 +110,12 @@
             <div class="" style="padding:5px;border:2px solid gray;">
               <p><strong>Remarks:</strong> {{invoice.remarks}}</p>
             </div>
-          
-{% endblock %}
 
-{%block js%}
+        <script type="text/javascript">
+            window.print();
+            window.onfocus = function () {
+                window.close();
+            }
+        </script>
 
-
-<script>
-    $('.ui.dropdown').dropdown();
-
-</script>
-
-{%endblock%}
+        {% endblock %}

@@ -79,7 +79,7 @@
             </li>
           </ul>
           <ul class="menu js__accordion">
-            <li class="{% if current == "expesnses" %}current{%endif%}">
+            <li class="{% if current == "expenses" %}current{%endif%}">
               <a class="" href="{% url 'ledger:pages:expenses:list' %}?user=&from_date=&to_date="">
                 <i class="menu-icon material-symbols-outlined">
                     currency_exchange
@@ -87,7 +87,17 @@
                   <span>Expenses</span></a>
             </li>
           </ul>
+          {% if request.user.is_rental_user %}
           <h5 class="title">Rental</h5>
+          <ul class="menu js__accordion">
+            <li class="{% if current == "dashboard_report" %}current{%endif%}">
+              <a class="" href="{% url 'rental:customer:dashboard_report' %}">
+                <i class="menu-icon material-symbols-outlined">
+                    people
+                </i>
+                  <span>Dashboard</span></a>
+            </li>
+          </ul>
           <ul class="menu js__accordion">
             <li class="{% if current == "customer" %}current{%endif%}">
               <a class="" href="{% url 'rental:customer:list' %}">
@@ -151,6 +161,7 @@
                   <span>Ledger</span></a>
             </li>
           </ul>
+          {% endif %}
           <ul class="menu js__accordion">
             <li class="{% if current == "logout" %}current{%endif%}">
               <a class="" href="{% url 'logout' %}?user=&from_date=&to_date="  onclick="return confirm('Are you sure you want to Logout?');">

@@ -80,6 +80,7 @@
         }
         // Initialize the DataTable
         $('#example').DataTable({
+            "pageLength": 200,
             "drawCallback": function(settings) {
                 var api = this.api();
                 var start = api.page.info().start;
@@ -91,7 +92,10 @@
     });
 
     function confirmStatusChange() {
-        return confirm('Are you sure ?');
+        if (confirm('Are you sure ?')) {
+            return true;  // Proceed with the link
+        }
+        return false;  // Cancel the link
     }
 </script>
 

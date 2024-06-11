@@ -6,7 +6,13 @@ from rental.models import Customer, Property, UnconfirmInvoice, CustomerProperty
 from .forms import CustomForm, IssueInvoiceForm
 from django.http import HttpResponseRedirect
 
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from decorators import is_renta_user
+from decorators import is_renta_user
 
+@login_required()
+@is_renta_user(['admin'])
 def generate_invoice_view(request):
     form = CustomForm()
     if request.method == "POST":
@@ -59,14 +65,23 @@ def generate_invoice_view(request):
     return render(request, 'invoice/generate_invoice.html', context)
 
 
+
+
+@login_required()
+@is_renta_user(['admin'])
 def unconfirm_invoice_list(request):
     invoices = UnconfirmInvoice.objects.all()
     context = {
+        "current":"generate_invoice",
         "invoices": invoices
     }
     return render(request, 'invoice/unconfirm_invoice_list.html', context)
 
 
+
+
+@login_required()
+@is_renta_user(['admin'])
 def delete_unconfirm_invoice(request, pk):
     invoice = UnconfirmInvoice.objects.get(pk=pk)
     invoice.delete()
@@ -74,6 +89,10 @@ def delete_unconfirm_invoice(request, pk):
     return redirect('rental:invoice:unconfirm_invoice_list')
 
 
+
+
+@login_required()
+@is_renta_user(['admin'])
 def issue_invoice(request, pk):
     obj = UnconfirmInvoice.objects.get(pk=pk)
     myproperty = obj.myproperty
@@ -122,6 +141,10 @@ def issue_invoice(request, pk):
     return render(request, 'invoice/issue.html', context)
 
 
+
+
+@login_required()
+@is_renta_user(['admin'])
 def invoice_list(request):
     invoices = Invoice.objects.all()
     context = {
@@ -132,6 +155,10 @@ def invoice_list(request):
     return render(request, 'invoice/list.html', context)
 
 
+
+
+@login_required()
+@is_renta_user(['admin'])
 def invoice_details(request, pk):
     invoice = Invoice.objects.get(pk=pk)
     context = {
@@ -139,7 +166,19 @@ def invoice_details(request, pk):
     }
     return render(request, 'invoice/details.html', context)
 
+@login_required()
+@is_renta_user(['admin'])
+def invoice_print(request, pk):
+    invoice = Invoice.objects.get(pk=pk)
+    context = {
+        "invoice": invoice
+    }
+    return render(request, 'invoice/print.html',context)
 
+
+
+@login_required()
+@is_renta_user(['admin'])
 def cancel_invoice(request, pk):
     try:
         invoice = Invoice.objects.get(pk=pk)

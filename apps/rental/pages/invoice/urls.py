@@ -24,4 +24,7 @@ urlpatterns = [
     path(
         'cancel/invoice/<str:pk>', views.cancel_invoice, name="cancel_invoice"
     ),
+    path(
+        'invoice/print/plan/<str:pk>/', views.invoice_print, name="invoice_print"
+    ),
 ]

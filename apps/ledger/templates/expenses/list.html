@@ -39,6 +39,7 @@
         <table id="items-table" class="display compact nowrap" style="width:100%">
             <thead>
                         <tr>
+                            <th>S.N</th>
                             <th>Create Date</th>
                             <th>Particular</th>
                             <th>Debit</th>
@@ -51,6 +52,7 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th>S.N</th>
                                 <th>Create Date</th>
                                 <th>Particular</th>
                                 <th>Debit</th>
@@ -74,12 +76,12 @@
     $(document).ready(function () {
             
         $('#items-table').dataTable({
-            order: [[0, 'desc']],
+            order: [[1, 'desc']],
             lengthMenu: [
                 [10, 20, 50, 100],
                 [10, 20, 50, 100]
             ],
-            pageLength: 20,
+            pageLength: 200,
             serverSide: true,
             paging: true,
             processing: true,
@@ -87,6 +89,12 @@
             sAjaxSource:"{% url 'ledger:pages:expenses:expenses_datatable' %}?user={{user}}&from_date={{from_date}}&to_date={{to_date}}",  // new url
             
             columns: [
+            {
+                name: "S.N",
+                data: null,
+                orderable: false,
+                searchable: false
+            },
             {
                 name: "Create Date",
                 data: 0,
@@ -139,6 +147,13 @@
 
 
             ],
+            drawCallback: function (settings) {
+                var api = this.api();
+                var start = api.page.info().start;
+                api.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = start + i + 1;
+                });
+            }
         });
     });
 

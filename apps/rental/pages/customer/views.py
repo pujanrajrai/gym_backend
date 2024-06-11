@@ -4,9 +4,16 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from rental.models.customer import Customer, CustomerDocument
-from .forms import CustomerForm, CustomerDocumentForm
+from .forms import CustomerForm, CustomerDocumentForm,DateRangeForm
+from django.db.models import Sum, Q
+
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from decorators import is_renta_user
 
 
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerListView(ListView):
     model = Customer
     template_name = 'customer/list.html'
@@ -18,6 +25,9 @@ class CustomerListView(ListView):
         return context
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerCreateView(CreateView):
     model = Customer
     form_class = CustomerForm
@@ -30,6 +40,9 @@ class CustomerCreateView(CreateView):
         return context
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerUpdateView(UpdateView):
     model = Customer
     form_class = CustomerForm
@@ -50,6 +63,9 @@ class CustomerUpdateView(UpdateView):
         return reverse_lazy('rental:customer:details', kwargs={'pk': self.object.pk})
 
 
+
+@login_required()
+@is_renta_user(['admin'])
 def active_inactive_toggle(request, pk):
     customer = Customer.objects.get(pk=pk)
     active_status = customer.is_active
@@ -61,6 +77,9 @@ def active_inactive_toggle(request, pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
+
+@login_required()
+@is_renta_user(['admin'])
 def customer_details(request, pk):
     customer = Customer.objects.get(pk=pk)
     customer_document = CustomerDocument.objects.filter(customer=customer)
@@ -72,6 +91,9 @@ def customer_details(request, pk):
     return render(request, 'customer/details.html', context)
 
 
+
+@method_decorator(login_required(), name='dispatch')
+@method_decorator(is_renta_user(['admin']), name='dispatch')
 class CustomerDocumentCreateView(CreateView):
     model = CustomerDocument
     form_class = CustomerDocumentForm
@@ -92,7 +114,107 @@ class CustomerDocumentCreateView(CreateView):
         return reverse_lazy('rental:customer:details', kwargs={'pk': self.object.customer.pk})
 
 
+
+@login_required()
+@is_renta_user(['admin'])
 def delete_document(request, pk):
     document = CustomerDocument.objects.get(pk=pk)
     document.delete()
     return redirect(request.META['HTTP_REFERER'])
+
+
+
+@login_required()
+@is_renta_user(['admin'])
+def dashboard_report(request):
+    form = DateRangeForm(request.GET or None)
+    context = {}
+    
+    if form.is_valid():
+        date_range = form.cleaned_data.get('date_range')
+        from_date = form.cleaned_data.get('from_date')
+        to_date = form.cleaned_data.get('to_date')
+        customer_id = form.cleaned_data.get('customer')
+        context["customer"] = customer_id
+        context["from_date"] = from_date
+        context["to_date"] = to_date
+        context["date_range"] = date_range
+
+        # Filter data based on company if selected
+        if customer_id and customer_id != 'All':
+            customer_filter = Q(customer=customer_id)
+        else:
+            customer_filter = Q()
+
+        # Filter data based on date range
+        if date_range == DateRangeForm.CUSTOM:
+            # Custom date range
+            date_filter = Q(created_date__range=[from_date, to_date])
+        else:
+            # Predefined date ranges
+            today = date.today()
+            if date_range == DateRangeForm.TODAY:
+                date_filter = Q(created_date__range=[
+                                today, today+timedelta(days=1)])
+            elif date_range == DateRangeForm.YESTERDAY:
+                date_filter = Q(created_date__range=[
+                    today - timedelta(days=1), today])
+            elif date_range == DateRangeForm.THIS_WEEK:
+                start_of_week = today - timedelta(days=today.weekday())
+                date_filter = Q(created_date__range=[
+                                start_of_week, start_of_week + timedelta(days=6)])
+            elif date_range == DateRangeForm.THIS_MONTH:
+                start_of_month = today.replace(day=1)
+                end_of_month = start_of_month.replace(
+                    day=1, month=start_of_month.month + 1) - timedelta(days=1)
+                date_filter = Q(created_date__range=[
+                                start_of_month, end_of_month])
+            elif date_range == DateRangeForm.LAST_MONTH:
+                start_of_last_month = (today.replace(
+                    day=1) - timedelta(days=1)).replace(day=1)
+                end_of_last_month = start_of_last_month.replace(
+                    day=1, month=start_of_last_month.month + 1) - timedelta(days=1)
+                date_filter = Q(created_date__range=[
+                                start_of_last_month, end_of_last_month])
+            elif date_range == DateRangeForm.LAST_THREE_MONTHS:
+                three_months_ago = today - timedelta(days=90)
+                date_filter = Q(created_date__range=[
+                                three_months_ago, today])
+            elif date_range == DateRangeForm.THIS_YEAR:
+                start_of_year = date(today.year, 1, 1)
+                end_of_year = date(today.year, 12, 31)
+                date_filter = Q(created_date__range=[
+                                start_of_year, end_of_year])
+            else:
+                date_filter = Q()  # No filtering
+
+        # Apply filters to queryset for each model
+        total_income = UserPlan.objects.filter(user_filter).filter(
+            date_filter).aggregate(total_sum=Sum('total'))['total_sum'] or 0
+
+        # Calculate total salary
+        total_salary = Ledger.objects.filter(date_filter).filter(
+            entry_type="salary").aggregate(total_sum=Sum('amount'))['total_sum'] or 0
+
+        # Calculate total expenses
+        total_expenses = Ledger.objects.filter(date_filter).filter(
+            entry_type="expenses").aggregate(total_sum=Sum('amount'))['total_sum'] or 0
+
+        pl = total_income-total_salary-total_expenses
+        # import pdb;pdb.set_trace()
+
+    else:
+        # If form is not valid, set totals to None
+        total_income = None
+        pl = None
+        total_salary = None
+        total_expenses = None
+
+    context["total_income"] = total_income
+    context["pl"] = pl
+    context["total_salary"] = total_salary
+    context["total_expenses"] = total_expenses
+    context["current"] = "dashboard_report"
+    context["form"] = form
+
+    return render(request, 'dashboard_rental.html', context)

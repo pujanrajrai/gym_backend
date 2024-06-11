@@ -25,6 +25,7 @@
             <table id="example" class="display compact nowrap" style="width:100%">
                 <thead>
                     <tr>
+                        <th>S.N</th>
                         <th>Name</th>
                         <th>Price</th>
                         <th>Default Month</th>
@@ -34,6 +35,7 @@
                 </thead>
                 <tfoot>
                     <tr>
+                        <th>S.N</th>
                         <th>Name</th>
                         <th>Price</th>
                         <th>Default Month</th>
@@ -44,6 +46,7 @@
                 <tbody>
                     {% for plan in plans %}
             <tr>
+                <td></td>
                 <td>{{ plan.name }}</td>
                 <td>{{ plan.price }}</td>
                 <td>{{ plan.default_month }}</td>
@@ -59,7 +62,28 @@
             </table>
         </div>
     </div>
+    {% endblock %}
+    {% block js %}
     <script>
+        $(document).ready(function() {
+            // Destroy any existing DataTable instance
+            if ($.fn.DataTable.isDataTable('#example')) {
+                $('#example').DataTable().destroy();
+            }
+            // Initialize the DataTable
+            $('#example').DataTable({
+                "pageLength": 200,
+                "drawCallback": function(settings) {
+                    
+                    var api = this.api();
+                    var start = api.page.info().start;
+                    api.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+                        cell.innerHTML = start + i + 1;
+                    });
+                }
+            });
+        });
+
         function confirmStatusChange() {
             if (confirm('Are you sure ?')) {
                 return true;  // Proceed with the link
@@ -68,4 +92,5 @@
         }
     </script>
 {% endblock %}
+
 
