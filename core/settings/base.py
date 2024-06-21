@@ -32,8 +32,6 @@ DJANGO_APP = [
 
 THIRD_PARTY_APP = [
     'captcha',
-
-
 ]
 
 INSTALLED_APPS += DJANGO_APP+THIRD_PARTY_APP
