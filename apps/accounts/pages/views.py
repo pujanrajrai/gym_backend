@@ -426,11 +426,16 @@ def dashboard_export(request):
     user_id = request.GET.get('user')
     # Convert from_date and to_date from string to date using the correct format
     date_format = '%B %d, %Y'
-    from_date = datetime.strptime(
-        from_date_str, date_format) if from_date_str else None
-    to_date = datetime.strptime(
-        to_date_str, date_format) if to_date_str else None
-
+    try:
+        from_date = datetime.strptime(
+            from_date_str, date_format) if from_date_str else None
+    except Exception as e:
+        from_date = None
+    try:
+        to_date = datetime.strptime(
+            to_date_str, date_format) if to_date_str else None
+    except Exception as e:
+        to_date = None
     # Filter data based on company if selected
     if user_id and user_id != 'All':
         user_filter = Q(userprofile__user=user_id)

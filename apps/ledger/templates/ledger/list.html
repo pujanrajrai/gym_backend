@@ -134,16 +134,19 @@
                 },
                 { name: "User", data: "user" },
                 { name: "Particular", data: "particular" },
+                
                 {
                     name: 'Debit',
-                    data: function (row) {
-                        return row._type === "Debit" ? row.amount : '';
+                    data: 'amount',  // Use the direct field for ordering
+                    render: function(data, type, row) {
+                        return row._type === "Debit" ? data : '';
                     }
                 },
                 {
                     name: 'Credit',
-                    data: function (row) {
-                        return row._type === "Credit" ? row.amount : '';
+                    data: 'amount',  // Use the direct field for ordering
+                    render: function(data, type, row) {
+                        return row._type === "Credit" ? data : '';
                     }
                 },
                 { name: "Balance", data: "balance" },

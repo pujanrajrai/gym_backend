@@ -28,7 +28,6 @@ from django.contrib.auth.decorators import login_required
 from decorators import is_renta_user
 
 
-
 class LedgerSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
 
@@ -224,7 +223,8 @@ def export_ledger_to_excel(request):
     # Add column headers
     headers = [
         'created_date',
-        'Customer',
+        'Phone Number',
+        'Name',
         'Particular',
         'Debit',
         'Credit',
@@ -240,11 +240,11 @@ def export_ledger_to_excel(request):
     for item in queryset:
         debit = item.amount if item._type == 'Debit' else None
         credit = item.amount if item._type == 'Credit' else None
-
         row_data = [
             item.created_date.strftime(
                 '%Y-%m-%d %H:%M:%S') if item.created_date else None,
             item.customer.phone_number,
+            item.customer.name,
             item.particular,
             debit,
             credit,

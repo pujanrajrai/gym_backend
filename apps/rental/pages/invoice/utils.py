@@ -14,7 +14,7 @@ def calculate_elr(myproperty, customer):
 
     try:
         latest_invoice = Invoice.objects.filter(
-            customer=customer, myproperty=myproperty).latest('created_date')
+            customer=customer, is_cancelled=False, myproperty=myproperty).latest('created_date')
     except ObjectDoesNotExist:
         latest_invoice = None
 

@@ -101,17 +101,17 @@
                 render: function (data) {
                     // Parse the input date string
                     var date = new Date(data);
-                    
-                    // Format the date as desired (example: "August 15, 2023 12:34 PM")
-                    var formattedDate = date.toLocaleString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: true
-                    });
-                    
+
+                    // Extract the individual components
+                    var year = date.getFullYear();
+                    var month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                    var day = String(date.getDate()).padStart(2, '0');
+                    var hours = String(date.getHours()).padStart(2, '0');
+                    var minutes = String(date.getMinutes()).padStart(2, '0');
+
+                    // Format the date as yyyy-mm-dd h:m
+                    var formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+
                     return formattedDate;
                 }
             },

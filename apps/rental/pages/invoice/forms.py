@@ -34,7 +34,7 @@ class CustomForm(forms.Form):
     customer_properties = CustomerProperty.objects.filter(is_terminated=False)
     properties_choices = [(cp.myproperty.id, cp.myproperty.name)
                           for cp in customer_properties]
-
+    print(properties_choices)
     type3 = forms.MultipleChoiceField(
         choices=properties_choices,
         widget=forms.SelectMultiple(

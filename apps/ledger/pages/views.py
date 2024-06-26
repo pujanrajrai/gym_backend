@@ -1,4 +1,5 @@
 # import pytz
+from django.db.models import Q
 from rest_framework.response import Response
 from urllib.parse import urlencode
 from django.urls import reverse
@@ -133,7 +134,9 @@ class LedgerListView(APIView):
 
         if search_value:
             queryset = queryset.filter(
-                Q(user__icontains=search_value) |
+                Q(user__phone_number__icontains=search_value) |
+                Q(user__user_profile__fullname__icontains=search_value) |
+                Q(user__user_profile__fullname__icontains=search_value) |
                 Q(particular__icontains=search_value) |
                 Q(_type__icontains=search_value) |
                 Q(remarks__icontains=search_value)
@@ -143,6 +146,8 @@ class LedgerListView(APIView):
 
         if order_dir == 'desc':
             order_column = f'-{order_column}'
+        else:
+            order_column = f'{order_column}'
 
         queryset = queryset.order_by(order_column)[start:start + length]
 
@@ -236,8 +241,6 @@ def create_ledger(request):
     return render(request, 'ledger/create.html', context)
 
 
-
-
 @login_required
 @has_roles(['admin'])
 def export_ledger_to_excel(request):
@@ -264,14 +267,14 @@ def export_ledger_to_excel(request):
     if to_date:
         queryset = queryset.filter(created_date__lte=to_date)
 
-
     workbook = Workbook()
     worksheet = workbook.active
 
     # Add column headers
     headers = [
         'created_date',
-        'User',
+        'Phone Number',
+        'Name',
         'Particular',
         'Debit',
         'Credit',
@@ -287,11 +290,20 @@ def export_ledger_to_excel(request):
     for item in queryset:
         debit = item.amount if item._type == 'Debit' else None
         credit = item.amount if item._type == 'Credit' else None
-        
+        role = item.user.role
+        if role == "staff":
+            name = item.user.staff_profile.fullname
+        elif role == "user":
+            name = item.user.user_profile.fullname
+        elif role == "company":
+            name = "Boudha Gym"
+        else:
+            name = ""
         row_data = [
             item.created_date.strftime(
                 '%Y-%m-%d %H:%M:%S') if item.created_date else None,
             item.user.phone_number,
+            name,
             item.particular,
             debit,
             credit,
@@ -300,7 +312,7 @@ def export_ledger_to_excel(request):
             item.remarks,
             item.entry_type,
             item.leaserid,
-            
+
         ]
         row_data = [str(value) if isinstance(value, datetime)
                     else value for value in row_data]

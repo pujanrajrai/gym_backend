@@ -19,6 +19,7 @@ from accounts.models.users import User
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from decorators import has_roles
+from django.db.models import Q
 
 
 @method_decorator(login_required(), name='dispatch')
@@ -39,7 +40,8 @@ class ExpensesListView(ServerSideDatatableView):
             to_date = datetime.strptime(to_date_str, '%b %d, %Y')
         else:
             to_date = None
-        queryset = Ledger.objects.filter(entry_type='Expenses')
+        queryset = Ledger.objects.filter(
+            Q(entry_type='Expenses') | Q(user__phone_number="expenses"))
         if user:
             queryset = queryset.filter(user=user)
         if from_date:

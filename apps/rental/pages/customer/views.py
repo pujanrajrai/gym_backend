@@ -187,7 +187,7 @@ def dashboard_report(request):
                 date_filter = Q()  # No filtering
 
         # Calculate total invoice
-        total_invoice = Invoice.objects.filter(customer_filter).filter(
+        total_invoice = Invoice.objects.filter(customer_filter, is_cancelled=False).filter(
             date_filter).aggregate(total_sum=Sum('total_price'))['total_sum'] or 0
 
         # Calculate total payment
