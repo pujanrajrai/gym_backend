@@ -4,6 +4,7 @@ app_name = "pages"
 
 urlpatterns = [
     path('user/list/', views.UserListView.as_view(), name="user_list"),
+    path('user/list/data/', views.user_list_data, name="user_list_data"),
     path('admin/create/', views.CreateAdmin.as_view(), name="admin_create"),
     path('staff/create/', views.CreateStaff.as_view(), name="staff_create"),
     path('user/create/', views.CreateUser.as_view(), name="user_create"),
@@ -25,6 +26,8 @@ urlpatterns = [
          name='user_profile_update'),
     path('user/expire/', views.expire_plan_list,
          name='expire_plan_list'),
+    path('user/expire/data/', views.expire_plan_list_data,
+         name='expire_plan_list_data'),
     path('dashboard/report/', views.dashboard_report,
          name='dashboard_report'),
     path('dashboard/export/', views.dashboard_export,

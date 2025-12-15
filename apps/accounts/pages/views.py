@@ -9,7 +9,7 @@ from accounts.models.users import User
 from accounts.models.profiles import StaffProfile, UserProfile
 from .forms import CreateAdminForm, CreateStaffForm, CreateUserForm, StaffProfileUpdateForm, UserProfileUpdateForm, AdminProfileUpdateForm, DateRangeForm
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
@@ -18,7 +18,7 @@ from decorators import has_roles
 from plan.models.userplan import UserPlan, UserPlanDetail
 # from django.utils import timezone
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from ledger.models import Ledger
 
 
@@ -47,6 +47,119 @@ class UserListView(ListView):
         elif tab == 'user':
             return queryset.filter(role='user')
         return queryset
+
+
+@login_required()
+@has_roles(['admin'])
+def user_list_data(request):
+    """
+    Server-side processing endpoint for DataTables on the user list page.
+    """
+    from django.db.models import Q
+
+    # DataTables parameters
+    draw = int(request.GET.get('draw', 1))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    search_value = request.GET.get('search[value]', '').strip()
+
+    # Base queryset with tab filtering similar to UserListView
+    tab = request.GET.get('tab')
+    if tab is None:
+        tab = "user"
+
+    queryset = User.objects.all()
+    if tab == 'admin':
+        queryset = queryset.filter(role='admin')
+    elif tab == 'staff':
+        queryset = queryset.filter(role='staff')
+    elif tab == 'user':
+        queryset = queryset.filter(role='user')
+
+    records_total = queryset.count()
+
+    # Search
+    if search_value:
+        queryset = queryset.filter(
+            Q(phone_number__icontains=search_value)
+            | Q(email__icontains=search_value)
+            | Q(user_profile__fullname__icontains=search_value)
+            | Q(staff_profile__fullname__icontains=search_value)
+            | Q(user_profile__gender__icontains=search_value)
+            | Q(staff_profile__gender__icontains=search_value)
+        )
+
+    records_filtered = queryset.count()
+
+    # Ordering
+    order_column_index = request.GET.get('order[0][column]')
+    order_dir = request.GET.get('order[0][dir]', 'asc')
+    # Map DataTable columns to model fields (index based on list.html columns)
+    column_map = {
+        1: 'user_profile__fullname',  # Full Name
+        # Gender (for ordering; staff uses same field name)
+        2: 'user_profile__gender',
+        3: 'phone_number',            # Phone Number
+        4: 'role',                    # Role
+        5: 'email',                   # Email
+    }
+    if order_column_index is not None and order_column_index.isdigit():
+        index = int(order_column_index)
+        sort_field = column_map.get(index)
+        if sort_field:
+            if order_dir == 'desc':
+                sort_field = f'-{sort_field}'
+            queryset = queryset.order_by(sort_field)
+
+    # Pagination
+    if length != -1:
+        queryset = queryset.select_related('user_profile', 'staff_profile')[
+            start:start + length]
+    else:
+        queryset = queryset.select_related('user_profile', 'staff_profile')
+
+    data = []
+    for user in queryset:
+        if user.role == "user" and hasattr(user, "user_profile"):
+            fullname = user.user_profile.fullname
+            gender = user.user_profile.gender
+        elif user.role == "staff" and hasattr(user, "staff_profile"):
+            fullname = user.staff_profile.fullname
+            gender = user.staff_profile.gender
+        else:
+            fullname = ""
+            gender = ""
+
+        # Action buttons HTML (same as in template)
+        if user.is_blocked:
+            block_unblock_btn = f'<a href="/accounts/pages/{user.id}/user/unblock/" class="btn btn-sm btn-info" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Unblock</a>'
+        else:
+            block_unblock_btn = f'<a href="/accounts/pages/{user.id}/user/block/" class="btn btn-sm btn-dark" onclick="return confirmStatusChange()"><i class="fa fa-trash"></i>&nbsp;Block</a>'
+
+        profile_btn = f'<a href="/accounts/pages/profileredirect/{user.id}/" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i>&nbsp;View Profile</a>'
+
+        actions_html = f"{block_unblock_btn} {profile_btn}"
+
+        data.append(
+            {
+                "sn": "",  # Will be filled on client-side using drawCallback
+                "fullname": fullname,
+                "gender": gender,
+                "phone_number": user.phone_number,
+                "role": user.role,
+                "email": user.email or "",
+                "actions": actions_html,
+            }
+        )
+
+    result = {
+        "draw": draw,
+        "recordsTotal": records_total,
+        "recordsFiltered": records_filtered,
+        "data": data,
+    }
+
+    return JsonResponse(result)
 
 
 @method_decorator(login_required(), name='dispatch')
@@ -319,6 +432,126 @@ def expire_plan_list(request):
         "current": "expiry"
     }
     return render(request, 'users/aboutoexpire.html', context)
+
+
+@login_required()
+@has_roles(['admin'])
+def expire_plan_list_data(request):
+    """
+    Server-side processing endpoint for DataTables on the expire plan list page.
+    """
+    from django.db.models import Q
+
+    # DataTables parameters
+    draw = int(request.GET.get('draw', 1))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    search_value = request.GET.get('search[value]', '').strip()
+
+    # Base queryset with related data
+    queryset = User.objects.filter(role="user").select_related('user_profile').prefetch_related(
+        Prefetch(
+            'user_profile__userplan',
+            queryset=UserPlan.objects.select_related(
+                'userprofile').prefetch_related('userplandetails__plan')
+        )
+    )
+
+    records_total = queryset.count()
+
+    # Search
+    if search_value:
+        queryset = queryset.filter(
+            Q(user_profile__fullname__icontains=search_value)
+            | Q(phone_number__icontains=search_value)
+            | Q(user_profile__userplan__userplandetails__plan__name__icontains=search_value)
+        )
+
+    queryset = queryset.distinct()
+    records_filtered = queryset.count()
+
+    # Ordering
+    order_column_index = request.GET.get('order[0][column]')
+    order_dir = request.GET.get('order[0][dir]', 'asc')
+    column_map = {
+        1: 'user_profile__fullname',                               # Name
+        2: 'phone_number',                                         # Phone Number
+        3: 'user_profile__userplan__userplandetails__plan__name',  # Plan Name
+        4: 'user_profile__userplan__starting_date',                # Starting Date
+        # (if exists)
+        5: 'user_profile__userplan__ending_date',
+        # Remaining Days (approx by ending_date)
+        6: 'user_profile__userplan__ending_date',
+        7: 'user_profile__userplan__total',                        # Total Cost
+    }
+    if order_column_index is not None and order_column_index.isdigit():
+        index = int(order_column_index)
+        sort_field = column_map.get(index)
+        if sort_field:
+            if order_dir == 'desc':
+                sort_field = f'-{sort_field}'
+            queryset = queryset.order_by(sort_field)
+
+    # Pagination
+    if length != -1:
+        queryset = queryset[start:start + length]
+
+    data = []
+    for user in queryset:
+        # Get first plan for this user
+        plan = None
+        plans = getattr(user.user_profile, "userplan", None)
+        if plans is not None:
+            plan = plans.first()
+
+        if plan:
+            plan_name = plan.userplandetails.first(
+            ).plan.name if plan.userplandetails.exists() else ""
+            starting_date = plan.starting_date
+            ending_date = plan.highest_ending_date()
+            remaining_days = plan.remaining_days()
+            total_cost = plan.total
+        else:
+            plan_name = ""
+            starting_date = ""
+            ending_date = ""
+            remaining_days = ""
+            total_cost = ""
+
+        profile_url = reverse(
+            'accounts:pages:profile_redirect', args=[user.pk])
+        extend_url = reverse(
+            'plan:pages:userplan:extend_user_plan', args=[user.pk])
+
+        actions_html = (
+            f'<a href="{profile_url}" class="btn btn-sm btn-dark">'
+            f'<i class="fa fa-trash"></i>&nbsp;View Plan</a>&nbsp;'
+            f'<a href="{extend_url}" class="btn btn-sm btn-dark">'
+            f'<i class="fa fa-trash"></i>&nbsp;Extends</a>'
+        )
+
+        data.append(
+            {
+                "sn": "",  # Will be filled on client-side
+                "name": user.user_profile.fullname if hasattr(user, "user_profile") else "",
+                "phone_number": user.phone_number,
+                "plan_name": plan_name,
+                "starting_date": starting_date,
+                "ending_date": ending_date,
+                "remaining_days": remaining_days,
+                "total_cost": total_cost,
+                "actions": actions_html,
+            }
+        )
+
+    result = {
+        "draw": draw,
+        "recordsTotal": records_total,
+        "recordsFiltered": records_filtered,
+        "data": data,
+    }
+
+    return JsonResponse(result)
 
 
 @login_required
